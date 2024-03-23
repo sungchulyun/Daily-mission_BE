@@ -19,6 +19,6 @@ public class AppProperties {
 
     @Getter
     public static final class Oauth2 {
-        
+
     }
 }
