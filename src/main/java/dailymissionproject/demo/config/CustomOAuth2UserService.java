@@ -1,10 +1,11 @@
-package dailymissionproject.config;
+package dailymissionproject.demo.config;
 
-import dailymissionproject.config.auth.dto.SessionUser;
-import dailymissionproject.domain.User;
-import dailymissionproject.repository.UserRepository;
+import dailymissionproject.demo.config.auth.dto.OAuthAttributes;
+import dailymissionproject.demo.config.auth.dto.SessionUser;
+import dailymissionproject.demo.entity.User;
+import dailymissionproject.demo.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -16,15 +17,21 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
+@Slf4j
 @Service
-@RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+
     private final UserRepository userRepository;
     private final HttpSession httpSession;
 
+    public CustomOAuth2UserService(UserRepository userRepository, HttpSession httpSession){
+        this.userRepository = userRepository;
+        this.httpSession = httpSession;
+    }
     @Override
-    public OAuth2User loadUser(OAuth2UserRequest userRequest)throws OAuth2AuthenticationException{
+    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException{
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
+        log.info("ATTR INFO : {}" , userRequest.getClientRegistration());
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
@@ -36,6 +43,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         User user = saveOrUpdate(attributes);
         httpSession.setAttribute("user", new SessionUser(user));
 
+        //System.out.println(attributes.getAttributes());
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())),
                 attributes.getAttributes(),

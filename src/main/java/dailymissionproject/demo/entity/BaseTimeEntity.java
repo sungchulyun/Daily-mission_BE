@@ -1,4 +1,4 @@
-package dailymissionproject.domain;
+package dailymissionproject.demo.entity;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;

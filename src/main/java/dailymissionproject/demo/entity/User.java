@@ -1,13 +1,18 @@
-package dailymissionproject.domain;
+package dailymissionproject.demo.entity;
 
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
 @Entity
+@Table(name = "User")
 public class User extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +30,12 @@ public class User extends BaseTimeEntity{
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    @CreatedDate
+    private LocalDateTime createdTime;
+
+    @LastModifiedDate
+    private LocalDateTime lastModifiedTime;
 
     @Builder
     public User(String name, String email, String picture, Role role){

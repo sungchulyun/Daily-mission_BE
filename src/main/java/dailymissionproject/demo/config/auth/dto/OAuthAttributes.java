@@ -1,12 +1,14 @@
-package dailymissionproject.config;
+package dailymissionproject.demo.config.auth.dto;
 
-import dailymissionproject.domain.Role;
-import dailymissionproject.domain.User;
+import dailymissionproject.demo.entity.Role;
+import dailymissionproject.demo.entity.User;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
+@Slf4j
 @Getter
 @Builder
 public class OAuthAttributes {
@@ -16,10 +18,9 @@ public class OAuthAttributes {
     private String email;
     private String picture;
     public static OAuthAttributes of(String registrationId, String userNameAttributeName, Map<String, Object> attributes) {
-        if("naver".equals(registrationId)){
+        if(registrationId.equals("naver")){
+            //return ofNaver(userNameAttributeName, attributes);
             return ofNaver("id", attributes);
-        } else if("github".equals(registrationId)){
-            return ofGithub("id", attributes);
         }
         return ofGoogle(userNameAttributeName, attributes);
     }
@@ -34,11 +35,12 @@ public class OAuthAttributes {
     }
 
     private static OAuthAttributes ofNaver(String userNameAttributeName, Map<String, Object> attributes){
+        log.info("RESPONSE : {}", attributes.get("response"));
         Map<String, Object> response = (Map<String, Object>) attributes.get("response");
-
         return OAuthAttributes.builder()
                 .name((String) response.get("name"))
                 .email((String) response.get("email"))
+                .picture((String) response.get("profile_image"))
                 .attributes(response)
                 .nameAttributeKey(userNameAttributeName)
                 .build();

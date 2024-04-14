@@ -1,4 +1,4 @@
-package dailymissionproject.domain;
+package dailymissionproject.demo.entity;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

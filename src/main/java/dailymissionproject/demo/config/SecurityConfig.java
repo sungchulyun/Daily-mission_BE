@@ -1,4 +1,4 @@
-package dailymissionproject.config;
+package dailymissionproject.demo.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,21 +19,21 @@ public class SecurityConfig {
         this.customOAuth2UserService = customOAuth2UserService;
     }
     @Bean
-    protected SecurityFilterChain config(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception{
+    public SecurityFilterChain config(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception{
        http
 
                .csrf(AbstractHttpConfigurer::disable)
-               .sessionManagement((sessionMangement) ->
-                       sessionMangement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+               .sessionManagement((sessionManagement) ->
+                       sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                        )
                .formLogin(AbstractHttpConfigurer::disable)
                .httpBasic(AbstractHttpConfigurer::disable)
-               .authorizeHttpRequests((authorizeReqeusts) -> authorizeReqeusts
-                       .requestMatchers(new MvcRequestMatcher(introspector, "/api/user")).permitAll()
+               .authorizeHttpRequests((authorizeRequests) -> authorizeRequests
+                       .requestMatchers(new MvcRequestMatcher(introspector, "/")).permitAll()
                )
                .oauth2Login(oauth2Login ->
                        oauth2Login.userInfoEndpoint(userInfoEndpointConfig ->
-                               userInfoEndpointConfig.userService(customOAuth2UserService)))
+                       userInfoEndpointConfig.userService(customOAuth2UserService)))
                ;
        return http.build();
     }
