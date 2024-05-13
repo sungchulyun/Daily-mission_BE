@@ -8,15 +8,27 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
 @Entity
 @Table(name = "User")
 public class User extends BaseTimeEntity{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id @GeneratedValue
+    @Column(name = "user_id")
     private long id;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    List<Mission> missions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    List<Participant> participants = new ArrayList<>();
 
     @Column(nullable = false)
     private String name;
@@ -24,18 +36,14 @@ public class User extends BaseTimeEntity{
     @Column(nullable = false)
     private String email;
 
-    @Column
+    @Column(name = "image_url")
     private String picture;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
-    @CreatedDate
-    private LocalDateTime createdTime;
 
-    @LastModifiedDate
-    private LocalDateTime lastModifiedTime;
 
     @Builder
     public User(String name, String email, String picture, Role role){

@@ -29,14 +29,15 @@ public class OAuthAttributes {
         return OAuthAttributes.builder()
                 .name((String)  attributes.get("name"))
                 .email((String) attributes.get("email"))
+                .picture((String) attributes.get("profile"))
                 .attributes(attributes)
                 .nameAttributeKey(userNameAttributeName)
                 .build();
     }
 
     private static OAuthAttributes ofNaver(String userNameAttributeName, Map<String, Object> attributes){
-        log.info("RESPONSE : {}", attributes.get("response"));
         Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+
         return OAuthAttributes.builder()
                 .name((String) response.get("name"))
                 .email((String) response.get("email"))
@@ -46,6 +47,7 @@ public class OAuthAttributes {
                 .build();
     }
 
+    /*
     private static OAuthAttributes ofGithub(String userNameAttributeName, Map<String, Object> attributes){
         return OAuthAttributes.builder()
                 .name((String) attributes.get("name"))
@@ -54,11 +56,13 @@ public class OAuthAttributes {
                 .nameAttributeKey(userNameAttributeName)
                 .build();
     }
+     */
 
     public User toEntity(){
         return User.builder()
                 .name(name)
                 .email(email)
+                .picture(picture)
                 .role(Role.USER)
                 .build();
     }
