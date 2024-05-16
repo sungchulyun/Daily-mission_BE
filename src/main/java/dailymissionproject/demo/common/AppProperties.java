@@ -1,4 +1,4 @@
-package dailymissionproject.demo;
+package dailymissionproject.demo.common;
 
 import lombok.Getter;
 import lombok.Setter;

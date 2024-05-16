@@ -1,14 +1,18 @@
 package dailymissionproject.demo.entity;
 
 import jakarta.persistence.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
-import java.time.LocalDateTime;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
+import org.springframework.format.annotation.DateTimeFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@NoArgsConstructor
+@Getter
 public class Mission {
 
     @Id @GeneratedValue
@@ -32,18 +36,28 @@ public class Mission {
     private String credential;
 
     @Column(name = "start_date")
-    private LocalDateTime startDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate startDate;
     @Column(name = "end_date")
-    private LocalDateTime endDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate endDate;
 
     private boolean ended;
     private boolean deleted;
 
-    @CreatedDate
-    @Column(name = "created_date")
-    private LocalDateTime createdDate;
-    @LastModifiedDate
-    @Column(name = "modified_date")
-    private LocalDateTime modifiedDate;
 
+    //== 생성 메서드 ==//
+    @Builder
+    public Mission(User user, String title, String content, String imageUrl,
+                   LocalDate startDate, LocalDate endDate){
+        this.user = user;
+        this.title = title;
+        this.content = content;
+
+        //s3
+        this.imageUrl = imageUrl;
+
+        this.ended = false;
+        this.deleted = false;
+    }
 }
