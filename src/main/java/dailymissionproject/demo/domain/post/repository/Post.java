@@ -1,5 +1,7 @@
-package dailymissionproject.demo.entity;
+package dailymissionproject.demo.domain.post.repository;
 
+import dailymissionproject.demo.domain.mission.repository.Mission;
+import dailymissionproject.demo.domain.user.repository.User;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -7,10 +9,10 @@ import org.springframework.data.annotation.LastModifiedDate;
 import java.time.LocalDateTime;
 
 @Entity
-public class Participant {
+public class Post {
 
     @Id @GeneratedValue
-    @Column(name = "participant_id")
+    @Column(name = "post_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -21,7 +23,12 @@ public class Participant {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private boolean banned;
+    private String title;
+    private String content;
+    @Column(name = "image_url")
+    private String imageUrl;
+
+    private boolean deleted;
 
     @CreatedDate
     @Column(name = "created_date")

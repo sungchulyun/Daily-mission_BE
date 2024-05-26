@@ -1,6 +1,6 @@
-package dailymissionproject.demo.repository;
+package dailymissionproject.demo.domain.user.repository;
 
-import dailymissionproject.demo.entity.User;
+import dailymissionproject.demo.domain.user.repository.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

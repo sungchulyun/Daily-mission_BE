@@ -1,6 +1,6 @@
-package dailymissionproject.demo.repository;
+package dailymissionproject.demo.domain.mission.repository;
 
-import dailymissionproject.demo.entity.Mission;
+import dailymissionproject.demo.domain.mission.repository.Mission;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

@@ -1,13 +1,6 @@
-package dailymissionproject.demo.config.auth.dto;
+package dailymissionproject.demo.common.config.auth.dto;
 
-import dailymissionproject.demo.entity.Role;
-import dailymissionproject.demo.entity.User;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-
-import java.util.Map;
-
+/*
 @Slf4j
 @Getter
 @Builder
@@ -56,7 +49,6 @@ public class OAuthAttributes {
                 .nameAttributeKey(userNameAttributeName)
                 .build();
     }
-     */
 
     public User toEntity(){
         return User.builder()
@@ -66,4 +58,16 @@ public class OAuthAttributes {
                 .role(Role.USER)
                 .build();
     }
+
+    public Map<String, Object> convertToMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", attributeKey);
+        map.put("key", attributeKey);
+        map.put("email", email);
+        map.put("provider", provider);
+
+        return map;
+    }
 }
+
+ */
