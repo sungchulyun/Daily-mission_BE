@@ -31,19 +31,15 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     List<Participant> participants = new ArrayList<>();
 
-    @Column(nullable = false)
     private String name;
-
-    @Column(nullable = false)
     private String email;
-
     @Column(name = "image_url")
     private String picture;
 
+    /*
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
-
 
 
     @Builder
@@ -52,6 +48,14 @@ public class User extends BaseTimeEntity {
         this.email = email;
         this.picture = picture;
         this.role = role;
+    }
+     */
+
+    @Builder
+    public User(String name, String email, String picture){
+        this.name = name;
+        this.email = email;
+        this.picture = picture;
     }
 
     public User update(String name, String picture){
