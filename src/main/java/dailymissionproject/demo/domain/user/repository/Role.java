@@ -1,4 +1,4 @@
-package dailymissionproject.demo.entity;
+package dailymissionproject.demo.domain.user.repository;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

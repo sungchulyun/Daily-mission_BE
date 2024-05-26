@@ -1,6 +1,6 @@
-package dailymissionproject.demo.config.auth.dto;
+package dailymissionproject.demo.common.config.auth.dto;
 
-import dailymissionproject.demo.entity.User;
+import dailymissionproject.demo.domain.user.repository.User;
 import lombok.Getter;
 
 import java.io.Serializable;

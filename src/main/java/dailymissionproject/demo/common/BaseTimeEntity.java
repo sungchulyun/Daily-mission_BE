@@ -1,4 +1,4 @@
-package dailymissionproject.demo.entity;
+package dailymissionproject.demo.common;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

@@ -1,13 +1,14 @@
-package dailymissionproject.demo.entity;
+package dailymissionproject.demo.domain.user.repository;
 
+import dailymissionproject.demo.domain.mission.repository.Mission;
+import dailymissionproject.demo.common.BaseTimeEntity;
+import dailymissionproject.demo.domain.participant.repository.Participant;
+import dailymissionproject.demo.domain.post.repository.Post;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "User")
-public class User extends BaseTimeEntity{
+public class User extends BaseTimeEntity {
 
     @Id @GeneratedValue
     @Column(name = "user_id")
@@ -58,7 +59,11 @@ public class User extends BaseTimeEntity{
         this.picture = picture;
         return this;
     }
+
+    /*
     public String getRoleKey(){
         return this.role.getKey();
     }
+
+     */
 }

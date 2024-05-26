@@ -1,4 +1,4 @@
-package dailymissionproject.demo.config;
+package dailymissionproject.demo.common.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
