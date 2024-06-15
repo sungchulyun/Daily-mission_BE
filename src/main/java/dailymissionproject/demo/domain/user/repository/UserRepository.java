@@ -22,6 +22,10 @@ public class UserRepository {
         return em.find(User.class, id);
     }
 
+    public User findOneByName(String name){
+        return em.find(User.class, name);
+    }
+
     public List<User> findAll(){
         return em.createQuery("select m from User u", User.class)
                 .getResultList();
@@ -30,6 +34,12 @@ public class UserRepository {
     public List<User> findByMail(String email){
         return em.createQuery("select u from User u where u.email = :email", User.class)
                 .setParameter("email", email)
+                .getResultList();
+    }
+
+    public List<User> findByName(String name){
+        return em.createQuery("select u from User u where u.name = :name", User.class)
+                .setParameter("name", name)
                 .getResultList();
     }
 }
