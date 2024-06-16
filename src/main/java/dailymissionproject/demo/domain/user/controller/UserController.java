@@ -38,34 +38,7 @@ public class UserController {
 
     @PostMapping("/update/{name}")
     public void updateImg(@PathVariable("name") String name, @RequestParam("file")MultipartFile file)throws IOException {
-        try {
-            String fileName = file.getOriginalFilename();
-            String fileUrl = bucketUrl + "/" + fileName;
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentType(file.getContentType());
-            metadata.setContentLength(file.getSize());
-            amazonS3.putObject(bucket, fileName, file.getInputStream(), metadata);
-            userService.updateProfile(name, fileUrl);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("이미지 업로드에 실패했습니다.");
-        }
-    }
-
-    @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file")MultipartFile file) {
-        try {
-            String fileName = file.getOriginalFilename();
-            String fileUrl = "https://" + bucket + "/test" + fileName;
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentType(file.getContentType());
-            metadata.setContentLength(file.getSize());
-            amazonS3.putObject(bucket, fileName, file.getInputStream(), metadata);
-            return ResponseEntity.ok(fileUrl);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        userService.updateProfile(name, file);
     }
 
     @GetMapping("/getUserInfo/{name}")
