@@ -4,6 +4,8 @@ import dailymissionproject.demo.domain.user.dto.request.UserReqDto;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,7 +25,9 @@ public class UserRepository {
     }
 
     public User findOneByName(String name){
-        return em.find(User.class, name);
+        return em.createQuery("select u from User u where u.name = :name", User.class)
+                .setParameter("name", name)
+                .getSingleResult();
     }
 
     public List<User> findAll(){

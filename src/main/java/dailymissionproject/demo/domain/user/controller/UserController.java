@@ -28,26 +28,28 @@ public class UserController {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+    @Value("${cloud.aws.s3.bucket.url}")
+    private String bucketUrl;
+
     @PostMapping("/join")
     public UserResDto signUp(@RequestParam("file")MultipartFile file, @RequestBody UserReqDto userReqDto){
         return userService.join(userReqDto);
     }
 
-    @PostMapping("/update")
-    public void updateImg(UpdateUserReqDto request, @RequestPart MultipartFile file)throws IOException {
+    @PostMapping("/update/{name}")
+    public void updateImg(@PathVariable("name") String name, @RequestParam("file")MultipartFile file)throws IOException {
         try {
             String fileName = file.getOriginalFilename();
-            String fileUrl = "https://" + bucket + "/test" + fileName;
+            String fileUrl = bucketUrl + "/" + fileName;
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(file.getContentType());
             metadata.setContentLength(file.getSize());
             amazonS3.putObject(bucket, fileName, file.getInputStream(), metadata);
+            userService.updateProfile(name, fileUrl);
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException("이미지 업로드에 실패했습니다.");
         }
-        userService.updateProfile(request);
-
     }
 
     @PostMapping("/upload")

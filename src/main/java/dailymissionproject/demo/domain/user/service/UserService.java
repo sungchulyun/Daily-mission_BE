@@ -43,12 +43,14 @@ public class UserService {
     }
 
     @Transactional
-    public void updateProfile(UpdateUserReqDto request){
-        User findUser = userRepository.findOneByName(request.getName());
+    public void updateProfile(String userName, String imgUrl){
+        User findUser = userRepository.findOneByName(userName);
+        log.info("{}", findUser);
         if(Objects.isNull(findUser)){
             throw new RuntimeException("없는 사용자 닉네임입니다.");
         }
-        findUser.setImageUrl(request.getImgUrl());
+        findUser.setImageUrl(imgUrl);
+        userRepository.save(findUser);
     }
 
     private boolean validateUpdateName(String name){
