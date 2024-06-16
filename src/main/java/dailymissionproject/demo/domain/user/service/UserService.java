@@ -1,6 +1,7 @@
 package dailymissionproject.demo.domain.user.service;
 
-import dailymissionproject.demo.domain.user.dto.request.UpdateUserReqDto;
+import com.amazonaws.services.s3.AmazonS3;
+import dailymissionproject.demo.domain.image.ImageService;
 import dailymissionproject.demo.domain.user.dto.request.UserReqDto;
 import dailymissionproject.demo.domain.user.dto.response.UserResDto;
 import dailymissionproject.demo.domain.user.repository.User;
@@ -9,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,7 +21,9 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
+
     private final UserRepository userRepository;
+    private final ImageService imageService;
 
     @Transactional
     public UserResDto join(UserReqDto userReqDto){
@@ -43,12 +48,14 @@ public class UserService {
     }
 
     @Transactional
-    public void updateProfile(String userName, String imgUrl){
+    public void updateProfile(String userName, MultipartFile file) throws IOException {
         User findUser = userRepository.findOneByName(userName);
         log.info("{}", findUser);
         if(Objects.isNull(findUser)){
             throw new RuntimeException("없는 사용자 닉네임입니다.");
         }
+
+        String imgUrl = imageService.uploadImg(file);
         findUser.setImageUrl(imgUrl);
         userRepository.save(findUser);
     }
@@ -63,6 +70,8 @@ public class UserService {
        }
        return true;
     }
+
+
 
     @Transactional(readOnly = true)
     public List<User> findUser(){
