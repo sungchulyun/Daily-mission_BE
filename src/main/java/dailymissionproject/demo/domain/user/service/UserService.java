@@ -50,14 +50,18 @@ public class UserService {
     @Transactional
     public void updateProfile(String userName, MultipartFile file) throws IOException {
         User findUser = userRepository.findOneByName(userName);
-        log.info("{}", findUser);
-        if(Objects.isNull(findUser)){
-            throw new RuntimeException("없는 사용자 닉네임입니다.");
-        }
+        isUserExists(userName);
 
         String imgUrl = imageService.uploadImg(file);
         findUser.setImageUrl(imgUrl);
         userRepository.save(findUser);
+    }
+
+    public void isUserExists(String name){
+        List<User> findUser = userRepository.findByName(name);
+        if(Objects.isNull(findUser)){
+            throw new RuntimeException("없는 사용자 이름입니다.");
+        }
     }
 
     private boolean validateUpdateName(String name){
