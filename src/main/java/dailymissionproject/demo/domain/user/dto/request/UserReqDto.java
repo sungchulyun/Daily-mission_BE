@@ -3,29 +3,22 @@ package dailymissionproject.demo.domain.user.dto.request;
 import dailymissionproject.demo.domain.user.repository.User;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Setter @Getter
-@NoArgsConstructor
+@Getter
 public class UserReqDto {
 
-    String name;
-    String email;
-    String picture;
+    private final String name;
+    private final String email;
 
     @Builder
-    public UserReqDto(String name, String email, String picture){
+    public UserReqDto(String name, String email){
         this.name = name;
         this.email = email;
-        this.picture = picture;
     }
     @Builder
-    public User toEntity(){
+    public User toEntity(UserReqDto userReqDto){
         return User.builder()
-                .name(name)
-                .email(email)
-                .picture(picture)
+                .name(userReqDto.getName())
+                .email(userReqDto.getEmail())
                 .build();
     }
 }

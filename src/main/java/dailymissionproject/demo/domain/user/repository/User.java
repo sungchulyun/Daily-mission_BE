@@ -8,13 +8,15 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
+@Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "User")
 public class User extends BaseTimeEntity {
 
@@ -34,7 +36,7 @@ public class User extends BaseTimeEntity {
     private String name;
     private String email;
     @Column(name = "image_url")
-    private String picture;
+    private String imageUrl;
 
     /*
     @Enumerated(EnumType.STRING)
@@ -43,25 +45,19 @@ public class User extends BaseTimeEntity {
 
 
     @Builder
-    public User(String name, String email, String picture, Role role){
+    public User(String name, String email, String imageUrl, Role role){
         this.name = name;
         this.email = email;
-        this.picture = picture;
+        this.imageUrl = imageUrl;
         this.role = role;
     }
      */
 
     @Builder
-    public User(String name, String email, String picture){
+    public User(String name, String email, String imageUrl){
         this.name = name;
         this.email = email;
-        this.picture = picture;
-    }
-
-    public User update(String name, String picture){
-        this.name = name;
-        this.picture = picture;
-        return this;
+        this.imageUrl = imageUrl;
     }
 
     /*
