@@ -67,4 +67,9 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @GetMapping("/getUserInfo/{name}")
+    public UserResDto getUser(@PathVariable("name")String name){
+        return userService.getUserInfo(name);
+    }
 }

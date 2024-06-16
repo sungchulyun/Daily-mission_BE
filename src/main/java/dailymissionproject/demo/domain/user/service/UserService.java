@@ -45,12 +45,32 @@ public class UserService {
     @Transactional
     public void updateProfile(String userName, String imgUrl){
         User findUser = userRepository.findOneByName(userName);
-        log.info("{}", findUser);
-        if(Objects.isNull(findUser)){
-            throw new RuntimeException("없는 사용자 닉네임입니다.");
-        }
+        isUserExists(userName);
+
         findUser.setImageUrl(imgUrl);
         userRepository.save(findUser);
+    }
+
+    @Transactional(readOnly = true)
+    public UserResDto getUserInfo(String name){
+        User user = userRepository.findOneByName(name);
+        isUserExists(name);
+
+        UserResDto res = UserResDto.builder()
+                .name(name)
+                .email(user.getEmail())
+                .code(200)
+                .msgCode("Success")
+                .build();
+
+        return res;
+    }
+
+    public void isUserExists(String name){
+        List<User> findUser = userRepository.findByName(name);
+        if(Objects.isNull(findUser)){
+            throw new RuntimeException("없는 사용자 이름입니다.");
+        }
     }
 
     private boolean validateUpdateName(String name){
