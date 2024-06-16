@@ -40,4 +40,9 @@ public class UserController {
     public void updateImg(@PathVariable("name") String name, @RequestParam("file")MultipartFile file)throws IOException {
         userService.updateProfile(name, file);
     }
+
+    @GetMapping("/getUserInfo/{name}")
+    public UserResDto getUser(@PathVariable("name")String name){
+        return userService.getUserInfo(name);
+    }
 }

@@ -57,6 +57,21 @@ public class UserService {
         userRepository.save(findUser);
     }
 
+    @Transactional(readOnly = true)
+    public UserResDto getUserInfo(String name){
+        User user = userRepository.findOneByName(name);
+        isUserExists(name);
+
+        UserResDto res = UserResDto.builder()
+                .name(name)
+                .email(user.getEmail())
+                .code(200)
+                .msgCode("Success")
+                .build();
+
+        return res;
+    }
+
     public void isUserExists(String name){
         List<User> findUser = userRepository.findByName(name);
         if(Objects.isNull(findUser)){
