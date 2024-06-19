@@ -7,11 +7,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
 @Getter
-public class MissionSaveResponseDto {
+public class MissionResponseDto {
 
     private String title;
     private String content;
     private String imgUrl;
+    private String userName;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
@@ -19,7 +20,7 @@ public class MissionSaveResponseDto {
     private LocalDate endDate;
 
     @Builder
-    public MissionSaveResponseDto(String title, String content, String imgUrl, LocalDate startDate, LocalDate endDate){
+    public MissionResponseDto(String title, String content, String imgUrl, String userName, LocalDate startDate, LocalDate endDate){
         this.title = title;
         this.content = content;
         this.imgUrl = imgUrl;
