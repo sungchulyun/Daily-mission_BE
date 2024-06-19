@@ -1,6 +1,7 @@
 package dailymissionproject.demo.domain.mission.Service;
 
 import dailymissionproject.demo.domain.mission.dto.request.MissionSaveRequestDto;
+import dailymissionproject.demo.domain.mission.dto.response.MissionResponseDto;
 import dailymissionproject.demo.domain.mission.dto.response.MissionSaveResponseDto;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
@@ -10,7 +11,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +22,23 @@ public class MissionService {
     private final MissionRepository missionRepository;
     private final UserRepository userRepository;
 
+    //==미션 상세 조회==//
+    public MissionResponseDto findById(Long id){
+        Mission mission = missionRepository.findById(id).orElseThrow(()-> new NoSuchElementException("해당 미션이 존재하지 않습니다."));
+
+        MissionResponseDto responseDto = MissionResponseDto.builder()
+                .title(mission.getTitle())
+                .content(mission.getContent())
+                .imgUrl(mission.getImageUrl())
+                .userName(mission.getUser().getName())
+                .startDate(mission.getStartDate())
+                .endDate(mission.getEndDate())
+                .build();
+        return responseDto;
+    }
+
+
+    //== 미션 생성 ==//
     public MissionSaveResponseDto save(String userName, MissionSaveRequestDto missionReqDto){
 
         User findUser = userRepository.findOneByName(userName);
@@ -33,15 +53,20 @@ public class MissionService {
                         .build();
         mission.setUser(findUser);
         missionRepository.save(mission);
+        String credential = String.valueOf(UUID.randomUUID());
 
         MissionSaveResponseDto responseDto = MissionSaveResponseDto.builder()
-                .title(mission.getTitle())
-                .content(mission.getContent())
-                .imgUrl(mission.getImageUrl())
-                .startDate(mission.getStartDate())
-                .endDate(mission.getEndDate())
-                .build();
+                .credential(credential).build();
         return responseDto;
+
+        //미션 생성자를 바로 참여하는 로직 추가 필요
     }
+
+    //Hot 미션 불러오기 ==//
+
+    //New 미션 불러오기 ==//
+
+    //모든 미션 불러오기 ==//
+
 
 }

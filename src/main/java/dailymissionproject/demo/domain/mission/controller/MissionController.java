@@ -17,7 +17,7 @@ public class MissionController {
     //== 미션 조회 ==//
     @GetMapping("/getInfo/{id}")
     public MissionResponseDto findById(@PathVariable Long id){
-
+        return missionService.findById(id);
     }
 
     //== 미션 생성==//
