@@ -28,11 +28,12 @@ public class MissionController {
 
 
     //==Hot 미션 목록 가져오기==//
+
     @GetMapping("/getInfo/hot")
     public List<MissionHotListResponseDto> findHotList(){
-
+        return missionService.findHotList();
     }
-
+    /*
     //==New 미션 목록 가져오기==//
     @GetMapping("/getInfo/new")
     public List<MissionNewListResponseDto> findNewList(){
@@ -45,5 +46,7 @@ public class MissionController {
 
     }
 
+
+     */
 
 }

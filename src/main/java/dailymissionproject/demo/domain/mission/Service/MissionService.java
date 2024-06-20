@@ -1,6 +1,7 @@
 package dailymissionproject.demo.domain.mission.Service;
 
 import dailymissionproject.demo.domain.mission.dto.request.MissionSaveRequestDto;
+import dailymissionproject.demo.domain.mission.dto.response.MissionHotListResponseDto;
 import dailymissionproject.demo.domain.mission.dto.response.MissionResponseDto;
 import dailymissionproject.demo.domain.mission.dto.response.MissionSaveResponseDto;
 import dailymissionproject.demo.domain.mission.repository.Mission;
@@ -10,10 +11,9 @@ import dailymissionproject.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.*;
 
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -63,6 +63,25 @@ public class MissionService {
     }
 
     //Hot 미션 불러오기 ==//
+    @Transactional(readOnly = true)
+    public List<MissionHotListResponseDto> findHotList(){
+
+        List<MissionHotListResponseDto> res = new ArrayList<>();
+
+        List<Mission> hotLists = missionRepository.findAllByParticipantSize();
+        for(Mission mission : hotLists){
+            MissionHotListResponseDto hotMission = MissionHotListResponseDto.builder()
+                    .title(mission.getTitle())
+                    .content(mission.getContent())
+                    .userName(mission.getUser().getName())
+                    .startDate(mission.getStartDate())
+                    .endDate(mission.getEndDate())
+                    .build();
+
+            res.add(hotMission);
+        }
+        return res;
+    }
 
     //New 미션 불러오기 ==//
 
