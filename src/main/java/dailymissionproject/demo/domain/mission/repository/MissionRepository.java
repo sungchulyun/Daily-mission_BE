@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 
-public interface MissionRepository extends JpaRepository<Mission, Long> {
+public interface MissionRepository extends JpaRepository<Mission, Long>, MissionRepositoryCustom {
 
 }
