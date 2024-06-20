@@ -1,5 +1,6 @@
 package dailymissionproject.demo.domain.mission.repository;
 
+import dailymissionproject.demo.common.repository.BaseTimeEntity;
 import dailymissionproject.demo.domain.participant.repository.Participant;
 import dailymissionproject.demo.domain.post.repository.Post;
 import dailymissionproject.demo.domain.user.repository.User;
@@ -16,7 +17,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Getter @Setter
-public class Mission {
+public class Mission extends BaseTimeEntity {
 
     @Id @GeneratedValue
     @Column(name = "mission_id")
