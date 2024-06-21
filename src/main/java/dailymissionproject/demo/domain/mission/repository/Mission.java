@@ -52,12 +52,12 @@ public class Mission extends BaseTimeEntity {
 
     //== 생성 메서드 ==//
     @Builder
-    public Mission(User user, String title, String content, String imageUrl,
+    public Mission(User user, String title, String content, String imageUrl, String credential,
                    LocalDate startDate, LocalDate endDate){
         this.user = user;
         this.title = title;
         this.content = content;
-
+        this.credential = credential;
         //s3
         this.imageUrl = imageUrl;
 
