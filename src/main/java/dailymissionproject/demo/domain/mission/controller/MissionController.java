@@ -22,31 +22,29 @@ public class MissionController {
 
     //== 미션 생성==//
     @PostMapping("/create/{userName}")
-    public MissionSaveResponseDto save(@PathVariable("userName")String userName, MissionSaveRequestDto missionReqDto){
+    public MissionSaveResponseDto save(@PathVariable("userName")String userName, @RequestBody  MissionSaveRequestDto missionReqDto){
         return missionService.save(userName, missionReqDto);
     }
 
 
     //==Hot 미션 목록 가져오기==//
 
-    @GetMapping("/getInfo/hot")
+    @GetMapping("/get/hot")
     public List<MissionHotListResponseDto> findHotList(){
         return missionService.findHotList();
     }
-    /*
-    //==New 미션 목록 가져오기==//
-    @GetMapping("/getInfo/new")
-    public List<MissionNewListResponseDto> findNewList(){
 
+
+    //==New 미션 목록 가져오기==//
+    @GetMapping("/get/new")
+    public List<MissionNewListResponseDto> findNewList(){
+        return missionService.findNewList();
     }
 
     //==모든 미션 목록 가져오기==//
-    @GetMapping("/getInfo/all")
+    @GetMapping("/get/all")
     public List<MissionAllListResponseDto> findAllList(){
-
+        return missionService.findAllList();
     }
-
-
-     */
 
 }

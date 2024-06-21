@@ -93,7 +93,7 @@ public class MissionService {
 
         List<Mission> newLists = missionRepository.findAllByParticipantSize();
         for(Mission mission : newLists){
-            MissionNewListResponseDto hotMission = MissionNewListResponseDto.builder()
+            MissionNewListResponseDto newMission = MissionNewListResponseDto.builder()
                     .title(mission.getTitle())
                     .content(mission.getContent())
                     .userName(mission.getUser().getName())
@@ -101,7 +101,7 @@ public class MissionService {
                     .endDate(mission.getEndDate())
                     .build();
 
-            res.add(hotMission);
+            res.add(newMission);
         }
         return res;
     }
@@ -114,7 +114,7 @@ public class MissionService {
 
         List<Mission> allLists = missionRepository.findAllByParticipantSize();
         for(Mission mission : allLists){
-            MissionAllListResponseDto hotMission = MissionAllListResponseDto.builder()
+            MissionAllListResponseDto allMission = MissionAllListResponseDto.builder()
                     .title(mission.getTitle())
                     .content(mission.getContent())
                     .userName(mission.getUser().getName())
@@ -122,7 +122,7 @@ public class MissionService {
                     .endDate(mission.getEndDate())
                     .build();
 
-            res.add(hotMission);
+            res.add(allMission);
         }
         return res;
     }

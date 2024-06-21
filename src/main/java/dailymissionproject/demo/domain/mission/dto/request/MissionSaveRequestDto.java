@@ -11,7 +11,7 @@ public class MissionSaveRequestDto {
     private final String imgUrl;
 
     @Builder
-    MissionSaveRequestDto(String title, String content, String imgUrl){
+    private MissionSaveRequestDto(String title, String content, String imgUrl){
         this.title = title;
         this.content = content;
         this.imgUrl = imgUrl;

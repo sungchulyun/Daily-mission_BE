@@ -23,11 +23,20 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
 
     @Override
     public List<Mission> findAllByCreatedInMonth() {
-        return null;
+        return queryFactory
+                .select(mission)
+                .from(mission)
+                .where(mission.deleted.isFalse(), mission.ended.isFalse())
+                .orderBy(mission.createdTime.desc())
+                .fetch();
     }
 
     @Override
     public List<Mission> findAllByCreatedDate() {
-        return null;
+        return queryFactory
+                .select(mission)
+                .from(mission)
+                .orderBy(mission.createdTime.desc())
+                .fetch();
     }
 }
