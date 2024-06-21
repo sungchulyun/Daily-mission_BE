@@ -2,6 +2,7 @@ package dailymissionproject.demo.domain.mission.repository;
 
 import dailymissionproject.demo.common.repository.BaseTimeEntity;
 import dailymissionproject.demo.domain.participant.repository.Participant;
+import dailymissionproject.demo.domain.participant.repository.ParticipantUserDto;
 import dailymissionproject.demo.domain.post.repository.Post;
 import dailymissionproject.demo.domain.user.repository.User;
 import jakarta.persistence.*;
@@ -63,5 +64,27 @@ public class Mission extends BaseTimeEntity {
 
         this.ended = false;
         this.deleted = false;
+    }
+
+    /**
+     * 설명 : 미션 참여중인 유저목록 List
+     *      아이디 / 이름 / 이미지/ 강퇴여부
+     */
+    public List<ParticipantUserDto> getAllParticipantUser(){
+        List<ParticipantUserDto> participantUserList = new ArrayList<>();
+
+        for(Participant p : this.participants){
+            User user = p.getUser();
+
+            ParticipantUserDto participantUser = ParticipantUserDto.builder()
+                    .id(user.getId())
+                    .userName(user.getName())
+                    .imgUrl(user.getImageUrl())
+                    .banned(p.isBanned())
+                    .build();
+
+            participantUserList.add(participantUser);
+        }
+        return participantUserList;
     }
 }

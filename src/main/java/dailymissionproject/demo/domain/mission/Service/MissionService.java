@@ -91,7 +91,7 @@ public class MissionService {
 
         List<MissionNewListResponseDto> res = new ArrayList<>();
 
-        List<Mission> newLists = missionRepository.findAllByParticipantSize();
+        List<Mission> newLists = missionRepository.findAllByCreatedInMonth();
         for(Mission mission : newLists){
             MissionNewListResponseDto newMission = MissionNewListResponseDto.builder()
                     .title(mission.getTitle())
@@ -112,7 +112,7 @@ public class MissionService {
 
         List<MissionAllListResponseDto> res = new ArrayList<>();
 
-        List<Mission> allLists = missionRepository.findAllByParticipantSize();
+        List<Mission> allLists = missionRepository.findAllByCreatedDate();
         for(Mission mission : allLists){
             MissionAllListResponseDto allMission = MissionAllListResponseDto.builder()
                     .title(mission.getTitle())

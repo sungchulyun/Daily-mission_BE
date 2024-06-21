@@ -1,15 +1,22 @@
 package dailymissionproject.demo.domain.participant.repository;
 
+import dailymissionproject.demo.common.repository.BaseTimeEntity;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.user.repository.User;
 import jakarta.persistence.*;
+
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
+@Getter
 @Entity
-public class Participant {
+@NoArgsConstructor
+public class Participant extends BaseTimeEntity {
 
     @Id @GeneratedValue
     @Column(name = "participant_id")
@@ -32,4 +39,16 @@ public class Participant {
     @LastModifiedDate
     @Column(name = "modified_date")
     private LocalDateTime modifiedDate;
+
+    @Builder
+    public Participant(User user, Mission mission){
+        this.user = user;
+        this.mission = mission;
+        //default
+        this.banned = false;
+    }
+
+    public void ban(){
+        this.banned = true;
+    }
 }
