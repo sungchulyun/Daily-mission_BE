@@ -1,7 +1,7 @@
 package dailymissionproject.demo.domain.user.repository;
 
 import dailymissionproject.demo.domain.mission.repository.Mission;
-import dailymissionproject.demo.common.BaseTimeEntity;
+import dailymissionproject.demo.common.repository.BaseTimeEntity;
 import dailymissionproject.demo.domain.participant.repository.Participant;
 import dailymissionproject.demo.domain.post.repository.Post;
 import jakarta.persistence.*;

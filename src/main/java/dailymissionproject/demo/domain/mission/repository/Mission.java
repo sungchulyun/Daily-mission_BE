@@ -1,5 +1,6 @@
 package dailymissionproject.demo.domain.mission.repository;
 
+import dailymissionproject.demo.common.repository.BaseTimeEntity;
 import dailymissionproject.demo.domain.participant.repository.Participant;
 import dailymissionproject.demo.domain.post.repository.Post;
 import dailymissionproject.demo.domain.user.repository.User;
@@ -7,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -14,8 +16,8 @@ import java.util.List;
 
 @Entity
 @NoArgsConstructor
-@Getter
-public class Mission {
+@Getter @Setter
+public class Mission extends BaseTimeEntity {
 
     @Id @GeneratedValue
     @Column(name = "mission_id")
@@ -50,12 +52,12 @@ public class Mission {
 
     //== 생성 메서드 ==//
     @Builder
-    public Mission(User user, String title, String content, String imageUrl,
+    public Mission(User user, String title, String content, String imageUrl, String credential,
                    LocalDate startDate, LocalDate endDate){
         this.user = user;
         this.title = title;
         this.content = content;
-
+        this.credential = credential;
         //s3
         this.imageUrl = imageUrl;
 
