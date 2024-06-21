@@ -24,6 +24,7 @@ public class MissionResponseDto {
         this.title = title;
         this.content = content;
         this.imgUrl = imgUrl;
+        this.userName = userName;
         this.startDate = startDate;
         this.endDate = endDate;
     }
