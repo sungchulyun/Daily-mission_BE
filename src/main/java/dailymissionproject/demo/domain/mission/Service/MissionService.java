@@ -1,5 +1,6 @@
 package dailymissionproject.demo.domain.mission.Service;
 
+import dailymissionproject.demo.domain.image.ImageService;
 import dailymissionproject.demo.domain.mission.dto.request.MissionSaveRequestDto;
 import dailymissionproject.demo.domain.mission.dto.response.*;
 import dailymissionproject.demo.domain.mission.repository.Mission;
@@ -10,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.*;
 
 
@@ -19,6 +23,7 @@ import java.util.*;
 public class MissionService {
     private final MissionRepository missionRepository;
     private final UserRepository userRepository;
+    private final ImageService imageService;
 
     //==미션 상세 조회==//
     @Transactional(readOnly = true)
@@ -39,7 +44,7 @@ public class MissionService {
 
     //== 미션 생성 ==//
     @Transactional
-    public MissionSaveResponseDto save(String userName, MissionSaveRequestDto missionReqDto){
+    public MissionSaveResponseDto save(String userName, MissionSaveRequestDto missionReqDto, MultipartFile file) throws IOException {
 
         User findUser = userRepository.findOneByName(userName);
         if(Objects.isNull(findUser)){
@@ -48,13 +53,17 @@ public class MissionService {
 
         String credential = String.valueOf(UUID.randomUUID());
 
+        String imgUrl = imageService.uploadImg(file);
+
         Mission mission = Mission.builder()
+                        .user(findUser)
                         .title(missionReqDto.getTitle())
                         .content(missionReqDto.getContent())
-                        .imageUrl(missionReqDto.getImgUrl())
+                        .imageUrl(imgUrl)
                         .credential(credential)
+                        .startDate(missionReqDto.getStartDate())
+                        .endDate(missionReqDto.getEndDate())
                         .build();
-        mission.setUser(findUser);
         missionRepository.save(mission);
 
         MissionSaveResponseDto responseDto = MissionSaveResponseDto.builder()
