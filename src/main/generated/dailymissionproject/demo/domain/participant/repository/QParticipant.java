@@ -22,11 +22,19 @@ public class QParticipant extends EntityPathBase<Participant> {
 
     public static final QParticipant participant = new QParticipant("participant");
 
+    public final dailymissionproject.demo.common.repository.QBaseTimeEntity _super = new dailymissionproject.demo.common.repository.QBaseTimeEntity(this);
+
     public final BooleanPath banned = createBoolean("banned");
 
     public final DateTimePath<java.time.LocalDateTime> createdDate = createDateTime("createdDate", java.time.LocalDateTime.class);
 
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createdTime = _super.createdTime;
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> lastModifiedTime = _super.lastModifiedTime;
 
     public final dailymissionproject.demo.domain.mission.repository.QMission mission;
 

@@ -12,8 +12,8 @@ import java.util.Optional;
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
     Optional<Participant> findByMissionAndUser(Mission mission, User user);
 
-    List<Participant> findByAllMission(Mission mission);
+    List<Participant> findAllByMission(Mission mission);
 
-    List<Participant> findByAllUser(User user);
+    List<Participant> findAllByUser(User user);
 
 }

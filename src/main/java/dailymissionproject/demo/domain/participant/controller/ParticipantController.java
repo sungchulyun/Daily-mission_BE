@@ -14,8 +14,7 @@ public class ParticipantController {
 
     //== 미션 참여==//
     @PostMapping("/join/{userName}")
-    public boolean save(@RequestParam("userName")String userName, @RequestBody ParticipantSaveRequestDto requestDto){
-        //return participantService.sa\
-        return true;
+    public boolean save(@PathVariable("userName")String userName, @RequestBody ParticipantSaveRequestDto requestDto){
+        return participantService.save(userName, requestDto);
     }
 }
