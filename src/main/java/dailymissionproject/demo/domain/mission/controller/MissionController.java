@@ -16,7 +16,7 @@ import java.util.List;
 public class MissionController {
     private final MissionService missionService;
 
-    //== 미션 조회 ==//
+    //== 미션 상세 조회 ==//
     @GetMapping("/getInfo/{id}")
     public MissionResponseDto findById(@PathVariable Long id){
         return missionService.findById(id);
@@ -32,7 +32,6 @@ public class MissionController {
 
 
     //==Hot 미션 목록 가져오기==//
-
     @GetMapping("/get/hot")
     public List<MissionHotListResponseDto> findHotList(){
         return missionService.findHotList();
@@ -50,5 +49,7 @@ public class MissionController {
     public List<MissionAllListResponseDto> findAllList(){
         return missionService.findAllList();
     }
+
+
 
 }

@@ -28,16 +28,11 @@ public class MissionService {
     //==미션 상세 조회==//
     @Transactional(readOnly = true)
     public MissionResponseDto findById(Long id){
-        Mission mission = missionRepository.findById(id).orElseThrow(()-> new NoSuchElementException("해당 미션이 존재하지 않습니다."));
 
-        MissionResponseDto responseDto = MissionResponseDto.builder()
-                .title(mission.getTitle())
-                .content(mission.getContent())
-                .imgUrl(mission.getImageUrl())
-                .userName(mission.getUser().getName())
-                .startDate(mission.getStartDate())
-                .endDate(mission.getEndDate())
-                .build();
+        Mission mission = missionRepository.findByIdAndDeletedIsFalse(id)
+                .orElseThrow(() -> new NoSuchElementException("해당 미션이 존재하지 않습니다."));
+
+        MissionResponseDto responseDto = new MissionResponseDto(mission);
         return responseDto;
     }
 
