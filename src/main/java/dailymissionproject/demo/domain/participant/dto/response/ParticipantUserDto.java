@@ -1,4 +1,4 @@
-package dailymissionproject.demo.domain.participant.repository;
+package dailymissionproject.demo.domain.participant.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
