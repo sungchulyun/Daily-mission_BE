@@ -17,7 +17,7 @@ import java.util.List;
 
 @Entity
 @NoArgsConstructor
-@Getter @Setter
+@Getter
 public class Mission extends BaseTimeEntity {
 
     @Id @GeneratedValue
@@ -61,7 +61,9 @@ public class Mission extends BaseTimeEntity {
         this.credential = credential;
         //s3
         this.imageUrl = imageUrl;
-
+        this.startDate = startDate;
+        this.endDate = endDate;
+        //default
         this.ended = false;
         this.deleted = false;
     }

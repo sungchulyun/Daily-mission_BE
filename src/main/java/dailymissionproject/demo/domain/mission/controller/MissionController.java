@@ -5,7 +5,9 @@ import dailymissionproject.demo.domain.mission.dto.request.MissionSaveRequestDto
 import dailymissionproject.demo.domain.mission.dto.response.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -22,8 +24,10 @@ public class MissionController {
 
     //== 미션 생성==//
     @PostMapping("/create/{userName}")
-    public MissionSaveResponseDto save(@PathVariable("userName")String userName, @RequestBody  MissionSaveRequestDto missionReqDto){
-        return missionService.save(userName, missionReqDto);
+    public MissionSaveResponseDto save(@PathVariable("userName")String userName
+                                    , @RequestBody MissionSaveRequestDto missionReqDto
+                                    , @RequestPart MultipartFile file) throws IOException {
+        return missionService.save(userName, missionReqDto, file);
     }
 
 

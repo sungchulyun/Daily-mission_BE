@@ -56,10 +56,17 @@ public class ParticipantService {
 
         /**
          * 설명 : 참여 가능한 미션인지 검증 추가 필요!
-         * 1. 종료되지 않은 미션
-         * 2. 삭제되지 않은 미션
-         * 3. 시작되지 않은 미션
+         * 1. 참여코드가 맞는지
+         * 2. 종료되지 않은 미션
+         * 3. 삭제되지 않은 미션
+         * 4. 시작되지 않은 미션
          */
+
+        //참여 코드 검증
+        if(!requestDto.getCredential().equals(mission.getCredential())){
+            throw new RuntimeException("참여코드를 확인해주세요.");
+        }
+
         Participant participant = requestDto.toEntity(findUser);
         participantRepository.save(participant);
         return true;
