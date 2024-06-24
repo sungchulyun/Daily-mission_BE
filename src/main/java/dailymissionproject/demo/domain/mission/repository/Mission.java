@@ -88,4 +88,45 @@ public class Mission extends BaseTimeEntity {
         }
         return participantUserList;
     }
+
+    /*
+    *미션에 참여중인 유저 중 강퇴당하지 않은 사용자들 count
+     */
+    public int getParticipantCountNotBanned(){
+        int count = 0;
+        for(Participant p : this.participants){
+            if(!p.isBanned()) count++;
+        }
+        return count;
+    }
+
+    /*
+    *미션 삭제 가능 확인
+     */
+    public boolean isDeletable(User user){
+
+        if(this.user.getId() != user.getId()){
+            throw new IllegalArgumentException("미션 생성자만 삭제가 가능합니다.");
+        }
+
+        if(this.deleted){
+            throw new IllegalArgumentException("이미 삭제된 미션입니다.");
+        }
+
+        return true;
+    }
+
+    /*
+    미션 시작 날짜 검증
+     */
+    public boolean isValidStartDate(LocalDate now){
+        if(this.startDate.isBefore(now)){
+            throw new IllegalArgumentException("미션 시작날짜는 현재보다 빠를 수 없습니다.");
+        }
+
+        if(this.startDate.isAfter(this.endDate)){
+            throw new IllegalArgumentException("미션 시작날짜는 미션종료날짜보다 느릴 수 없습니다.");
+        }
+        return true;
+    }
 }

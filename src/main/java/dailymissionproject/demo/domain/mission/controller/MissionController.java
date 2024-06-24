@@ -30,6 +30,15 @@ public class MissionController {
         return missionService.save(userName, missionReqDto, file);
     }
 
+    /*
+    *미션 삭제
+    * 방장만 삭제 가능
+     */
+    @DeleteMapping("/delete/{id}/{userName}")
+    public boolean delete(@PathVariable("id")Long id, @PathVariable("userName")String userName){
+        return missionService.delete(id, userName);
+    }
+
 
     //==Hot 미션 목록 가져오기==//
     @GetMapping("/get/hot")
@@ -49,7 +58,5 @@ public class MissionController {
     public List<MissionAllListResponseDto> findAllList(){
         return missionService.findAllList();
     }
-
-
 
 }
