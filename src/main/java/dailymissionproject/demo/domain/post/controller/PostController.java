@@ -3,10 +3,7 @@ package dailymissionproject.demo.domain.post.controller;
 import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
 import dailymissionproject.demo.domain.post.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/post")
@@ -17,7 +14,7 @@ public class PostController {
 
     //== 인증 글 생성==//
     @PostMapping("/create/{id}/{name}")
-    public Long save(@PathVariable("id")Long id, @PathVariable("name")String userName, PostSaveRequestDto requestDto){
+    public Long save(@PathVariable("id")Long id, @PathVariable("name")String userName, @RequestBody PostSaveRequestDto requestDto){
         return postService.save(id, userName, requestDto);
     }
 
