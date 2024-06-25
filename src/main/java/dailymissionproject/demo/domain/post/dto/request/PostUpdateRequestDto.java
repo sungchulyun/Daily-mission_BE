@@ -6,16 +6,12 @@ import lombok.Getter;
 
 @Getter
 public class PostUpdateRequestDto {
-    private final Long missionId;
     private final String title;
     private final String content;
-    private final String imgUrl;
     @Builder
-    public PostUpdateRequestDto(Long missionId, String title, String content, String imgUrl) {
-        this.missionId = missionId;
+    public PostUpdateRequestDto(String title, String content) {
         this.title = title;
         this.content = content;
-        this.imgUrl = imgUrl;
     }
 
 }
