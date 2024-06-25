@@ -22,6 +22,7 @@ import java.util.*;
 @RequiredArgsConstructor
 @Slf4j
 public class MissionService {
+
     private final MissionRepository missionRepository;
     private final UserRepository userRepository;
     private final ImageService imageService;
