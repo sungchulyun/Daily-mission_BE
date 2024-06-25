@@ -3,42 +3,38 @@ package dailymissionproject.demo.domain.post.service;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
 import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
-import dailymissionproject.demo.domain.post.dto.request.PostUpdateRequestDto;
-import dailymissionproject.demo.domain.post.dto.response.PostResponseDto;
 import dailymissionproject.demo.domain.post.repository.Post;
 import dailymissionproject.demo.domain.post.repository.PostRepository;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class PostService {
 
     private final MissionRepository missionRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
 
-    //== 포스트 저장==//
     @Transactional
-    public Long save(String userName, PostSaveRequestDto requestDto){
-        log.info("미션 ID : {}", requestDto.getMissionId());
-        Mission mission = missionRepository.findByIdAndDeletedIsFalse(requestDto.getMissionId())
-                .orElseThrow(() -> new NoSuchElementException("해당 미션이 존재하지 않습니다. MissionId : " + requestDto.getMissionId()));
+    public Long save(Long id, String userName, PostSaveRequestDto requestDto){
+
+        Mission mission = missionRepository.findByIdAndDeletedIsFalse(id)
+                .orElseThrow(() -> new NoSuchElementException("해당 미션이 존재하지 않습니다."));
+
 
         User findUser = userRepository.findOneByName(userName);
         if(Objects.isNull(findUser)){
             throw new NoSuchElementException("해당 사용자가 존재하지 않습니다. Name : " + userName);
         }
+        //미션 참여자인지 검증
+        validIsParticipating(findUser, mission);
 
         Post post = requestDto.toEntity(findUser, mission);
         return postRepository.save(post).getId();
@@ -89,5 +85,13 @@ public class PostService {
         Post post = postRepository.findById(id).orElseThrow(() -> new NoSuchElementException("존재하지 않는 포스트입니다. id =" + id));
         postRepository.deleteById(id);
         return true;
+    }
+
+    private boolean validIsParticipating(User user, Mission mission){
+        for(Participant p : mission.getParticipants()){
+            if(p.getId() == user.getId())
+                return true;
+        }
+        throw new RuntimeException("참여중이지 않은 미션에 인증 글을 작성할 수 없습니다.");
     }
 }

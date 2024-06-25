@@ -24,9 +24,9 @@ public class PostSaveRequestDto {
         return Post.builder()
                 .mission(mission)
                 .user(user)
-                .title(title)
-                .content(content)
-                .imgUrl(imgUrl)
+                .title(this.title)
+                .content(this.content)
+                .imgUrl(this.imgUrl)
                 .build();
     }
 
