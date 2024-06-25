@@ -43,8 +43,8 @@ public class PostController {
 
     //== 포스트 삭제==//
     @DeleteMapping("/delete/{id}")
-    public void deleteById(@PathVariable("id") Long id){
-        return;
+    public boolean deleteById(@PathVariable("id") Long id){
+        return postService.deleteById(id);
     }
 
 }

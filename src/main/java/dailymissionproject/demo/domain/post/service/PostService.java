@@ -87,5 +87,7 @@ public class PostService {
     public boolean deleteById(Long id){
 
         Post post = postRepository.findById(id).orElseThrow(() -> new NoSuchElementException("존재하지 않는 포스트입니다. id =" + id));
+        postRepository.deleteById(id);
+        return true;
     }
 }
