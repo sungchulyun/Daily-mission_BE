@@ -1,12 +1,10 @@
 package dailymissionproject.demo.domain.post.controller;
 
 import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
+import dailymissionproject.demo.domain.post.dto.response.PostResponseDto;
 import dailymissionproject.demo.domain.post.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/post")
@@ -22,6 +20,10 @@ public class PostController {
     }
 
     //== 인증 글 상세 조회==//
+    @GetMapping("/getInfo/{id}/{name}")
+    public PostResponseDto findById(@PathVariable("id") Long id){
+        return postService.findById(id);
+    }
 
     //== 사용자가 작성한 모든 인증 조회==//
 

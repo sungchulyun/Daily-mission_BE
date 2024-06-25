@@ -3,6 +3,7 @@ package dailymissionproject.demo.domain.post.service;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
 import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
+import dailymissionproject.demo.domain.post.dto.response.PostResponseDto;
 import dailymissionproject.demo.domain.post.repository.Post;
 import dailymissionproject.demo.domain.post.repository.PostRepository;
 import dailymissionproject.demo.domain.user.repository.User;
@@ -35,6 +36,14 @@ public class PostService {
 
         Post post = requestDto.toEntity(findUser, mission);
         return postRepository.save(post);
+    }
 
+    @Transactional
+    public PostResponseDto findById(Long id){
+
+        Post post = postRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 포스트가 존재하지 않습니다."));
+
+        PostResponseDto responseDto = new PostResponseDto(post);
+        return responseDto;
     }
 }
