@@ -2,7 +2,10 @@ package dailymissionproject.demo.domain.post.service;
 
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
+import dailymissionproject.demo.domain.participant.repository.Participant;
 import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
+import dailymissionproject.demo.domain.post.dto.request.PostUpdateRequestDto;
+import dailymissionproject.demo.domain.post.dto.response.PostResponseDto;
 import dailymissionproject.demo.domain.post.repository.Post;
 import dailymissionproject.demo.domain.post.repository.PostRepository;
 import dailymissionproject.demo.domain.user.repository.User;
@@ -11,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
@@ -23,9 +28,9 @@ public class PostService {
     private final PostRepository postRepository;
 
     @Transactional
-    public Long save(Long id, String userName, PostSaveRequestDto requestDto){
+    public Long save(String userName, PostSaveRequestDto requestDto){
 
-        Mission mission = missionRepository.findByIdAndDeletedIsFalse(id)
+        Mission mission = missionRepository.findByIdAndDeletedIsFalse(requestDto.getMissionId())
                 .orElseThrow(() -> new NoSuchElementException("해당 미션이 존재하지 않습니다."));
 
 
