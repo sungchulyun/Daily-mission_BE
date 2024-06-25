@@ -2,6 +2,7 @@ package dailymissionproject.demo.domain.post.repository;
 
 import dailymissionproject.demo.common.repository.BaseTimeEntity;
 import dailymissionproject.demo.domain.mission.repository.Mission;
+import dailymissionproject.demo.domain.post.dto.request.PostUpdateRequestDto;
 import dailymissionproject.demo.domain.user.repository.User;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -51,5 +52,10 @@ public class Post extends BaseTimeEntity {
         this.title = title;
         this.content = content;
         this.imageUrl = imgUrl;
+    }
+
+    public void update(String title, String content){
+        this.title = title;
+        this.content = content;
     }
 }

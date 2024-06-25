@@ -3,6 +3,7 @@ package dailymissionproject.demo.domain.post.service;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
 import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
+import dailymissionproject.demo.domain.post.dto.request.PostUpdateRequestDto;
 import dailymissionproject.demo.domain.post.dto.response.PostResponseDto;
 import dailymissionproject.demo.domain.post.repository.Post;
 import dailymissionproject.demo.domain.post.repository.PostRepository;
@@ -62,13 +63,22 @@ public class PostService {
             throw new IllegalArgumentException("해당 사용자가 존재하지 않습니다.");
         }
 
-        List<Post> lists = postRepository.findByUser(user);
+        List<Post> lists = postRepository.findAllByUser(user);
 
         List<PostResponseDto> responseList = new ArrayList<>();
         for(Post post : lists){
             responseList.add(new PostResponseDto(post));
         }
         return responseList;
+    }
+
+    //== 포스트 수정==//
+    @Transactional
+    public Long updateById(Long id, PostUpdateRequestDto requestDto){
+        Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포스트입니다."));
+
+        post.update(requestDto.getTitle(), requestDto.getContent());
+        return postRepository.save(post).getId();
     }
 
     //== 포스트 삭제==//
