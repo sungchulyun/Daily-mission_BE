@@ -33,11 +33,11 @@ public class PostService {
     public Long save(String userName, PostSaveRequestDto requestDto){
         log.info("미션 ID : {}", requestDto.getMissionId());
         Mission mission = missionRepository.findByIdAndDeletedIsFalse(requestDto.getMissionId())
-                .orElseThrow(() -> new NoSuchElementException("해당 미션이 존재하지 않습니다."));
+                .orElseThrow(() -> new NoSuchElementException("해당 미션이 존재하지 않습니다. MissionId : " + requestDto.getMissionId()));
 
         User findUser = userRepository.findOneByName(userName);
         if(Objects.isNull(findUser)){
-            throw new IllegalArgumentException("해당 사용자가 존재하지 않습니다.");
+            throw new NoSuchElementException("해당 사용자가 존재하지 않습니다. Name : " + userName);
         }
 
         Post post = requestDto.toEntity(findUser, mission);
@@ -48,7 +48,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostResponseDto findById(Long id){
 
-        Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 포스트가 존재하지 않습니다."));
+        Post post = postRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 포스트가 존재하지 않습니다. id : " + id));
 
         PostResponseDto responseDto = new PostResponseDto(post);
         return responseDto;
@@ -60,7 +60,7 @@ public class PostService {
 
         User user = userRepository.findOne(id);
         if (Objects.isNull(user)) {
-            throw new IllegalArgumentException("해당 사용자가 존재하지 않습니다.");
+            throw new NoSuchElementException("해당 사용자가 존재하지 않습니다. UserId : " + id);
         }
 
         List<Post> lists = postRepository.findAllByUser(user);
@@ -75,12 +75,17 @@ public class PostService {
     //== 포스트 수정==//
     @Transactional
     public Long updateById(Long id, PostUpdateRequestDto requestDto){
-        Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포스트입니다."));
+
+        Post post = postRepository.findById(id).orElseThrow(() -> new NoSuchElementException("존재하지 않는 포스트입니다."+ id));
 
         post.update(requestDto.getTitle(), requestDto.getContent());
         return postRepository.save(post).getId();
     }
 
     //== 포스트 삭제==//
+    @Transactional
+    public boolean deleteById(Long id){
 
+        Post post = postRepository.findById(id).orElseThrow(() -> new NoSuchElementException("존재하지 않는 포스트입니다. id =" + id));
+    }
 }
