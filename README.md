@@ -23,3 +23,9 @@
 - 내가 참여중인 미션 목록과 제출한 포스트 목록 조회 가능 - 강퇴 미션 재입장 불가
 - 참여중인 미션의 weekly 포스트 history 조회 가능
 - 제목/내용/사진을 입력해 인증 포스트 작성
+
+
+<details>
+  <summary>ERD 모델링</summary>
+ <img src="https://github.com/sungchulyun/Daily-mission/assets/97434717/3ccad2e0-b28b-4935-9c38-8dfbf9a597cd">
+</details>
