@@ -5,6 +5,9 @@ import dailymissionproject.demo.domain.mission.dto.request.MissionSaveRequestDto
 import dailymissionproject.demo.domain.mission.dto.response.*;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
+import dailymissionproject.demo.domain.missionRule.repository.MissionRuleRepository;
+import dailymissionproject.demo.domain.participant.repository.Participant;
+import dailymissionproject.demo.domain.participant.repository.ParticipantRepository;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,7 @@ public class MissionService {
 
     private final MissionRepository missionRepository;
     private final UserRepository userRepository;
+    private final ParticipantRepository participantRepository;
     private final ImageService imageService;
 
     //==미션 상세 조회==//
@@ -48,30 +52,28 @@ public class MissionService {
             throw new RuntimeException("존재하지 않는 사용자 닉네임입니다.");
         }
 
-
-
         String credential = String.valueOf(UUID.randomUUID());
-
         String imgUrl = imageService.uploadImg(file);
 
-        Mission mission = Mission.builder()
-                        .user(findUser)
-                        .title(missionReqDto.getTitle())
-                        .content(missionReqDto.getContent())
-                        .imageUrl(imgUrl)
-                        .credential(credential)
-                        .startDate(missionReqDto.getStartDate())
-                        .endDate(missionReqDto.getEndDate())
-                        .build();
+        Mission mission = missionReqDto.toEntity(findUser);
+        mission.setImageUrl(imgUrl);
+        mission.setCredential(credential);
 
         mission.isValidStartDate(LocalDate.now());
         missionRepository.save(mission);
+
+        //미션 생성 시 방장은 자동 참여
+        Participant participant = Participant.builder()
+                .mission(mission)
+                .user(findUser)
+                .build();
+        participantRepository.save(participant);
 
         MissionSaveResponseDto responseDto = MissionSaveResponseDto.builder()
                 .credential(credential).build();
         return responseDto;
 
-        //미션 생성자를 바로 참여하는 로직 추가 필요
+
     }
 
     /*

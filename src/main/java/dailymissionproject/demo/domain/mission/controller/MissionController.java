@@ -25,7 +25,7 @@ public class MissionController {
     //== 미션 생성==//
     @PostMapping("/create/{userName}")
     public MissionSaveResponseDto save(@PathVariable("userName")String userName
-                                    , @RequestBody MissionSaveRequestDto missionReqDto
+                                    , @RequestPart MissionSaveRequestDto missionReqDto
                                     , @RequestPart MultipartFile file) throws IOException {
         return missionService.save(userName, missionReqDto, file);
     }

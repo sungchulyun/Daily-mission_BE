@@ -44,6 +44,8 @@ public class QMission extends EntityPathBase<Mission> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> lastModifiedTime = _super.lastModifiedTime;
 
+    public final dailymissionproject.demo.domain.missionRule.repository.QMissionRule missionRule;
+
     public final ListPath<dailymissionproject.demo.domain.participant.repository.Participant, dailymissionproject.demo.domain.participant.repository.QParticipant> participants = this.<dailymissionproject.demo.domain.participant.repository.Participant, dailymissionproject.demo.domain.participant.repository.QParticipant>createList("participants", dailymissionproject.demo.domain.participant.repository.Participant.class, dailymissionproject.demo.domain.participant.repository.QParticipant.class, PathInits.DIRECT2);
 
     public final ListPath<dailymissionproject.demo.domain.post.repository.Post, dailymissionproject.demo.domain.post.repository.QPost> posts = this.<dailymissionproject.demo.domain.post.repository.Post, dailymissionproject.demo.domain.post.repository.QPost>createList("posts", dailymissionproject.demo.domain.post.repository.Post.class, dailymissionproject.demo.domain.post.repository.QPost.class, PathInits.DIRECT2);
@@ -72,6 +74,7 @@ public class QMission extends EntityPathBase<Mission> {
 
     public QMission(Class<? extends Mission> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.missionRule = inits.isInitialized("missionRule") ? new dailymissionproject.demo.domain.missionRule.repository.QMissionRule(forProperty("missionRule"), inits.get("missionRule")) : null;
         this.user = inits.isInitialized("user") ? new dailymissionproject.demo.domain.user.repository.QUser(forProperty("user")) : null;
     }
 
