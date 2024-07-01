@@ -24,22 +24,19 @@
 - 참여중인 미션의 weekly 포스트 history 조회 가능
 - 제목/내용/사진을 입력해 인증 포스트 작성
 
-
-<details>
-  <summary>ERD 🖼️ </summary>
- <img src="https://github.com/sungchulyun/Daily-mission/assets/97434717/3ccad2e0-b28b-4935-9c38-8dfbf9a597cd">
-</details>
-
-<details>
-  <summary>기술 스택 🧰 </summary>
-- Spring Boot(API SERVER)
-- Spring Security(Security)
-- Spring Batch(Batch) : 😢 추후 적용 예정
+#### 기술 스택 🧰
+ - Spring Boot(API SERVER)
+ - Spring Security(Security)
+ - Spring Batch(Batch) : 😢 추후 적용 예정
  - MariaDB (RDB)
  - JPA & QueryDSL (ORM)
  - OAuth2.0 + JWT(Authentication & Authorization)
  - Redis (Cache) : 추후 적용 예정
  - Jenkins & GitLab (CI/CD)
  - AWS (Infra)
- - Nginx, Tomcat (MiddleWare)
+ - Nginx, Tomcat (WEB Server, WAS)
+
+<details>
+  <summary>ERD 🖼️ </summary>
+ <img src="https://github.com/sungchulyun/Daily-mission/assets/97434717/3ccad2e0-b28b-4935-9c38-8dfbf9a597cd">
 </details>
