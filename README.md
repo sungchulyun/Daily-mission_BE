@@ -26,6 +26,20 @@
 
 
 <details>
-  <summary>ERD 모델링</summary>
+  <summary>ERD 🖼️ </summary>
  <img src="https://github.com/sungchulyun/Daily-mission/assets/97434717/3ccad2e0-b28b-4935-9c38-8dfbf9a597cd">
+</details>
+
+<details>
+  <summary>기술 스택 🧰 </summary>
+- Spring Boot(API SERVER)
+- Spring Security(Security)
+- Spring Batch(Batch) : 😢 추후 적용 예정
+ - MariaDB (RDB)
+ - JPA & QueryDSL (ORM)
+ - OAuth2.0 + JWT(Authentication & Authorization)
+ - Redis (Cache) : 추후 적용 예정
+ - Jenkins & GitLab (CI/CD)
+ - AWS (Infra)
+ - Nginx, Tomcat (MiddleWare)
 </details>
