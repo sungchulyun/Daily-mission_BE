@@ -35,7 +35,10 @@ public class User extends BaseTimeEntity {
 
     private String name;
     private String email;
+
+    @Column(name = "username")
     private String username;
+
     @Column(name = "image_url")
     private String imageUrl;
 

@@ -9,8 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AuthRepository extends JpaRepository<User, Long> {
 
-    //@Query("select u from User u where u.username = :username")
     User findByUsername(String username);
 
-    Boolean existsByUsername(String username);
 }
