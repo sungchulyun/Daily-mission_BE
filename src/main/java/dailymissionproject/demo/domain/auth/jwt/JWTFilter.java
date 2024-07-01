@@ -27,6 +27,18 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+        String requestUri = request.getRequestURI();
+        if(requestUri.matches("^\\/login(?:\\/.*)?$")){
+
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if(requestUri.matches("^\\/oauth2(?:\\/.*)?$")){
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String authorization = null;
         Cookie[] cookies = request.getCookies();
         log.info("{}", cookies);
@@ -55,11 +67,11 @@ public class JWTFilter extends OncePerRequestFilter {
         }
 
         String username = jwtUtil.getUsername(token);
-        Role role = jwtUtil.getRole(token);
+        String role = jwtUtil.getRole(token);
 
         UserDto userDto = new UserDto();
         userDto.setUsername(username);
-        userDto.setRole(role);
+        userDto.setRole(Role.valueOf(role));
 
         //인증 객체 담기
         CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDto);
