@@ -24,46 +24,48 @@ public class User extends BaseTimeEntity {
     @Column(name = "user_id")
     private long id;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user")
     List<Mission> missions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user")
     List<Post> posts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+   @OneToMany(mappedBy = "user")
     List<Participant> participants = new ArrayList<>();
 
     private String name;
     private String email;
+
+    @Column(name = "username")
+    private String username;
+
     @Column(name = "image_url")
     private String imageUrl;
 
-    /*
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
 
     @Builder
-    public User(String name, String email, String imageUrl, Role role){
+    public User(String name, String email, String username, String imageUrl, Role role){
         this.name = name;
         this.email = email;
+        this.username = username;
         this.imageUrl = imageUrl;
         this.role = role;
     }
-     */
 
     @Builder
-    public User(String name, String email, String imageUrl){
+    public User(String name, String username, String email, String imageUrl){
         this.name = name;
+        this.username = username;
         this.email = email;
         this.imageUrl = imageUrl;
     }
 
-    /*
+
     public String getRoleKey(){
         return this.role.getKey();
     }
-
-     */
 }

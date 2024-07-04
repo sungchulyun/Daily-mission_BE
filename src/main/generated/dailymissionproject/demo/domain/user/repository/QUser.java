@@ -42,6 +42,10 @@ public class QUser extends EntityPathBase<User> {
 
     public final ListPath<dailymissionproject.demo.domain.post.repository.Post, dailymissionproject.demo.domain.post.repository.QPost> posts = this.<dailymissionproject.demo.domain.post.repository.Post, dailymissionproject.demo.domain.post.repository.QPost>createList("posts", dailymissionproject.demo.domain.post.repository.Post.class, dailymissionproject.demo.domain.post.repository.QPost.class, PathInits.DIRECT2);
 
+    public final EnumPath<Role> role = createEnum("role", Role.class);
+
+    public final StringPath username = createString("username");
+
     public QUser(String variable) {
         super(User.class, forVariable(variable));
     }

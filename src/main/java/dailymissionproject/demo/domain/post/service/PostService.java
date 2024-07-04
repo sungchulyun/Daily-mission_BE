@@ -28,16 +28,15 @@ public class PostService {
     private final PostRepository postRepository;
 
     @Transactional
-    public Long save(String userName, PostSaveRequestDto requestDto){
+    public Long save(String username, PostSaveRequestDto requestDto){
 
         Mission mission = missionRepository.findByIdAndDeletedIsFalse(requestDto.getMissionId())
                 .orElseThrow(() -> new NoSuchElementException("해당 미션이 존재하지 않습니다."));
 
 
-        User findUser = userRepository.findOneByName(userName);
-        if(Objects.isNull(findUser)){
-            throw new NoSuchElementException("해당 사용자가 존재하지 않습니다. Name : " + userName);
-        }
+        User findUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
+
         //미션 참여자인지 검증
         validIsParticipating(findUser, mission);
 
@@ -59,12 +58,10 @@ public class PostService {
     @Transactional(readOnly = true)
     public List<PostResponseDto> findByUser(Long id){
 
-        User user = userRepository.findOne(id);
-        if (Objects.isNull(user)) {
-            throw new NoSuchElementException("해당 사용자가 존재하지 않습니다. UserId : " + id);
-        }
+        User findUser = userRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
 
-        List<Post> lists = postRepository.findAllByUser(user);
+        List<Post> lists = postRepository.findAllByUser(findUser);
 
         List<PostResponseDto> responseList = new ArrayList<>();
         for(Post post : lists){

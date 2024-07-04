@@ -45,12 +45,10 @@ public class MissionService {
 
     //== 미션 생성 ==//
     @Transactional
-    public MissionSaveResponseDto save(String userName, MissionSaveRequestDto missionReqDto, MultipartFile file) throws IOException {
+    public MissionSaveResponseDto save(String username, MissionSaveRequestDto missionReqDto, MultipartFile file) throws IOException {
 
-        User findUser = userRepository.findOneByName(userName);
-        if(Objects.isNull(findUser)){
-            throw new RuntimeException("존재하지 않는 사용자 닉네임입니다.");
-        }
+        User findUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
 
         String credential = String.valueOf(UUID.randomUUID());
         String imgUrl = imageService.uploadImg(file);
@@ -81,12 +79,13 @@ public class MissionService {
     * 방장만 가능하고, 시작되지 않았고, 참여자가 없어야함
      */
     @Transactional
-    public boolean delete(Long id, String userName){
+    public boolean delete(Long id, String username){
 
         Mission mission = missionRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 미션입니다."));
 
-        User findUser = userRepository.findOneByName(userName);
+        User findUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
 
         mission.isDeletable(findUser);
         if(mission.getParticipantCountNotBanned() > 1){
