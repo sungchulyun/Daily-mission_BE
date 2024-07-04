@@ -9,6 +9,7 @@ import dailymissionproject.demo.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +43,7 @@ public class UserController {
     }
    */
 
-    @GetMapping("/Info")
+    @GetMapping("/info")
     public UserResDto getUser(){
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
