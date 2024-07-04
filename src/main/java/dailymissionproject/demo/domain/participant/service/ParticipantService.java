@@ -25,24 +25,19 @@ public class ParticipantService {
     private final MissionRepository missionRepository;
 
     @Transactional
-    public boolean save(String userName, ParticipantSaveRequestDto requestDto){
+    public boolean save(String username, ParticipantSaveRequestDto requestDto){
 
         //미션 null값 검증
         if(requestDto.getMission() == null){
             throw new IllegalArgumentException("참여할 미션을 선택하지 않았습니다.");
         }
 
-        //사용자 이름 유효한지 검증
-        User findUser = userRepository.findOneByName(userName);
-        if(Objects.isNull(findUser)){
-            throw new NoSuchElementException("해당 사용자가 존재하지 않습니다.");
-        }
-
         //미션 id 유효한지 검증
         Mission mission = missionRepository.findById(requestDto.getMission().getId())
                 .orElseThrow(() -> new NoSuchElementException("해당 미션이 존재하지 않습니다."));
 
-
+        User findUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
 
         //해당 사용자가 해당 미션에 참여한 이력이 있는지 검증
         Optional<Participant> optional = participantRepository.findByMissionAndUser(mission, findUser);

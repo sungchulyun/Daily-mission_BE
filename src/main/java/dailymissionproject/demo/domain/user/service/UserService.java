@@ -14,7 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,32 +27,17 @@ public class UserService {
     private final UserRepository userRepository;
     private final ImageService imageService;
 
-    @Transactional
-    public UserResDto join(UserReqDto userReqDto){
-        User user = userReqDto.toEntity(userReqDto);
-        validateName(user);
-        userRepository.save(user);
 
-       UserResDto res = UserResDto.builder()
-                .name(userReqDto.getName())
-                .code(200)
-                .msgCode("성공적으로 회원 가입 완료.")
-               .build();
-       return res;
-    }
-
-    //이메일 중복 검증 로직 oauth2 도입 시 수정 필요
-    private void validateName(User user) {
-        List<User> findUser = userRepository.findByMail(user.getEmail());
-        if(!findUser.isEmpty()){
-            throw new IllegalStateException("이미 존재하는 회원입니다.");
-        }
-    }
+    //이메일 중복 검증 로직 oauth2 도입 시 수정 필요 -> 수정 완
+    /*
+    * 2024-07-04
+     */
 
     @Transactional
-    public void updateProfile(String userName, MultipartFile file) throws IOException {
-        User findUser = userRepository.findOneByName(userName);
-        isUserExists(userName);
+    public void updateProfile(String username, MultipartFile file) throws IOException {
+
+        User findUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
 
         String imgUrl = imageService.uploadImg(file);
         findUser.setImageUrl(imgUrl);
@@ -58,48 +45,18 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserResDto getUserInfo(String name){
-        User user = userRepository.findOneByName(name);
-        isUserExists(name);
+    public UserResDto getUserInfo(String username){
+
+        User findUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
 
         UserResDto res = UserResDto.builder()
-                .name(name)
-                .email(user.getEmail())
+                .name(username)
+                .email(findUser.getEmail())
                 .code(200)
                 .msgCode("Success")
                 .build();
 
         return res;
     }
-
-    public void isUserExists(String name){
-        List<User> findUser = userRepository.findByName(name);
-        if(Objects.isNull(findUser)){
-            throw new RuntimeException("없는 사용자 이름입니다.");
-        }
-    }
-
-    private boolean validateUpdateName(String name){
-       if(name == null){
-           return false;
-       }
-       List<User> findUser = userRepository.findByName(name);
-       if(!findUser.isEmpty()){
-           return false;
-       }
-       return true;
-    }
-
-
-
-    @Transactional(readOnly = true)
-    public List<User> findUser(){
-        return userRepository.findAll();
-    }
-
-    @Transactional(readOnly = true)
-    public User findOne(Long id){
-        return userRepository.findOne(id);
-    }
-
 }
