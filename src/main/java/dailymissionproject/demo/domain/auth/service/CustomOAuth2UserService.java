@@ -4,6 +4,7 @@ import dailymissionproject.demo.domain.auth.dto.*;
 import dailymissionproject.demo.domain.auth.repository.AuthRepository;
 import dailymissionproject.demo.domain.user.repository.Role;
 import dailymissionproject.demo.domain.user.repository.User;
+import dailymissionproject.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -14,13 +15,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    private final AuthRepository authRepository;
+    private final UserRepository userRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException{
@@ -42,9 +44,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
 
         String username = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
-        User findUser = authRepository.findByUsername(username);
-
-        if(Objects.isNull(findUser)){
+        Optional<User> findUser = userRepository.findByUsername(username);
+        if(!findUser.isPresent()){
 
             UserDto userDto = new UserDto();
             userDto.setUsername(username);
@@ -53,23 +54,25 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userDto.setImageUrl(oAuth2Response.getProfileImage());
             userDto.setRole(Role.USER);
 
-            authRepository.save(findUser);
+            User user = userDto.toEntity(userDto);
+            userRepository.save(user);
 
             return new CustomOAuth2User(userDto);
 
         } else {
-            findUser.setEmail(oAuth2Response.getEmail());
-            findUser.setImageUrl(oAuth2Response.getProfileImage());
-            findUser.setName(oAuth2Response.getName());
+            User user = findUser.get();
+            user.setEmail(oAuth2Response.getEmail());
+            user.setImageUrl(oAuth2Response.getProfileImage());
+            user.setName(oAuth2Response.getName());
 
-            authRepository.save(findUser);
+            userRepository.save(user);
 
             UserDto userDto = new UserDto();
-            userDto.setUsername(findUser.getUsername());
+            userDto.setUsername(user.getUsername());
             userDto.setName(oAuth2User.getName());
             userDto.setEmail(oAuth2Response.getEmail());
             userDto.setImageUrl(oAuth2Response.getProfileImage());
-            userDto.setRole(findUser.getRole());
+            userDto.setRole(user.getRole());
 
             return new CustomOAuth2User(userDto);
         }

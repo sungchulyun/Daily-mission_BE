@@ -1,6 +1,8 @@
 package dailymissionproject.demo.domain.auth.dto;
 
 import dailymissionproject.demo.domain.user.repository.Role;
+import dailymissionproject.demo.domain.user.repository.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,4 +14,15 @@ public class UserDto {
     private String username;
     private String imageUrl;
     private String email;
+
+    @Builder
+    public User toEntity(UserDto userDto){
+        return User.builder()
+                .name(userDto.getName())
+                .username(userDto.getUsername())
+                .imageUrl(userDto.getImageUrl())
+                .email(userDto.getEmail())
+                .role(userDto.getRole())
+                .build();
+    }
 }
