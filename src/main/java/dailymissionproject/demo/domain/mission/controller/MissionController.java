@@ -1,33 +1,44 @@
 package dailymissionproject.demo.domain.mission.controller;
 
+import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.mission.Service.MissionService;
 import dailymissionproject.demo.domain.mission.dto.request.MissionSaveRequestDto;
 import dailymissionproject.demo.domain.mission.dto.response.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/mission")
+@Slf4j
 public class MissionController {
+
     private final MissionService missionService;
 
     //== 미션 상세 조회 ==//
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/getInfo/{id}")
     public MissionResponseDto findById(@PathVariable Long id){
         return missionService.findById(id);
     }
 
     //== 미션 생성==//
-    @PostMapping("/create/{userName}")
-    public MissionSaveResponseDto save(@PathVariable("userName")String userName
-                                    , @RequestPart MissionSaveRequestDto missionReqDto
-                                    , @RequestPart MultipartFile file) throws IOException {
-        return missionService.save(userName, missionReqDto, file);
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/create")
+    public MissionSaveResponseDto save(@RequestPart MissionSaveRequestDto missionReqDto, @RequestPart MultipartFile file) throws IOException {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
+        return missionService.save(user.getUsername(), missionReqDto, file);
     }
 
     /*
