@@ -56,15 +56,17 @@ public class PostService {
 
         Post post = postRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 포스트가 존재하지 않습니다. id : " + id));
 
-        PostResponseDto responseDto = new PostResponseDto(post);
+        PostResponseDto responseDto = PostResponseDto.builder()
+                                    .post(post)
+                                    .build();
         return responseDto;
     }
 
     //== 사용자가 작성한 전체 포스트 조회==//
     @Transactional(readOnly = true)
-    public List<PostResponseDto> findAllByUser(Long id){
+    public List<PostResponseDto> findAllByUser(String username){
 
-        User findUser = userRepository.findById(id)
+        User findUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
 
         List<Post> lists = postRepository.findAllByUser(findUser);
