@@ -35,10 +35,10 @@ public class Mission extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "mission")
     private List<Participant> participants = new ArrayList<>();
 
-    @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "mission")
     private List<Post> posts = new ArrayList<>();
 
     private String title;
