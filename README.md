@@ -31,7 +31,7 @@
  - MariaDB (RDB)
  - JPA & QueryDSL (ORM)
  - OAuth2.0 + JWT(Authentication & Authorization)
- - Redis (Cache) : 추후 적용 예정
+ - Redis (Cache)
  - Jenkins & GitLab (CI/CD)
  - AWS (Infra)
  - Nginx, Tomcat (WEB Server, WAS)
