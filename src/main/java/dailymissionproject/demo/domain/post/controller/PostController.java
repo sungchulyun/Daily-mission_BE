@@ -41,7 +41,14 @@ public class PostController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/getUser/{id}")
     public List<PostResponseDto> findByUser(@PathVariable("id") Long id){
-        return postService.findByUser(id);
+        return postService.findAllByUser(id);
+    }
+
+    //== 유저별 전체 포스트 목록 불러오기==//
+    @PreAuthorize("hasRole('ROLE_USER)")
+    @GetMapping("getMission/{id}")
+    public List<PostResponseDto> findByMission(@PathVariable("id") Long id){
+        return postService.findAllByMission(id);
     }
 
     //== 포스트 업데이트==//

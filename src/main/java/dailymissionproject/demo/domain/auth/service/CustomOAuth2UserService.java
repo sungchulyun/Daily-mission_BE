@@ -1,7 +1,6 @@
 package dailymissionproject.demo.domain.auth.service;
 
 import dailymissionproject.demo.domain.auth.dto.*;
-import dailymissionproject.demo.domain.auth.repository.AuthRepository;
 import dailymissionproject.demo.domain.user.repository.Role;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;

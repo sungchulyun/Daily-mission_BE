@@ -2,7 +2,9 @@ package dailymissionproject.demo.domain.post.service;
 
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
+import dailymissionproject.demo.domain.missionRule.dto.DateDto;
 import dailymissionproject.demo.domain.participant.repository.Participant;
+import dailymissionproject.demo.domain.post.dto.PostScheduleResponseDto;
 import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
 import dailymissionproject.demo.domain.post.dto.request.PostUpdateRequestDto;
 import dailymissionproject.demo.domain.post.dto.response.PostResponseDto;
@@ -14,6 +16,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -56,7 +61,7 @@ public class PostService {
 
     //== 사용자가 작성한 전체 포스트 조회==//
     @Transactional(readOnly = true)
-    public List<PostResponseDto> findByUser(Long id){
+    public List<PostResponseDto> findAllByUser(Long id){
 
         User findUser = userRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
@@ -69,6 +74,24 @@ public class PostService {
         }
         return responseList;
     }
+
+    //== 미션별 작성된 전체 포스트 조회
+    @Transactional(readOnly = true)
+    public List<PostResponseDto> findAllByMission(Long id){
+
+        Mission mission = missionRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 미션이 존재하지 않습니다. id" + id));
+
+        List<Post> lists = postRepository.findAllByMission(mission);
+
+        List<PostResponseDto> responseList = new ArrayList<>();
+        for(Post post : lists){
+            responseList.add(new PostResponseDto(post));
+        }
+        return responseList;
+    }
+
+    //==포스트 제출 이력 조회==//
+
 
     //== 포스트 수정==//
     @Transactional

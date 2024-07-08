@@ -1,5 +1,6 @@
 package dailymissionproject.demo.domain.post.repository;
 
+import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.user.repository.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -12,4 +13,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
       Post save(Post post);
 
       List<Post> findAllByUser(User user);
+
+      List<Post> findAllByMission(Mission mission);
 }
