@@ -5,6 +5,7 @@ import dailymissionproject.demo.domain.mission.repository.MissionRepository;
 import dailymissionproject.demo.domain.missionRule.dto.DateDto;
 import dailymissionproject.demo.domain.participant.repository.Participant;
 import dailymissionproject.demo.domain.post.dto.PostScheduleResponseDto;
+import dailymissionproject.demo.domain.post.dto.PostSubmitDto;
 import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
 import dailymissionproject.demo.domain.post.dto.request.PostUpdateRequestDto;
 import dailymissionproject.demo.domain.post.dto.response.PostResponseDto;
@@ -91,7 +92,36 @@ public class PostService {
     }
 
     //==포스트 제출 이력 조회==//
+    @Transactional(readOnly = true)
+    public PostScheduleResponseDto findSchedule(Long id, Long week){
 
+        /*
+        * 설명 : 현재 요일에서 가장 가까운 일요일을 찾는다(한 주의 시작)
+        * ex ) 월 -> 어제인 일요일
+         */
+        LocalDate startDate = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).minusWeeks(week);
+
+        Mission mission = missionRepository.findByIdAndDeletedIsFalse(id)
+                .orElseThrow(() -> new NoSuchElementException("해당 미션은 존재하지 않거나 폐기되었습니다. id"+ id));
+
+        /*
+        * Week주의 일주일간 날짜 & 제출의무 요일 확인
+        * ex) 메서드 호출 일자 : 2024-07-31 / week : 0
+        *       -> 2024-07-28  ~ 2024-08-02
+        *       -> false/true/true/true/true/true/false
+         */
+        List<DateDto> weekDates = mission.getWeekDates(startDate);
+        /*
+        * 미션별 weekly 제출 이력을 postSubmitDto 객체로 전달받는다.
+        * 새벽 3시 이전 제출 -> 전날 제출한 것으로 변환
+         */
+        List<PostSubmitDto> submits = postRepository.findWeeklyPostSubmitByMission(id, startDate);
+
+        return PostScheduleResponseDto.builder()
+                .weekDates(weekDates)
+                .histories(null)
+                .build();
+    }
 
     //== 포스트 수정==//
     @Transactional
