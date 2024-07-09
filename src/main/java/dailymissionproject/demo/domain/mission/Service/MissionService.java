@@ -5,7 +5,6 @@ import dailymissionproject.demo.domain.mission.dto.request.MissionSaveRequestDto
 import dailymissionproject.demo.domain.mission.dto.response.*;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
-import dailymissionproject.demo.domain.missionRule.repository.MissionRuleRepository;
 import dailymissionproject.demo.domain.participant.repository.Participant;
 import dailymissionproject.demo.domain.participant.repository.ParticipantRepository;
 import dailymissionproject.demo.domain.user.repository.User;
@@ -146,6 +145,7 @@ public class MissionService {
         List<Mission> allLists = missionRepository.findAllByCreatedDate();
         for(Mission mission : allLists){
             MissionAllListResponseDto allMission = MissionAllListResponseDto.builder()
+                    .id(mission.getId())
                     .title(mission.getTitle())
                     .content(mission.getContent())
                     .userName(mission.getUser().getName())
@@ -156,5 +156,19 @@ public class MissionService {
             res.add(allMission);
         }
         return res;
+    }
+
+    @Transactional
+    public void end(List<MissionAllListResponseDto> missionLists){
+
+        for(MissionAllListResponseDto missionDto : missionLists){
+            Mission mission = missionRepository.findByIdAndDeletedIsFalse(missionDto.getId())
+                    .orElseThrow(() -> new NoSuchElementException("해당 미션은 종료되었거나 폐기되었습니다."));
+
+            if(mission.isEndAble(LocalDate.now())){
+                mission.end();
+            }
+        }
+
     }
 }
