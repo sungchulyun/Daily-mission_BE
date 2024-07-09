@@ -7,10 +7,15 @@ import dailymissionproject.demo.domain.user.dto.request.UserReqDto;
 import dailymissionproject.demo.domain.user.dto.response.UserResDto;
 import dailymissionproject.demo.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +30,10 @@ public class UserController {
 
     private final UserService userService;
 
+    /*
+    * 2024-07-09
+    * OAuth2를 통한 로그인으로 변경
+     */
 
     /*
     @PostMapping("/join")
@@ -44,10 +53,8 @@ public class UserController {
    */
 
     @GetMapping("/info")
-    public UserResDto getUser(){
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
+    @Cacheable(value = "user", key = "#user.username")
+    public UserResDto getUser(@AuthenticationPrincipal CustomOAuth2User user){
         return userService.getUserInfo(user.getUsername());
     }
 }
