@@ -36,7 +36,7 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
         return queryFactory
                 .select(post)
                 .from(post)
-                .where(post.user.eq(user).and(post.deleted).isFalse())
+                .where(post.user.eq(user).and(post.deleted.isFalse()))
                 .orderBy(post.createdDate.desc())
                 .fetch();
     }
