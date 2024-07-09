@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableJpaAuditing
 @EnableCaching
-@EnableBatchProcessing
 @EnableScheduling
 @SpringBootApplication
 public class DemoApplication {
