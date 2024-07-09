@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor
 public class MissionAllListResponseDto {
+    private Long id;
     private String title;
     private String content;
     private String imgUrl;
@@ -21,7 +22,8 @@ public class MissionAllListResponseDto {
     private LocalDate endDate;
 
     @Builder
-    MissionAllListResponseDto(String title, String content, String imgUrl, String userName, LocalDate startDate, LocalDate endDate) {
+    MissionAllListResponseDto(Long id, String title, String content, String imgUrl, String userName, LocalDate startDate, LocalDate endDate) {
+        this.id = id;
         this.title = title;
         this.content = content;
         this.imgUrl = imgUrl;
