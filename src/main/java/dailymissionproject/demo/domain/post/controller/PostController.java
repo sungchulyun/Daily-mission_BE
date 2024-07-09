@@ -12,6 +12,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,10 +54,8 @@ public class PostController {
     //== 유저별 전체 포스트 목록 불러오기==//
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/getUser")
-    @Cacheable(value = "postLists", key = "'user-' + #username")
-    public List<PostResponseDto> findByUser(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
+    @Cacheable(value = "postLists", key = "'user-' + #user.username")
+    public List<PostResponseDto> findByUser(@AuthenticationPrincipal CustomOAuth2User user){
         String username = user.getUsername();
         return postService.findAllByUser(username);
     }
