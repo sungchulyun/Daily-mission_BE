@@ -57,6 +57,11 @@ dependencies {
 	//Redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+	//Spring-batch
+	implementation 'org.springframework.boot:spring-boot-starter-batch'
+	//scheduler
+	implementation 'org.springframework.boot:spring-boot-starter-quartz'
+
 	//Security && oauth2
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.security:spring-security-oauth2-client'
