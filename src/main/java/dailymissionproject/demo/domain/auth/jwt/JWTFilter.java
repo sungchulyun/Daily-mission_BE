@@ -70,7 +70,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         UserDto userDto = new UserDto();
         userDto.setUsername(username);
-        userDto.setRole(Role.valueOf(role));
+        userDto.setRole("ROLE_USER");
 
         //인증 객체 담기
         CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDto);

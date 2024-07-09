@@ -32,7 +32,7 @@ public class SecurityConfig {
     private final JWTUtil jwtUtil;
 
     @Bean
-    public SecurityFilterChain config(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception{
+    public SecurityFilterChain config(HttpSecurity http) throws Exception{
 
         http
                 .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {

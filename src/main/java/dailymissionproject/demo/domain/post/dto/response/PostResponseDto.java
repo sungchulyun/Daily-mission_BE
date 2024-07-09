@@ -1,14 +1,21 @@
 package dailymissionproject.demo.domain.post.dto.response;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import dailymissionproject.demo.domain.post.repository.Post;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
-public class PostResponseDto {
+@NoArgsConstructor
+public class PostResponseDto implements Serializable {
     private Long postId;
     private Long missionId;
     private String missionTitle;
@@ -20,9 +27,13 @@ public class PostResponseDto {
     private String content;
     private String imgUrl;
 
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdDate;
 
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @DateTimeFormat(pattern = "yyyy-MM-dd'THH:mm:ss")
     private LocalDateTime modifiedDate;
 

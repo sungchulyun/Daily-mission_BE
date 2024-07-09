@@ -54,10 +54,17 @@ dependencies {
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
+	//Redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
 	//Security && oauth2
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.security:spring-security-oauth2-client'
 	//compileOnly('org.springframework.boot:spring-boot-starter-security')
+
+	//JSON Serialize, Deserialize
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
 
 	//JWT
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'

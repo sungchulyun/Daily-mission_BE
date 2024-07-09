@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter @Setter
 public class UserDto {
 
-    private Role role;
+    private String role;
     private String name;
     private String username;
     private String imageUrl;
@@ -22,7 +22,7 @@ public class UserDto {
                 .username(userDto.getUsername())
                 .imageUrl(userDto.getImageUrl())
                 .email(userDto.getEmail())
-                .role(userDto.getRole())
+                .role(Role.valueOf(userDto.getRole()))
                 .build();
     }
 }
