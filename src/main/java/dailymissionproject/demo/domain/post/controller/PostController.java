@@ -43,7 +43,7 @@ public class PostController {
     }
 
     //== 인증 글 상세 조회==//
-    @PreAuthorize("hasAnyRole('USER')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/getInfo/{id}")
     @Cacheable(value = "posts", key = "#id")
     public PostResponseDto findById(@PathVariable("id") Long id){
@@ -51,10 +51,10 @@ public class PostController {
     }
 
     //== 유저별 전체 포스트 목록 불러오기==//
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_GUEST)")
-    @GetMapping("/getUser/{id}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/getUser")
     @Cacheable(value = "postLists", key = "'user-' + #username")
-    public List<PostResponseDto> findByUser(@PathVariable("id") Long id){
+    public List<PostResponseDto> findByUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
         String username = user.getUsername();
@@ -69,7 +69,7 @@ public class PostController {
     }
 
     //== 포스트 업데이트==//
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/update/{id}")
     public Long updateById(@PathVariable("id") Long id, @RequestBody PostUpdateRequestDto postUpdateRequestDto){
         return postService.updateById(id, postUpdateRequestDto);
@@ -77,7 +77,7 @@ public class PostController {
 
 
     //== 포스트 삭제==//
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/delete/{id}")
     public boolean deleteById(@PathVariable("id") Long id){
         return postService.deleteById(id);
