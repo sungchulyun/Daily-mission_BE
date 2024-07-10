@@ -1,29 +1,19 @@
 package dailymissionproject.demo.domain.user.controller;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.sun.security.auth.UserPrincipal;
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
-import dailymissionproject.demo.domain.user.dto.request.UserReqDto;
 import dailymissionproject.demo.domain.user.dto.response.UserResDto;
 import dailymissionproject.demo.domain.user.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.checkerframework.checker.units.qual.C;
-import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import java.io.IOException;
 
 
 @RestController
 @RequestMapping("/user")
+@Tag(name = "사용자 조회 API", description = "User컨트롤러에 대한 설명입니다.")
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
