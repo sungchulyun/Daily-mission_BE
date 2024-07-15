@@ -24,7 +24,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "미션", description = "미션 관련 API 입니다.")
-@RequestMapping("/mission")
+@RequestMapping("/api/mission")
 @Slf4j
 public class MissionController {
 

@@ -24,7 +24,7 @@ import java.util.List;
 
 @RestController
 @Tag(name = "포스트(인증글)", description = "포스트 관련 API 입니다.")
-@RequestMapping("/post")
+@RequestMapping("/api/post")
 @RequiredArgsConstructor
 @Slf4j
 public class PostController {

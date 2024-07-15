@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/participant")
+@RequestMapping("/api/participant")
 @Tag(name = "미션 참여", description = "미션 참여 관련 API입니다.")
 public class ParticipantController {
 
