@@ -35,11 +35,13 @@ public class SecurityConfig {
     private final JWTUtil jwtUtil;
 
     //인증, 인가 없이 swagger 접근 가능
+    /*
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
                 .requestMatchers("/swagger-ui/**");
     }
+     */
 
     @Bean
     public SecurityFilterChain config(HttpSecurity http) throws Exception{
@@ -51,7 +53,7 @@ public class SecurityConfig {
 
                         CorsConfiguration configuration = new CorsConfiguration();
 
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:8080"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -91,7 +93,7 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/swagger-ui","/swagger-ui/**").permitAll()
+                        //.requestMatchers("/swagger-ui","/swagger-ui/**").permitAll()
                         .requestMatchers("/").permitAll()
                         .anyRequest().authenticated());
 
