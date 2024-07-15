@@ -5,6 +5,10 @@ import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
 import dailymissionproject.demo.domain.post.dto.request.PostUpdateRequestDto;
 import dailymissionproject.demo.domain.post.dto.response.PostResponseDto;
 import dailymissionproject.demo.domain.post.service.PostService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@Tag(name = "포스트(인증글)", description = "포스트 관련 API 입니다.")
 @RequestMapping("/post")
 @RequiredArgsConstructor
 @Slf4j
@@ -35,6 +40,13 @@ public class PostController {
             @CacheEvict(value = "postLists", key = "'user-' + #username" ),
             @CacheEvict(value = "postLists", key = "'mission-' + #requestDto.missionId"),
     })
+    @Operation(summary = "포스트 생성", description = "사용자가 포스트를 생성할 때 사용하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공!"),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
+            @ApiResponse(responseCode = "404", description = "포스트 생성에 실패하였습니다."),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
+    })
     public Long save(@RequestBody PostSaveRequestDto requestDto) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -47,6 +59,13 @@ public class PostController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/getInfo/{id}")
     @Cacheable(value = "posts", key = "#id")
+    @Operation(summary = "포스트 상세 조회", description = "포스트 상세 조회할 때 사용하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공!"),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
+            @ApiResponse(responseCode = "404", description = "포스트 조회에 실패하였습니다."),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
+    })
     public PostResponseDto findById(@PathVariable("id") Long id){
         return postService.findById(id);
     }
@@ -55,6 +74,13 @@ public class PostController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/getUser")
     @Cacheable(value = "postLists", key = "'user-' + #user.username")
+    @Operation(summary = "유저별 전체 포스트 조회", description = "유저가 제출한 포스트 목록을 조회할 때 사용하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공!"),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
+            @ApiResponse(responseCode = "404", description = "포스트 조회에 실패하였습니다."),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
+    })
     public List<PostResponseDto> findByUser(@AuthenticationPrincipal CustomOAuth2User user){
         String username = user.getUsername();
         return postService.findAllByUser(username);
@@ -63,6 +89,13 @@ public class PostController {
     //== 미션별 전체 포스트 목록 불러오기==//
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("getMission/{id}")
+    @Operation(summary = "미션별 전체 포스트 조회", description = "미션별 전체 포스트 목록을 조회할 때 사용하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공!"),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
+            @ApiResponse(responseCode = "404", description = "포스트 조회에 실패하였습니다."),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
+    })
     public List<PostResponseDto> findByMission(@PathVariable("id") Long id){
         return postService.findAllByMission(id);
     }
@@ -70,6 +103,13 @@ public class PostController {
     //== 포스트 업데이트==//
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/update/{id}")
+    @Operation(summary = "포스트 수정", description = "포스트를 수정할 때 사용하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공!"),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
+            @ApiResponse(responseCode = "404", description = "포스트 수정에 실패하였습니다."),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
+    })
     public Long updateById(@PathVariable("id") Long id, @RequestBody PostUpdateRequestDto postUpdateRequestDto){
         return postService.updateById(id, postUpdateRequestDto);
     }
@@ -78,6 +118,13 @@ public class PostController {
     //== 포스트 삭제==//
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/delete/{id}")
+    @Operation(summary = "포스트 삭제", description = "포스트를 삭제할 때 사용하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공!"),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
+            @ApiResponse(responseCode = "404", description = "포스트 삭제에 실패하였습니다."),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
+    })
     public boolean deleteById(@PathVariable("id") Long id){
         return postService.deleteById(id);
         }
