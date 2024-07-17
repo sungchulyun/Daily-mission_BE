@@ -15,7 +15,8 @@
  - Redis (Cache)
  - AWS S3 (Object Storage)
  - Jenkins & GitLab (CI/CD) - 추후 적용 예정 😢
- - AWS EC2, Docker (Infra)
+ - AWS EC2(Ubuntu), Docker (Infra)
+ - Swagger(API Docs)
 
 <details>
   <summary>ERD 모델링 🖼️ </summary>
