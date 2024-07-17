@@ -3,9 +3,10 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.3'
 	id 'io.spring.dependency-management' version '1.1.4'
-	id 'com.ewerk.gradle.plugins.querydsl' version "1.0.10"
+	//id 'com.ewerk.gradle.plugins.querydsl' version "1.0.10"
 }
 
+/*
 def querydslSrcDir = 'src/main/generated' // QClass 생성 위치
 
 querydsl {
@@ -25,6 +26,7 @@ compileQuerydsl{
 	options.annotationProcessorPath = configurations.querydsl
 }
 
+ */
 group = 'daily-mission-project'
 version = '0.0.1-SNAPSHOT'
 
