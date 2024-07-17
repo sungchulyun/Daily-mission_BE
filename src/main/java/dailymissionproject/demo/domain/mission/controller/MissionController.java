@@ -31,7 +31,7 @@ public class MissionController {
     private final MissionService missionService;
 
     //== 미션 생성==//
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/create")
     @Caching(evict = {
             @CacheEvict(value = "missionLists", key = "'hot'"),
