@@ -39,7 +39,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String token = jwtUtil.createJwt(username, role,3600*60*60L);
 
         response.addCookie(createCookie("Authorization", token));
-        response.sendRedirect("http://localhost:8080/");
+        response.sendRedirect("http://ec2-43-201-86-45.ap-northeast-2.compute.amazonaws.com:8080/swagger-ui");
     }
 
     private Cookie createCookie(String key, String value){
