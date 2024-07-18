@@ -24,7 +24,7 @@ public class MissionResponseDto {
     @Schema(description = "방장 PK ID")
     private Long userId;
     @Schema(description = "방장 이름")
-    private String userName;
+    private String name;
 
     @Schema(description = "참여자들 목록")
     private List<ParticipantUserDto> participants = new ArrayList<>();
@@ -43,7 +43,7 @@ public class MissionResponseDto {
         this.content = mission.getContent();
         this.imgUrl = mission.getImageUrl();
         this.userId = mission.getUser().getId();
-        this.userName = mission.getUser().getName();
+        this.name = mission.getUser().getName();
         this.participants = mission.getAllParticipantUser();
         this.startDate = mission.getStartDate();
         this.endDate = mission.getEndDate();

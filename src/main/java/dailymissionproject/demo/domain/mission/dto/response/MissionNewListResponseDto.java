@@ -20,7 +20,7 @@ public class MissionNewListResponseDto {
     @Schema(description = "미션 썸네일")
     private String imgUrl;
     @Schema(description = "미션 방장")
-    private String userName;
+    private String name;
 
     @Schema(description = "미션 시작일자")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -31,11 +31,11 @@ public class MissionNewListResponseDto {
     private LocalDate endDate;
 
     @Builder
-    MissionNewListResponseDto(String title, String content, String imgUrl, String userName, LocalDate startDate, LocalDate endDate) {
+    MissionNewListResponseDto(String title, String content, String imgUrl, String name, LocalDate startDate, LocalDate endDate) {
         this.title = title;
         this.content = content;
         this.imgUrl = imgUrl;
-        this.userName = userName;
+        this.name = name;
 
         this.startDate = startDate;
         this.endDate = endDate;
