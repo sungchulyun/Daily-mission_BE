@@ -50,7 +50,9 @@ public class MissionService {
         User findUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
 
-        String credential = String.valueOf(UUID.randomUUID());
+        //참여 코드 6자로 설정
+        String credential = String.valueOf(UUID.randomUUID()).substring(0, 6);
+        log.info("credential is {}", credential);
         String imgUrl = imageService.uploadImg(file);
 
         Mission mission = missionReqDto.toEntity(findUser);
