@@ -10,10 +10,8 @@ import dailymissionproject.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.resource.NoResourceFoundException;
-
+import java.time.LocalDate;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -60,6 +58,10 @@ public class ParticipantService {
         //참여 코드 검증
         if(!requestDto.getCredential().equals(mission.getCredential())){
             throw new RuntimeException("참여코드를 확인해주세요.");
+        }
+
+        if(!(mission.isPossibleToParticipate(LocalDate.now()))){
+            throw new RuntimeException("해당 미션은 참여가 불가능한 미션입니다.");
         }
 
         Participant participant = requestDto.toEntity(findUser);
