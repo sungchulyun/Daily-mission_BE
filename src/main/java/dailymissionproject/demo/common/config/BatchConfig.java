@@ -22,7 +22,7 @@ import java.util.List;
 public class BatchConfig {
 
     private final MissionService missionService;
-    private List<MissionAllListResponseDto> missionLists = new ArrayList<>();
+    private List<MissionAllListResponseDto> missionLists;
 
     @Bean
     public Job endJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
@@ -44,7 +44,9 @@ public class BatchConfig {
                 build();
     }
 
-    @Bean Step readJobStep(JobRepository jobRepository, PlatformTransactionManager transactionManager){
+    @Bean
+    public Step readJobStep(JobRepository jobRepository, PlatformTransactionManager transactionManager){
+        missionLists = new ArrayList<>();
         return new StepBuilder("endJobStep", jobRepository)
                 .tasklet((stepContribution, chunkContext) -> {
                     missionLists = missionService.findAllList();
