@@ -1,5 +1,9 @@
 package dailymissionproject.demo.domain.mission.dto.response;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.participant.dto.response.ParticipantUserDto;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,17 +28,21 @@ public class MissionResponseDto {
     @Schema(description = "방장 PK ID")
     private Long userId;
     @Schema(description = "방장 이름")
-    private String userName;
+    private String name;
 
     @Schema(description = "참여자들 목록")
     private List<ParticipantUserDto> participants = new ArrayList<>();
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Schema(description = "미션 시작일자")
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate startDate;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Schema(description = "미션 종료일자")
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate endDate;
 
     @Builder
@@ -43,7 +51,7 @@ public class MissionResponseDto {
         this.content = mission.getContent();
         this.imgUrl = mission.getImageUrl();
         this.userId = mission.getUser().getId();
-        this.userName = mission.getUser().getName();
+        this.name = mission.getUser().getName();
         this.participants = mission.getAllParticipantUser();
         this.startDate = mission.getStartDate();
         this.endDate = mission.getEndDate();

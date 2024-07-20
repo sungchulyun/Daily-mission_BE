@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -32,11 +33,11 @@ public class MissionController {
 
     //== 미션 생성==//
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PostMapping("/create")
+    @PostMapping("/save")
     @Caching(evict = {
-            @CacheEvict(value = "missionLists", key = "'hot'"),
-            @CacheEvict(value = "missionLists", key = "'new'"),
-            @CacheEvict(value = "missionLists", key = "'all'"),
+            @CacheEvict(value = "missionLists", key = "'hot-' + #pageable.getPageNumber()"),
+            @CacheEvict(value = "missionLists", key = "'new-' + #pageable.getPageNumber()"),
+            @CacheEvict(value = "missionLists", key = "'all-' + #pageable.getPageNumber()"),
             @CacheEvict(value = "mission", key = "'info'")
     })
     @Operation(summary = "미션 생성", description = "사용자가 미션을 생성하고 싶을 때 사용하는 API입니다.")
@@ -47,14 +48,14 @@ public class MissionController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
     public MissionSaveResponseDto save(@AuthenticationPrincipal CustomOAuth2User user
-            , @RequestPart MissionSaveRequestDto missionReqDto
-            , @RequestPart MultipartFile file) throws IOException {
+                                        , @RequestPart MissionSaveRequestDto missionReqDto
+                                        , @RequestPart MultipartFile file) throws IOException {
         return missionService.save(user.getUsername(), missionReqDto, file);
     }
 
     //== 미션 상세 조회 ==//
     @PreAuthorize("hasRole('ROLE_USER')")
-    @GetMapping("/getInfo/{id}")
+    @GetMapping("/{id}")
     @Cacheable(value = "mission", key = "'info'")
     @Operation(summary = "미션 상세 정보 확인", description = "각 미션에 대한 상세정보를 확인하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
@@ -72,7 +73,7 @@ public class MissionController {
     * 방장만 삭제 가능
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     @CacheEvict(value = "mission", key = "'info'")
     @Operation(summary = "미션 삭제", description = "사용자가 미션을 삭제하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
@@ -87,8 +88,8 @@ public class MissionController {
 
 
     //==Hot 미션 목록 가져오기==//
-    @GetMapping("/get/hot")
-    @Cacheable(value = "missionLists", key = "'hot'")
+    @GetMapping("/hot")
+    @Cacheable(value = "missionLists", key = "'hot-' + #pageable.getPageNumber()")
     @Operation(summary = "인기 미션 확인", description = "인기 미션 목록을 확인하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공!"),
@@ -96,14 +97,14 @@ public class MissionController {
             @ApiResponse(responseCode = "404", description = "권한을 확인해주세요."),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
-    public List<MissionHotListResponseDto> findHotList(){
-        return missionService.findHotList();
+    public List<MissionHotListResponseDto> findHotList(Pageable pageable){
+        return missionService.findHotList(pageable);
     }
 
 
     //==New 미션 목록 가져오기==//
-    @GetMapping("/get/new")
-    @CacheEvict(value = "missionLists", key = "'new'")
+    @GetMapping("/new")
+    @Cacheable(value = "missionLists", key = "'new-' + #pageable.getPageNumber()")
     @Operation(summary = "신규 미션 확인", description = "신규 미션 목록을 확인하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공!"),
@@ -111,13 +112,13 @@ public class MissionController {
             @ApiResponse(responseCode = "404", description = "권한을 확인해주세요."),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
-    public List<MissionNewListResponseDto> findNewList(){
-        return missionService.findNewList();
+    public List<MissionNewListResponseDto> findNewList(Pageable pageable){
+        return missionService.findNewList(pageable);
     }
 
     //==모든 미션 목록 가져오기==//
-    @GetMapping("/get/all")
-    @CacheEvict(value = "missionLists", key = "'all'")
+    @GetMapping("/all")
+    @Cacheable(value = "missionLists", key = "'all-' + #pageable.getPageNumber()")
     @Operation(summary = "모든 미션 확인", description = "모든 미션 목록을 확인하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공!"),
@@ -125,8 +126,8 @@ public class MissionController {
             @ApiResponse(responseCode = "404", description = "권한을 확인해주세요."),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
-    public List<MissionAllListResponseDto> findAllList(){
-        return missionService.findAllList();
+    public List<MissionAllListResponseDto> findAllList(Pageable pageable){
+        return missionService.findAllList(pageable);
     }
 
 }
