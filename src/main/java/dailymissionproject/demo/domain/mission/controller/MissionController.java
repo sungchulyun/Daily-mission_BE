@@ -34,12 +34,12 @@ public class MissionController {
     //== 미션 생성==//
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/save")
-    @Caching(evict = {
-            @CacheEvict(value = "missionLists", key = "'hot-' + #pageable.getPageNumber()"),
-            @CacheEvict(value = "missionLists", key = "'new-' + #pageable.getPageNumber()"),
-            @CacheEvict(value = "missionLists", key = "'all-' + #pageable.getPageNumber()"),
-            @CacheEvict(value = "mission", key = "'info'")
-    })
+    //@Caching(evict = {
+    //        @CacheEvict(value = "missionLists", key = "'hot'"),
+    //        @CacheEvict(value = "missionLists", key = "'new'"),
+    //        @CacheEvict(value = "missionLists", key = "'all'"),
+    //        @CacheEvict(value = "mission", key = "'info'")
+    //})
     @Operation(summary = "미션 생성", description = "사용자가 미션을 생성하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공!"),
@@ -89,7 +89,7 @@ public class MissionController {
 
     //==Hot 미션 목록 가져오기==//
     @GetMapping("/hot")
-    @Cacheable(value = "missionLists", key = "'hot-' + #pageable.getPageNumber()")
+    //@Cacheable(value = "missionLists", key = "'hot'")
     @Operation(summary = "인기 미션 확인", description = "인기 미션 목록을 확인하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공!"),
@@ -98,15 +98,13 @@ public class MissionController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
     public List<MissionHotListResponseDto> findHotList(Pageable pageable){
-        int pageNum = pageable.getPageNumber();
-        log.info("pageable page is {}", pageNum);
         return missionService.findHotList(pageable);
     }
 
 
     //==New 미션 목록 가져오기==//
     @GetMapping("/new")
-    @Cacheable(value = "missionLists", key = "'new-' + #pageable.getPageNumber()")
+    //@CacheEvict(value = "missionLists", key = "'new'")
     @Operation(summary = "신규 미션 확인", description = "신규 미션 목록을 확인하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공!"),
@@ -120,7 +118,7 @@ public class MissionController {
 
     //==모든 미션 목록 가져오기==//
     @GetMapping("/all")
-    @Cacheable(value = "missionLists", key = "'all-' + #pageable.getPageNumber()")
+    //@CacheEvict(value = "missionLists", key = "'all'")
     @Operation(summary = "모든 미션 확인", description = "모든 미션 목록을 확인하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공!"),
