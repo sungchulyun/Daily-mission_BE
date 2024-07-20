@@ -14,8 +14,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +33,7 @@ public class MissionController {
 
     //== 미션 생성==//
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PostMapping("/create")
+    @PostMapping("/save")
     //@Caching(evict = {
     //        @CacheEvict(value = "missionLists", key = "'hot'"),
     //        @CacheEvict(value = "missionLists", key = "'new'"),
@@ -57,7 +55,7 @@ public class MissionController {
 
     //== 미션 상세 조회 ==//
     @PreAuthorize("hasRole('ROLE_USER')")
-    @GetMapping("/getInfo/{id}")
+    @GetMapping("/{id}")
     @Cacheable(value = "mission", key = "'info'")
     @Operation(summary = "미션 상세 정보 확인", description = "각 미션에 대한 상세정보를 확인하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
@@ -75,7 +73,7 @@ public class MissionController {
     * 방장만 삭제 가능
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     @CacheEvict(value = "mission", key = "'info'")
     @Operation(summary = "미션 삭제", description = "사용자가 미션을 삭제하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
@@ -90,7 +88,7 @@ public class MissionController {
 
 
     //==Hot 미션 목록 가져오기==//
-    @GetMapping("/get/hot")
+    @GetMapping("/hot")
     //@Cacheable(value = "missionLists", key = "'hot'")
     @Operation(summary = "인기 미션 확인", description = "인기 미션 목록을 확인하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
@@ -105,7 +103,7 @@ public class MissionController {
 
 
     //==New 미션 목록 가져오기==//
-    @GetMapping("/get/new")
+    @GetMapping("/new")
     //@CacheEvict(value = "missionLists", key = "'new'")
     @Operation(summary = "신규 미션 확인", description = "신규 미션 목록을 확인하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
@@ -119,7 +117,7 @@ public class MissionController {
     }
 
     //==모든 미션 목록 가져오기==//
-    @GetMapping("/get/all")
+    @GetMapping("/all")
     //@CacheEvict(value = "missionLists", key = "'all'")
     @Operation(summary = "모든 미션 확인", description = "모든 미션 목록을 확인하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
