@@ -4,6 +4,7 @@ import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
 import dailymissionproject.demo.domain.missionRule.dto.DateDto;
 import dailymissionproject.demo.domain.participant.repository.Participant;
+import dailymissionproject.demo.domain.participant.repository.ParticipantRepository;
 import dailymissionproject.demo.domain.post.dto.PostScheduleResponseDto;
 import dailymissionproject.demo.domain.post.dto.PostSubmitDto;
 import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
@@ -32,6 +33,7 @@ public class PostService {
     private final MissionRepository missionRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final ParticipantRepository participantRepository;
 
     @Transactional
     public Long save(String username, PostSaveRequestDto requestDto){
@@ -41,7 +43,10 @@ public class PostService {
 
 
         User findUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new NoSuchElementException("해당 사용자가 존재하지 않습니다."));
+
+        Participant participant = participantRepository.findByMissionAndUser(mission, findUser)
+                .orElseThrow(() -> new NoSuchElementException("해당 미션에 참여중인 사용자가 아닙니다."));
 
         //미션 참여자인지 검증
         validIsParticipating(findUser, mission);
