@@ -10,7 +10,7 @@
  - Spring Security(Security)
  - OAuth2.0 + JWT(Authentication & Authorization)
  - Spring Batch(Batch)
- - MariaDB (RDB)
+ - AWS RDS(MariaDB)
  - JPA & QueryDSL (ORM)
  - Redis (Cache)
  - AWS S3 (Object Storage)
