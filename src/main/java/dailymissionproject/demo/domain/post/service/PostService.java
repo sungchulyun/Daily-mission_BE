@@ -43,7 +43,6 @@ public class PostService {
         Mission mission = missionRepository.findByIdAndDeletedIsFalse(requestDto.getMissionId())
                 .orElseThrow(() -> new NoSuchElementException("해당 미션이 존재하지 않습니다."));
 
-
         User findUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
 
@@ -51,9 +50,10 @@ public class PostService {
         validIsParticipating(findUser, mission);
 
         String imgUrl = imageService.uploadImg(file);
-        mission.setImageUrl(imgUrl);
 
         Post post = requestDto.toEntity(findUser, mission);
+        post.setImageUrl(imgUrl);
+
         return postRepository.save(post).getId();
     }
 
@@ -154,7 +154,7 @@ public class PostService {
     private boolean validIsParticipating(User user, Mission mission){
 
         for(Participant p : mission.getParticipants()){
-            if(p.getId() == user.getId())
+            if(p.getUser().getId() == user.getId())
                 return true;
         }
         throw new RuntimeException("참여중이지 않은 미션에 인증 글을 작성할 수 없습니다.");
