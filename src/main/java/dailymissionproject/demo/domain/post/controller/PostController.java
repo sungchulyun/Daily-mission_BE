@@ -49,11 +49,11 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "포스트 생성에 실패하였습니다."),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
-    public Long save(@RequestBody PostSaveRequestDto requestDto
-                    , @AuthenticationPrincipal CustomOAuth2User user
+    public Long save(@AuthenticationPrincipal CustomOAuth2User user
+                    , @RequestPart PostSaveRequestDto postSaveReqDto
                     , @RequestPart MultipartFile file)throws IOException {
 
-        return postService.save(user.getUsername(), requestDto, file);
+        return postService.save(user.getUsername(), postSaveReqDto, file);
     }
 
     //== 인증 글 상세 조회==//
