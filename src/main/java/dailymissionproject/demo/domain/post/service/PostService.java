@@ -1,5 +1,6 @@
 package dailymissionproject.demo.domain.post.service;
 
+import dailymissionproject.demo.domain.image.ImageService;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
 import dailymissionproject.demo.domain.missionRule.dto.DateDto;
@@ -16,7 +17,9 @@ import dailymissionproject.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,9 +35,10 @@ public class PostService {
     private final MissionRepository missionRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final ImageService imageService;
 
     @Transactional
-    public Long save(String username, PostSaveRequestDto requestDto){
+    public Long save(String username, PostSaveRequestDto requestDto, MultipartFile file) throws IOException {
 
         Mission mission = missionRepository.findByIdAndDeletedIsFalse(requestDto.getMissionId())
                 .orElseThrow(() -> new NoSuchElementException("해당 미션이 존재하지 않습니다."));
@@ -45,6 +49,9 @@ public class PostService {
 
         //미션 참여자인지 검증
         validIsParticipating(findUser, mission);
+
+        String imgUrl = imageService.uploadImg(file);
+        mission.setImageUrl(imgUrl);
 
         Post post = requestDto.toEntity(findUser, mission);
         return postRepository.save(post).getId();
