@@ -29,6 +29,9 @@ public class MissionBatchScheduler {
 
      */
 
+    /**
+     * 설명 : 스케줄러 설정은 서비스 배포 이후에 수행한다.
+
     @Scheduled(cron = "0 0 3 * * *")
     public void runJob(){
         LocalDate time = LocalDate.now();
@@ -45,5 +48,5 @@ public class MissionBatchScheduler {
         }
     }
 
-
+        */
 }
