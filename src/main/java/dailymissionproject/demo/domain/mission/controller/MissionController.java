@@ -1,7 +1,7 @@
 package dailymissionproject.demo.domain.mission.controller;
 
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
-import dailymissionproject.demo.domain.mission.Service.MissionService;
+import dailymissionproject.demo.domain.mission.service.MissionService;
 import dailymissionproject.demo.domain.mission.dto.request.MissionSaveRequestDto;
 import dailymissionproject.demo.domain.mission.dto.response.*;
 import io.swagger.v3.oas.annotations.Operation;
