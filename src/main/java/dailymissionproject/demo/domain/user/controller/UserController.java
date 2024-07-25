@@ -25,7 +25,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/info")
+    @GetMapping("/detail")
     @Operation(summary = "사용자 개인 정보 확인", description = "사용자가 프로필 정보를 확인하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공!"),
@@ -33,7 +33,6 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "해당 사용자가 존재하지 않습니다."),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
-    @Cacheable(value = "user", key = "#user.username")
     public UserResDto getUser(@AuthenticationPrincipal CustomOAuth2User user){
         return userService.getUserInfo(user.getUsername());
     }
