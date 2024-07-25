@@ -71,4 +71,12 @@ public class User extends BaseTimeEntity {
     public void setImg(String imgUrl){
         this.imgUrl = imgUrl;
     }
+
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public void setEmail(String email){
+        this.email = email;
+    }
 }

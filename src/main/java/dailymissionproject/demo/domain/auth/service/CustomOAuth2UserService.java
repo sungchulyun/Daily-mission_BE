@@ -60,7 +60,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         } else {
             User user = findUser.get();
             user.setEmail(oAuth2Response.getEmail());
-            user.setImageUrl(oAuth2Response.getProfileImage());
+            user.setImg(oAuth2Response.getProfileImage());
             user.setName(oAuth2Response.getName());
 
             userRepository.save(user);
