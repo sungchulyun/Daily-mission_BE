@@ -1,12 +1,18 @@
 package dailymissionproject.demo.domain.mission.service;
 
+
+import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.MISSION_NOT_FOUND;
+import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
+
 import dailymissionproject.demo.domain.image.ImageService;
 import dailymissionproject.demo.domain.mission.dto.request.MissionSaveRequestDto;
 import dailymissionproject.demo.domain.mission.dto.response.*;
+import dailymissionproject.demo.domain.mission.exception.MissionException;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
 import dailymissionproject.demo.domain.participant.repository.Participant;
 import dailymissionproject.demo.domain.participant.repository.ParticipantRepository;
+import dailymissionproject.demo.domain.user.exception.UserException;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +22,11 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
+
+
 
 
 @Service
@@ -37,7 +44,7 @@ public class MissionService {
     public MissionResponseDto findById(Long id){
 
         Mission mission = missionRepository.findByIdAndDeletedIsFalse(id)
-                .orElseThrow(() -> new NoSuchElementException("해당 미션이 존재하지 않습니다."));
+                .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
 
         MissionResponseDto responseDto = new MissionResponseDto(mission);
         return responseDto;
@@ -49,31 +56,34 @@ public class MissionService {
     public MissionSaveResponseDto save(String username, MissionSaveRequestDto missionReqDto, MultipartFile file) throws IOException {
 
         User findUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         //참여 코드 5글자로 설정
         String credential = String.valueOf(UUID.randomUUID()).substring(0, 5);
         String imgUrl = imageService.uploadImg(file);
 
         Mission mission = missionReqDto.toEntity(findUser);
-        mission.setImageUrl(imgUrl);
+
+        mission.setImgUrl(imgUrl);
         mission.setCredential(credential);
 
+        //미션 시작일자 검증
         mission.isValidStartDate(LocalDate.now());
+
         missionRepository.save(mission);
 
         //미션 생성 시 방장은 자동 참여
         Participant participant = Participant.builder()
-                .mission(mission)
-                .user(findUser)
-                .build();
+                                             .mission(mission)
+                                             .user(findUser)
+                                             .build();
+
         participantRepository.save(participant);
 
         MissionSaveResponseDto responseDto = MissionSaveResponseDto.builder()
-                .credential(credential).build();
+                                                                    .credential(credential)
+                                                                    .build();
         return responseDto;
-
-
     }
 
     /*
@@ -84,7 +94,7 @@ public class MissionService {
     public boolean delete(Long id, String username){
 
         Mission mission = missionRepository.findByIdAndDeletedIsFalse(id)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 미션입니다."));
+                .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
 
         User findUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
@@ -194,7 +204,7 @@ public class MissionService {
 
         for(MissionAllListResponseDto missionDto : missionLists){
             Mission mission = missionRepository.findByIdAndDeletedIsFalse(missionDto.getId())
-                    .orElseThrow(() -> new NoSuchElementException("해당 미션은 종료되었거나 폐기되었습니다."));
+                    .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
 
             if(mission.isEndAble(LocalDate.now())){
                 mission.end();
