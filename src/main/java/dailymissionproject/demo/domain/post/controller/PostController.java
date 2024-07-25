@@ -18,7 +18,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -87,6 +86,7 @@ public class PostController {
     //== 미션별 전체 포스트 목록 불러오기==//
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/mission/{id}")
+    @Cacheable(value = "postLists", key = "'mission-' + #requestDto.missionId")
     @Operation(summary = "미션별 전체 포스트 조회", description = "미션별 전체 포스트 목록을 조회할 때 사용하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공!"),
@@ -114,8 +114,10 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "포스트 수정에 실패하였습니다."),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
-    public Long updateById(@PathVariable("id") Long id, @RequestBody PostUpdateRequestDto postUpdateRequestDto){
-        return postService.updateById(id, postUpdateRequestDto);
+    public Long updateById(@PathVariable("id") Long id
+                        , @RequestPart MultipartFile file
+                        , @RequestPart PostUpdateRequestDto postUpdateRequestDto) throws IOException {
+        return postService.updateById(id, file, postUpdateRequestDto);
     }
 
 
