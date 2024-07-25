@@ -20,7 +20,7 @@ import java.util.List;
 
 @Entity
 @NoArgsConstructor
-@Getter @Setter
+@Getter
 public class Mission extends BaseTimeEntity {
 
     @Id @GeneratedValue
@@ -74,6 +74,14 @@ public class Mission extends BaseTimeEntity {
         //default
         this.ended = false;
         this.deleted = false;
+    }
+
+    public void setCredential(String credential){
+        this.credential = credential;
+    }
+
+    public void setImgUrl(String imgUrl){
+        this.imageUrl = imgUrl;
     }
 
     /**
@@ -131,7 +139,7 @@ public class Mission extends BaseTimeEntity {
             ParticipantUserDto participantUser = ParticipantUserDto.builder()
                     .id(user.getId())
                     .userName(user.getName())
-                    .imgUrl(user.getImageUrl())
+                    .imgUrl(user.getImgUrl())
                     .banned(p.isBanned())
                     .build();
 
