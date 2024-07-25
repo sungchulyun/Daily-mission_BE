@@ -47,6 +47,7 @@ public class BatchConfig {
     @Bean
     public Step readJobStep(JobRepository jobRepository, PlatformTransactionManager transactionManager){
         missionLists = new ArrayList<>();
+
         return new StepBuilder("endJobStep", jobRepository)
                 .tasklet((stepContribution, chunkContext) -> {
                     missionLists = missionService.findAllList();

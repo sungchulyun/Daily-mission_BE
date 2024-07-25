@@ -16,7 +16,28 @@ public interface MissionRepositoryCustom {
 
     //All 미션 목록
     Slice<Mission> findAllByCreatedDate(Pageable pageable);
+    List<Mission> findAllByCreatedDate();
+    /*
+        @Override
+        public List<Mission> findAllByParticipantSize() {
+            return queryFactory
+                    .select(mission)
+                    .from(mission)
+                    .where(mission.deleted.isFalse().and(mission.ended.isFalse()))
+                    .orderBy(mission.participants.size().desc(), mission.createdTime.desc())
+                    .fetch();
+        }
 
+        @Override
+        public List<Mission> findAllByCreatedInMonth() {
+            return queryFactory
+                    .select(mission)
+                    .from(mission)
+                    .where(mission.deleted.isFalse(), mission.ended.isFalse())
+                    .orderBy(mission.createdTime.desc())
+                    .fetch();
+        }
+        */
 
 
 

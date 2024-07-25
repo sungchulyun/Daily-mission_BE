@@ -106,6 +106,7 @@ public class MissionService {
         Slice<Mission> hotLists = missionRepository.findAllByParticipantSize(pageable);
         for(Mission mission : hotLists){
             MissionHotListResponseDto hotMission = MissionHotListResponseDto.builder()
+                    .id(mission.getId())
                     .title(mission.getTitle())
                     .content(mission.getContent())
                     .imgUrl(mission.getImageUrl())
@@ -128,6 +129,7 @@ public class MissionService {
         Slice<Mission> newLists = missionRepository.findAllByCreatedInMonth(pageable);
         for(Mission mission : newLists){
             MissionNewListResponseDto newMission = MissionNewListResponseDto.builder()
+                    .id(mission.getId())
                     .title(mission.getTitle())
                     .content(mission.getContent())
                     .imgUrl(mission.getImageUrl())
@@ -148,6 +150,29 @@ public class MissionService {
         List<MissionAllListResponseDto> res = new ArrayList<>();
 
         Slice<Mission> allLists = missionRepository.findAllByCreatedDate(pageable);
+        for(Mission mission : allLists){
+            MissionAllListResponseDto allMission = MissionAllListResponseDto.builder()
+                    .id(mission.getId())
+                    .title(mission.getTitle())
+                    .content(mission.getContent())
+                    .imgUrl(mission.getImageUrl())
+                    .name(mission.getUser().getName())
+                    .startDate(mission.getStartDate())
+                    .endDate(mission.getEndDate())
+                    .build();
+
+            res.add(allMission);
+        }
+        return res;
+    }
+
+    @Transactional(readOnly = true)
+    public List<MissionAllListResponseDto> findAllList(){
+
+        List<MissionAllListResponseDto> res = new ArrayList<>();
+
+        List<Mission> allLists = missionRepository.findAllByCreatedDate();
+
         for(Mission mission : allLists){
             MissionAllListResponseDto allMission = MissionAllListResponseDto.builder()
                     .id(mission.getId())
