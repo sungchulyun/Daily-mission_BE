@@ -1,4 +1,4 @@
-package dailymissionproject.demo.common.config;
+package dailymissionproject.demo.domain.mission.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.*;
@@ -14,7 +14,7 @@ import java.time.LocalDate;
 
 @Component
 @RequiredArgsConstructor
-public class BatchScheduler {
+public class MissionBatchScheduler {
 
     private final JobLauncher jobLauncher;
     private final JobRegistry jobRegistry;

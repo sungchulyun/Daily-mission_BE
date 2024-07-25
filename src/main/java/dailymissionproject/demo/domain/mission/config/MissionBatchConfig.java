@@ -1,4 +1,4 @@
-package dailymissionproject.demo.common.config;
+package dailymissionproject.demo.domain.mission.config;
 
 import dailymissionproject.demo.domain.mission.Service.MissionService;
 import dailymissionproject.demo.domain.mission.dto.response.MissionAllListResponseDto;
@@ -19,7 +19,7 @@ import java.util.List;
 @Configuration
 @Slf4j
 @RequiredArgsConstructor
-public class BatchConfig {
+public class MissionBatchConfig {
 
     private final MissionService missionService;
     private List<MissionAllListResponseDto> missionLists;
