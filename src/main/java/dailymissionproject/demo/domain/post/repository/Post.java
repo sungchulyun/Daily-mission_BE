@@ -15,7 +15,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter
+@Getter
 @NoArgsConstructor
 public class Post extends BaseTimeEntity {
 
@@ -55,8 +55,13 @@ public class Post extends BaseTimeEntity {
         this.imageUrl = imgUrl;
     }
 
-    public void update(String title, String content){
+    public void update(String title, String content, String imgUrl){
         this.title = title;
         this.content = content;
+        this.imageUrl = imgUrl;
+    }
+
+    public void setImageUrl(String imageUrl){
+        this.imageUrl = imageUrl;
     }
 }
