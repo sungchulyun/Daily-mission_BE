@@ -58,7 +58,7 @@ public class PostController {
 
     //== 인증 글 상세 조회==//
     @PreAuthorize("hasRole('ROLE_USER')")
-    @GetMapping("/getInfo/{id}")
+    @GetMapping("/detail/{id}")
     @Cacheable(value = "posts", key = "#id")
     @Operation(summary = "포스트 상세 조회", description = "포스트 상세 조회할 때 사용하는 API입니다.")
     @ApiResponses({
@@ -73,7 +73,7 @@ public class PostController {
 
     //== 유저별 전체 포스트 목록 불러오기==//
     @PreAuthorize("hasRole('ROLE_USER')")
-    @GetMapping("/getUser")
+    @GetMapping("/user")
     @Cacheable(value = "postLists", key = "'user-' + #user.getUsername()")
     @Operation(summary = "유저별 전체 포스트 조회", description = "유저가 제출한 포스트 목록을 조회할 때 사용하는 API입니다.")
     @ApiResponses({
@@ -89,7 +89,7 @@ public class PostController {
 
     //== 미션별 전체 포스트 목록 불러오기==//
     @PreAuthorize("hasRole('ROLE_USER')")
-    @GetMapping("getMission/{id}")
+    @GetMapping("/mission/{id}")
     @Operation(summary = "미션별 전체 포스트 조회", description = "미션별 전체 포스트 목록을 조회할 때 사용하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공!"),
@@ -102,8 +102,8 @@ public class PostController {
     }
 
     //== 포스트 업데이트==//
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/update/{id}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PutMapping("/{id}")
     @Caching(evict = {
             //전체 포스트
             @CacheEvict(value = "postLists", key = "'all'"),
@@ -123,8 +123,8 @@ public class PostController {
 
 
     //== 포스트 삭제==//
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @DeleteMapping("/{id}")
     @Caching(evict = {
             //전체 포스트
             @CacheEvict(value = "postLists", key = "'all'"),
