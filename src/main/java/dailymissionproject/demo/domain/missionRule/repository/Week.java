@@ -1,5 +1,6 @@
 package dailymissionproject.demo.domain.missionRule.repository;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.Builder;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Embeddable
 @Getter
 @NoArgsConstructor
+@Schema(description = "미션 필수 제출 요일")
 public class Week {
 
     @Column(name = "SUNDAY", nullable = false)

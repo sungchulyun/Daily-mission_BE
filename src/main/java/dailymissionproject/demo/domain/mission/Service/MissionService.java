@@ -11,6 +11,8 @@ import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,7 +51,8 @@ public class MissionService {
         User findUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
 
-        String credential = String.valueOf(UUID.randomUUID());
+        //참여 코드 5글자로 설정
+        String credential = String.valueOf(UUID.randomUUID()).substring(0, 5);
         String imgUrl = imageService.uploadImg(file);
 
         Mission mission = missionReqDto.toEntity(findUser);
@@ -96,16 +99,17 @@ public class MissionService {
 
     //Hot 미션 불러오기 ==//
     @Transactional(readOnly = true)
-    public List<MissionHotListResponseDto> findHotList(){
+    public List<MissionHotListResponseDto> findHotList(Pageable pageable){
 
         List<MissionHotListResponseDto> res = new ArrayList<>();
 
-        List<Mission> hotLists = missionRepository.findAllByParticipantSize();
+        Slice<Mission> hotLists = missionRepository.findAllByParticipantSize(pageable);
         for(Mission mission : hotLists){
             MissionHotListResponseDto hotMission = MissionHotListResponseDto.builder()
                     .title(mission.getTitle())
                     .content(mission.getContent())
-                    .userName(mission.getUser().getName())
+                    .imgUrl(mission.getImageUrl())
+                    .name(mission.getUser().getName())
                     .startDate(mission.getStartDate())
                     .endDate(mission.getEndDate())
                     .build();
@@ -117,16 +121,17 @@ public class MissionService {
 
     //New 미션 불러오기 ==//
     @Transactional(readOnly = true)
-    public List<MissionNewListResponseDto> findNewList(){
+    public List<MissionNewListResponseDto> findNewList(Pageable pageable){
 
         List<MissionNewListResponseDto> res = new ArrayList<>();
 
-        List<Mission> newLists = missionRepository.findAllByCreatedInMonth();
+        Slice<Mission> newLists = missionRepository.findAllByCreatedInMonth(pageable);
         for(Mission mission : newLists){
             MissionNewListResponseDto newMission = MissionNewListResponseDto.builder()
                     .title(mission.getTitle())
                     .content(mission.getContent())
-                    .userName(mission.getUser().getName())
+                    .imgUrl(mission.getImageUrl())
+                    .name(mission.getUser().getName())
                     .startDate(mission.getStartDate())
                     .endDate(mission.getEndDate())
                     .build();
@@ -138,17 +143,18 @@ public class MissionService {
 
     //모든 미션 불러오기 ==//
     @Transactional(readOnly = true)
-    public List<MissionAllListResponseDto> findAllList(){
+    public List<MissionAllListResponseDto> findAllList(Pageable pageable){
 
         List<MissionAllListResponseDto> res = new ArrayList<>();
 
-        List<Mission> allLists = missionRepository.findAllByCreatedDate();
+        Slice<Mission> allLists = missionRepository.findAllByCreatedDate(pageable);
         for(Mission mission : allLists){
             MissionAllListResponseDto allMission = MissionAllListResponseDto.builder()
                     .id(mission.getId())
                     .title(mission.getTitle())
                     .content(mission.getContent())
-                    .userName(mission.getUser().getName())
+                    .imgUrl(mission.getImageUrl())
+                    .name(mission.getUser().getName())
                     .startDate(mission.getStartDate())
                     .endDate(mission.getEndDate())
                     .build();

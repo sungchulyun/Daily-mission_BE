@@ -1,5 +1,6 @@
 package dailymissionproject.demo.domain.post.service;
 
+import dailymissionproject.demo.domain.image.ImageService;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
 import dailymissionproject.demo.domain.missionRule.dto.DateDto;
@@ -16,14 +17,16 @@ import dailymissionproject.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -32,13 +35,13 @@ public class PostService {
     private final MissionRepository missionRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final ImageService imageService;
 
     @Transactional
-    public Long save(String username, PostSaveRequestDto requestDto){
+    public Long save(String username, PostSaveRequestDto requestDto, MultipartFile file) throws IOException {
 
         Mission mission = missionRepository.findByIdAndDeletedIsFalse(requestDto.getMissionId())
                 .orElseThrow(() -> new NoSuchElementException("해당 미션이 존재하지 않습니다."));
-
 
         User findUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
@@ -46,7 +49,11 @@ public class PostService {
         //미션 참여자인지 검증
         validIsParticipating(findUser, mission);
 
+        String imgUrl = imageService.uploadImg(file);
+
         Post post = requestDto.toEntity(findUser, mission);
+        post.setImageUrl(imgUrl);
+
         return postRepository.save(post).getId();
     }
 
@@ -145,10 +152,42 @@ public class PostService {
     }
 
     private boolean validIsParticipating(User user, Mission mission){
+
         for(Participant p : mission.getParticipants()){
-            if(p.getId() == user.getId())
+            if(p.getUser().getId() == user.getId())
                 return true;
         }
         throw new RuntimeException("참여중이지 않은 미션에 인증 글을 작성할 수 없습니다.");
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isSubmitToday(Participant participant, LocalDateTime now){
+
+        boolean isSubmit = false;
+
+        /*
+        * 설명 : 현재시간 0시 ~ 3시 : 전날 03시01분 ~ 현재시간까지 제출 여부 확인
+        *        현재시간 3시 ~ 24시 : 금일 03시 ~ 현재시간까지 제출 여부 확인
+        *
+        * 설명 : 매일 03시에 강퇴 처리를 수행하기 때문에,
+        * -> 전날 새벽3시~ 다음날 새벽3시를 각각 분기 처리
+         */
+
+        LocalDateTime criteria = LocalDate.now().atTime(03,00);
+        if(now.isBefore(criteria)){
+            //전날 새벽 3시 ~ 현재
+            isSubmit = postRepository.countPostSubmit(participant.getMission()
+            , participant.getUser()
+            ,criteria.minusDays(1)
+            , now) > 0;
+
+        } else {
+            //금일 새벽 3시  ~ 현재
+            isSubmit = postRepository.countPostSubmit(participant.getMission()
+            ,participant.getUser()
+            ,criteria
+            ,now) > 0;
+        }
+        return isSubmit;
     }
 }

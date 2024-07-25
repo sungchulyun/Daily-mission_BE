@@ -3,9 +3,10 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.3'
 	id 'io.spring.dependency-management' version '1.1.4'
-	id 'com.ewerk.gradle.plugins.querydsl' version "1.0.10"
+	//id 'com.ewerk.gradle.plugins.querydsl' version "1.0.10"
 }
 
+/*
 def querydslSrcDir = 'src/main/generated' // QClass 생성 위치
 
 querydsl {
@@ -25,6 +26,7 @@ compileQuerydsl{
 	options.annotationProcessorPath = configurations.querydsl
 }
 
+ */
 group = 'daily-mission-project'
 version = '0.0.1-SNAPSHOT'
 
@@ -47,6 +49,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.7'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	//Swagger
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 
 	//QueryDsl
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'

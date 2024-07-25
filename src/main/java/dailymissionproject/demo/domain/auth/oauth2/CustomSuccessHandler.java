@@ -33,12 +33,13 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
-        Role role = Role.valueOf(auth.getAuthority());
+        //Role role = Role.valueOf(auth.getAuthority());
 
+        String role = auth.getAuthority();
         String token = jwtUtil.createJwt(username, role,3600*60*60L);
 
         response.addCookie(createCookie("Authorization", token));
-        response.sendRedirect("http://localhost:3000/");
+        response.sendRedirect("http://ec2-43-201-86-45.ap-northeast-2.compute.amazonaws.com:8080/swagger-ui");
     }
 
     private Cookie createCookie(String key, String value){

@@ -5,15 +5,17 @@ import dailymissionproject.demo.domain.mission.repository.MissionRepository;
 import dailymissionproject.demo.domain.participant.dto.request.ParticipantSaveRequestDto;
 import dailymissionproject.demo.domain.participant.repository.Participant;
 import dailymissionproject.demo.domain.participant.repository.ParticipantRepository;
+import dailymissionproject.demo.domain.post.service.PostService;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.resource.NoResourceFoundException;
-
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -23,6 +25,8 @@ public class ParticipantService {
     private final ParticipantRepository participantRepository;
     private final UserRepository userRepository;
     private final MissionRepository missionRepository;
+    private final PostService postService;
+
 
     @Transactional
     public boolean save(String username, ParticipantSaveRequestDto requestDto){
@@ -62,8 +66,30 @@ public class ParticipantService {
             throw new RuntimeException("참여코드를 확인해주세요.");
         }
 
+        if(!(mission.isPossibleToParticipate(LocalDate.now()))){
+            throw new RuntimeException("해당 미션은 참여가 불가능한 미션입니다.");
+        }
+
         Participant participant = requestDto.toEntity(findUser);
         participantRepository.save(participant);
         return true;
+    }
+
+    @Transactional
+    public void ban(){
+
+        LocalDateTime now = LocalDateTime.now();
+
+        List<Mission> missionList = missionRepository.findAll();
+
+        for(Mission mission : missionList){
+            for(Participant p : mission.getParticipants()){
+                boolean submitted = postService.isSubmitToday(p, now);
+
+                if(!submitted){
+                    p.ban();
+                }
+            }
+        }
     }
 }

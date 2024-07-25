@@ -3,21 +3,28 @@ package dailymissionproject.demo.domain.post.dto.request;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.post.repository.Post;
 import dailymissionproject.demo.domain.user.repository.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Schema(description = "포스트 생성 요청 DTO")
 public class PostSaveRequestDto {
+
+    @Schema(description = "미션 PK ID")
     private final Long missionId;
+
+    @Schema(description = "포스트 제목")
     private final String title;
+
+    @Schema(description = "포스트 내용")
     private final String content;
-    private final String imgUrl;
+
     @Builder
-    public PostSaveRequestDto(Long missionId, String title, String content, String imgUrl) {
+    public PostSaveRequestDto(Long missionId, String title, String content) {
         this.missionId = missionId;
         this.title = title;
         this.content = content;
-        this.imgUrl = imgUrl;
     }
 
     public Post toEntity(User user, Mission mission){
@@ -26,7 +33,6 @@ public class PostSaveRequestDto {
                 .user(user)
                 .title(this.title)
                 .content(this.content)
-                .imgUrl(this.imgUrl)
                 .build();
     }
 
