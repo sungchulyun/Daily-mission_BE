@@ -17,6 +17,8 @@ import java.time.LocalDate;
 @Schema(description = "신규 미션 목록")
 public class MissionNewListResponseDto {
 
+    @Schema(description = "미션 PK ID")
+    private Long id;
     @Schema(description = "미션 제목")
     private String title;
     @Schema(description = "미션 내용")
@@ -39,7 +41,8 @@ public class MissionNewListResponseDto {
     private LocalDate endDate;
 
     @Builder
-    MissionNewListResponseDto(String title, String content, String imgUrl, String name, LocalDate startDate, LocalDate endDate) {
+    MissionNewListResponseDto(Long id, String title, String content, String imgUrl, String name, LocalDate startDate, LocalDate endDate) {
+        this.id = id;
         this.title = title;
         this.content = content;
         this.imgUrl = imgUrl;

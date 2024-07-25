@@ -84,7 +84,7 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
                 .orderBy(mission.createdTime.desc())
                 .fetch();
     }
-
+    */
     @Override
     public List<Mission> findAllByCreatedDate() {
         return queryFactory
@@ -94,5 +94,5 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
                 .fetch();
     }
 
-     */
+
 }
