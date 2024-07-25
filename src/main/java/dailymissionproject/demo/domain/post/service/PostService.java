@@ -1,6 +1,12 @@
 package dailymissionproject.demo.domain.post.service;
 
+
+import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.MISSION_NOT_FOUND;
+import static dailymissionproject.demo.domain.post.exception.PostExceptionCode.POST_NOT_FOUND;
+import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
+
 import dailymissionproject.demo.domain.image.ImageService;
+import dailymissionproject.demo.domain.mission.exception.MissionException;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
 import dailymissionproject.demo.domain.missionRule.dto.DateDto;
@@ -10,15 +16,16 @@ import dailymissionproject.demo.domain.post.dto.PostSubmitDto;
 import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
 import dailymissionproject.demo.domain.post.dto.request.PostUpdateRequestDto;
 import dailymissionproject.demo.domain.post.dto.response.PostResponseDto;
+import dailymissionproject.demo.domain.post.exception.PostException;
 import dailymissionproject.demo.domain.post.repository.Post;
 import dailymissionproject.demo.domain.post.repository.PostRepository;
+import dailymissionproject.demo.domain.user.exception.UserException;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -41,10 +48,10 @@ public class PostService {
     public Long save(String username, PostSaveRequestDto requestDto, MultipartFile file) throws IOException {
 
         Mission mission = missionRepository.findByIdAndDeletedIsFalse(requestDto.getMissionId())
-                .orElseThrow(() -> new NoSuchElementException("해당 미션이 존재하지 않습니다."));
+                .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
 
         User findUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         //미션 참여자인지 검증
         validIsParticipating(findUser, mission);
@@ -61,7 +68,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostResponseDto findById(Long id){
 
-        Post post = postRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 포스트가 존재하지 않습니다. id : " + id));
+        Post post = postRepository.findById(id).orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
         PostResponseDto responseDto = PostResponseDto.builder()
                                     .post(post)
@@ -74,7 +81,7 @@ public class PostService {
     public List<PostResponseDto> findAllByUser(String username){
 
         User findUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         List<Post> lists = postRepository.findAllByUser(findUser);
 
@@ -89,7 +96,8 @@ public class PostService {
     @Transactional(readOnly = true)
     public List<PostResponseDto> findAllByMission(Long id){
 
-        Mission mission = missionRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 미션이 존재하지 않습니다. id" + id));
+        Mission mission = missionRepository.findById(id)
+                .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
 
         List<Post> lists = postRepository.findAllByMission(mission);
 
@@ -111,7 +119,7 @@ public class PostService {
         LocalDate startDate = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).minusWeeks(week);
 
         Mission mission = missionRepository.findByIdAndDeletedIsFalse(id)
-                .orElseThrow(() -> new NoSuchElementException("해당 미션은 존재하지 않거나 폐기되었습니다. id"+ id));
+                .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
 
         /*
         * Week주의 일주일간 날짜 & 제출의무 요일 확인
@@ -134,11 +142,14 @@ public class PostService {
 
     //== 포스트 수정==//
     @Transactional
-    public Long updateById(Long id, PostUpdateRequestDto requestDto){
+    public Long updateById(Long id, MultipartFile file, PostUpdateRequestDto requestDto) throws IOException {
 
-        Post post = postRepository.findById(id).orElseThrow(() -> new NoSuchElementException("존재하지 않는 포스트입니다."+ id));
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
-        post.update(requestDto.getTitle(), requestDto.getContent());
+        String imgUrl = imageService.uploadImg(file);
+
+        post.update(requestDto.getTitle(), requestDto.getContent(), imgUrl);
         return postRepository.save(post).getId();
     }
 
@@ -146,7 +157,8 @@ public class PostService {
     @Transactional
     public boolean deleteById(Long id){
 
-        Post post = postRepository.findById(id).orElseThrow(() -> new NoSuchElementException("존재하지 않는 포스트입니다. id =" + id));
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new PostException(POST_NOT_FOUND));
         postRepository.deleteById(id);
         return true;
     }
