@@ -23,19 +23,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final ImageService imageService;
 
-    @Transactional
-    public void updateProfile(String username, MultipartFile file) throws IOException {
-
-        User findUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
-
-        String imgUrl = imageService.uploadImg(file);
-        findUser.setImageUrl(imgUrl);
-        userRepository.save(findUser);
-    }
-
+    /**
+     *
+     */
     @Transactional(readOnly = true)
-    public UserResDto getUserInfo(String username){
+    public UserResDto detail(String username){
 
         User findUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
@@ -43,9 +35,19 @@ public class UserService {
         UserResDto res = UserResDto.builder()
                 .name(username)
                 .email(findUser.getEmail())
-                .imgUrl(findUser.getImageUrl())
+                .imgUrl(findUser.getImgUrl())
                 .build();
 
         return res;
+    }
+    @Transactional
+    public void updateProfile(String username, MultipartFile file) throws IOException {
+
+        User findUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+
+        String imgUrl = imageService.uploadImg(file);
+        findUser.setImg(imgUrl);
+        userRepository.save(findUser);
     }
 }

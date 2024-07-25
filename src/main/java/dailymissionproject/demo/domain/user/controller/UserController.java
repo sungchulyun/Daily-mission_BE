@@ -34,7 +34,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
     public UserResDto getUser(@AuthenticationPrincipal CustomOAuth2User user){
-        return userService.getUserInfo(user.getUsername());
+        return userService.detail(user.getUsername());
     }
     /*
     * 2024-07-09
