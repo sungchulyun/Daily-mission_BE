@@ -15,9 +15,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -83,8 +81,7 @@ public class PostController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
     public List<PostResponseDto> findByUser(@AuthenticationPrincipal CustomOAuth2User user){
-        String username = user.getUsername();
-        return postService.findAllByUser(username);
+        return postService.findAllByUser(user.getUsername());
     }
 
     //== 미션별 전체 포스트 목록 불러오기==//
