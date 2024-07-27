@@ -10,7 +10,7 @@ public enum UserExceptionCode {
 
     SUCCESS(HttpStatus.OK, "OK"),
 
-    USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "해당 사용자가 존재하지 않습니다.");
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자가 존재하지 않습니다.");
 
     private final HttpStatus status;
     private final String message;
