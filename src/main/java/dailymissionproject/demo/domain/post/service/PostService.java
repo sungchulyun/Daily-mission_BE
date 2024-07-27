@@ -2,6 +2,7 @@ package dailymissionproject.demo.domain.post.service;
 
 
 import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.MISSION_NOT_FOUND;
+import static dailymissionproject.demo.domain.post.exception.PostExceptionCode.INVALID_POST_SAVE_REQUEST;
 import static dailymissionproject.demo.domain.post.exception.PostExceptionCode.POST_NOT_FOUND;
 import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
 
@@ -150,6 +151,7 @@ public class PostService {
         String imgUrl = imageService.uploadImg(file);
 
         post.update(requestDto.getTitle(), requestDto.getContent(), imgUrl);
+
         return postRepository.save(post).getId();
     }
 
@@ -159,6 +161,7 @@ public class PostService {
 
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new PostException(POST_NOT_FOUND));
+
         postRepository.deleteById(id);
         return true;
     }
@@ -169,7 +172,7 @@ public class PostService {
             if(p.getUser().getId() == user.getId())
                 return true;
         }
-        throw new RuntimeException("참여중이지 않은 미션에 인증 글을 작성할 수 없습니다.");
+        throw new PostException(INVALID_POST_SAVE_REQUEST);
     }
 
     @Transactional(readOnly = true)
