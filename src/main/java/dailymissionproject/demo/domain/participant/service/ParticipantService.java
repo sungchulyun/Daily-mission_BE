@@ -1,11 +1,14 @@
 package dailymissionproject.demo.domain.participant.service;
 
+import dailymissionproject.demo.domain.mission.exception.MissionException;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
 import dailymissionproject.demo.domain.participant.dto.request.ParticipantSaveRequestDto;
+import dailymissionproject.demo.domain.participant.exception.ParticipantException;
 import dailymissionproject.demo.domain.participant.repository.Participant;
 import dailymissionproject.demo.domain.participant.repository.ParticipantRepository;
 import dailymissionproject.demo.domain.post.service.PostService;
+import dailymissionproject.demo.domain.user.exception.UserException;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.INPUT_VALUE_IS_EMPTY;
+import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.MISSION_NOT_FOUND;
+import static dailymissionproject.demo.domain.participant.exception.ParticipantExceptionCode.*;
+import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -33,23 +41,23 @@ public class ParticipantService {
 
         //미션 null값 검증
         if(requestDto.getMission() == null){
-            throw new IllegalArgumentException("참여할 미션을 선택하지 않았습니다.");
+            throw new MissionException(INPUT_VALUE_IS_EMPTY);
         }
 
         //미션 id 유효한지 검증
         Mission mission = missionRepository.findById(requestDto.getMission().getId())
-                .orElseThrow(() -> new NoSuchElementException("해당 미션이 존재하지 않습니다."));
+                .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
 
         User findUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         //해당 사용자가 해당 미션에 참여한 이력이 있는지 검증
         Optional<Participant> optional = participantRepository.findByMissionAndUser(mission, findUser);
         if(optional.isPresent()){
             if(optional.get().isBanned()){
-                throw new IllegalArgumentException("강퇴된 미션에는 다시 참여할 수 없습니다.");
+                throw new ParticipantException(BAN_HISTORY_EXISTS);
             } else {
-                throw new IllegalArgumentException("이미 참여중인 미션입니다.");
+                throw new ParticipantException(PARTICIPANT_ALREADY_EXISTS);
             }
         }
 
@@ -63,11 +71,11 @@ public class ParticipantService {
 
         //참여 코드 검증
         if(!requestDto.getCredential().equals(mission.getCredential())){
-            throw new RuntimeException("참여코드를 확인해주세요.");
+            throw new ParticipantException(INVALID_INPUT_VALUE_CREDENTIAL);
         }
 
         if(!(mission.isPossibleToParticipate(LocalDate.now()))){
-            throw new RuntimeException("해당 미션은 참여가 불가능한 미션입니다.");
+            throw new ParticipantException(INVALID_PARTICIPATE_REQUEST);
         }
 
         Participant participant = requestDto.toEntity(findUser);
