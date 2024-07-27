@@ -1,6 +1,7 @@
 package dailymissionproject.demo.domain.mission.repository;
 
 import dailymissionproject.demo.common.repository.BaseTimeEntity;
+import dailymissionproject.demo.domain.mission.exception.MissionException;
 import dailymissionproject.demo.domain.missionRule.dto.DateDto;
 import dailymissionproject.demo.domain.missionRule.repository.MissionRule;
 import dailymissionproject.demo.domain.missionRule.repository.Week;
@@ -17,6 +18,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.*;
 
 @Entity
 @NoArgsConstructor
@@ -165,11 +168,11 @@ public class Mission extends BaseTimeEntity {
     public boolean isDeletable(User user){
 
         if(this.user.getId() != user.getId()){
-            throw new IllegalArgumentException("미션 생성자만 삭제가 가능합니다.");
+            throw new MissionException(INVALID_USER_DELETE_REQUEST);
         }
 
         if(this.deleted){
-            throw new IllegalArgumentException("이미 삭제된 미션입니다.");
+            throw new MissionException(MISSION_ALREADY_DELETED);
         }
 
         return true;
@@ -180,11 +183,11 @@ public class Mission extends BaseTimeEntity {
      */
     public boolean isValidStartDate(LocalDate now){
         if(this.startDate.isBefore(now)){
-            throw new IllegalArgumentException("미션 시작날짜는 현재보다 빠를 수 없습니다.");
+            throw new MissionException(INPUT_START_VALUE_IS_NOT_VALID);
         }
 
         if(this.startDate.isAfter(this.endDate)){
-            throw new IllegalArgumentException("미션 시작날짜는 미션종료날짜보다 느릴 수 없습니다.");
+            throw new MissionException(INPUT_DELETE_VALUE_IS_NOT_VALID);
         }
         return true;
     }

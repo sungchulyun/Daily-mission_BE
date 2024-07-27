@@ -1,6 +1,7 @@
 package dailymissionproject.demo.domain.mission.service;
 
 
+import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.INVALID_DELETE_REQUEST;
 import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.MISSION_NOT_FOUND;
 import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
 
@@ -97,11 +98,12 @@ public class MissionService {
                 .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
 
         User findUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         mission.isDeletable(findUser);
+
         if(mission.getParticipantCountNotBanned() > 1){
-            throw new RuntimeException("다른 참여자가 참여중인 미션은 삭제가 불가능합니다.");
+            throw new MissionException(INVALID_DELETE_REQUEST);
         }
         missionRepository.delete(mission);
         return true;
@@ -115,15 +117,16 @@ public class MissionService {
 
         Slice<Mission> hotLists = missionRepository.findAllByParticipantSize(pageable);
         for(Mission mission : hotLists){
-            MissionHotListResponseDto hotMission = MissionHotListResponseDto.builder()
-                    .id(mission.getId())
-                    .title(mission.getTitle())
-                    .content(mission.getContent())
-                    .imgUrl(mission.getImageUrl())
-                    .name(mission.getUser().getName())
-                    .startDate(mission.getStartDate())
-                    .endDate(mission.getEndDate())
-                    .build();
+            MissionHotListResponseDto hotMission =
+                    MissionHotListResponseDto.builder()
+                                            .id(mission.getId())
+                                            .title(mission.getTitle())
+                                            .content(mission.getContent())
+                                            .imgUrl(mission.getImageUrl())
+                                            .name(mission.getUser().getName())
+                                            .startDate(mission.getStartDate())
+                                            .endDate(mission.getEndDate())
+                                            .build();
 
             res.add(hotMission);
         }
@@ -138,15 +141,16 @@ public class MissionService {
 
         Slice<Mission> newLists = missionRepository.findAllByCreatedInMonth(pageable);
         for(Mission mission : newLists){
-            MissionNewListResponseDto newMission = MissionNewListResponseDto.builder()
-                    .id(mission.getId())
-                    .title(mission.getTitle())
-                    .content(mission.getContent())
-                    .imgUrl(mission.getImageUrl())
-                    .name(mission.getUser().getName())
-                    .startDate(mission.getStartDate())
-                    .endDate(mission.getEndDate())
-                    .build();
+            MissionNewListResponseDto newMission =
+                    MissionNewListResponseDto.builder()
+                                            .id(mission.getId())
+                                            .title(mission.getTitle())
+                                            .content(mission.getContent())
+                                            .imgUrl(mission.getImageUrl())
+                                            .name(mission.getUser().getName())
+                                            .startDate(mission.getStartDate())
+                                            .endDate(mission.getEndDate())
+                                            .build();
 
             res.add(newMission);
         }
@@ -161,15 +165,16 @@ public class MissionService {
 
         Slice<Mission> allLists = missionRepository.findAllByCreatedDate(pageable);
         for(Mission mission : allLists){
-            MissionAllListResponseDto allMission = MissionAllListResponseDto.builder()
-                    .id(mission.getId())
-                    .title(mission.getTitle())
-                    .content(mission.getContent())
-                    .imgUrl(mission.getImageUrl())
-                    .name(mission.getUser().getName())
-                    .startDate(mission.getStartDate())
-                    .endDate(mission.getEndDate())
-                    .build();
+            MissionAllListResponseDto allMission =
+                    MissionAllListResponseDto.builder()
+                                            .id(mission.getId())
+                                            .title(mission.getTitle())
+                                            .content(mission.getContent())
+                                            .imgUrl(mission.getImageUrl())
+                                            .name(mission.getUser().getName())
+                                            .startDate(mission.getStartDate())
+                                            .endDate(mission.getEndDate())
+                                            .build();
 
             res.add(allMission);
         }
@@ -184,15 +189,16 @@ public class MissionService {
         List<Mission> allLists = missionRepository.findAllByCreatedDate();
 
         for(Mission mission : allLists){
-            MissionAllListResponseDto allMission = MissionAllListResponseDto.builder()
-                    .id(mission.getId())
-                    .title(mission.getTitle())
-                    .content(mission.getContent())
-                    .imgUrl(mission.getImageUrl())
-                    .name(mission.getUser().getName())
-                    .startDate(mission.getStartDate())
-                    .endDate(mission.getEndDate())
-                    .build();
+            MissionAllListResponseDto allMission =
+                    MissionAllListResponseDto.builder()
+                                            .id(mission.getId())
+                                            .title(mission.getTitle())
+                                            .content(mission.getContent())
+                                            .imgUrl(mission.getImageUrl())
+                                            .name(mission.getUser().getName())
+                                            .startDate(mission.getStartDate())
+                                            .endDate(mission.getEndDate())
+                                            .build();
 
             res.add(allMission);
         }
