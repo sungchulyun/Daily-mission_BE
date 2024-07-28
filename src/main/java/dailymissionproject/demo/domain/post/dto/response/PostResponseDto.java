@@ -58,7 +58,7 @@ public class PostResponseDto implements Serializable {
         this.missionTitle = post.getMission().getTitle();
 
         this.userName = post.getUser().getName();
-        this.userImgUrl = post.getUser().getImageUrl();
+        this.userImgUrl = post.getUser().getImgUrl();
 
         this.title = post.getTitle();
         this.content = post.getContent();
