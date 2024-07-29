@@ -1,5 +1,8 @@
 package dailymissionproject.demo.domain.mission.repository;
 
+import dailymissionproject.demo.domain.mission.dto.response.MissionAllListResponseDto;
+import dailymissionproject.demo.domain.mission.dto.response.MissionHotListResponseDto;
+import dailymissionproject.demo.domain.mission.dto.response.MissionNewListResponseDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
@@ -9,13 +12,13 @@ public interface MissionRepositoryCustom {
 
     //== Pagination 적용 ==//
     //Hot 미션 목록
-    Slice<Mission> findAllByParticipantSize(Pageable pageable);
+    Slice<MissionHotListResponseDto> findAllByParticipantSize(Pageable pageable);
 
     //New 미션 목록
-    Slice<Mission> findAllByCreatedInMonth(Pageable pageable);
+    Slice<MissionNewListResponseDto> findAllByCreatedInMonth(Pageable pageable);
 
     //All 미션 목록
-    Slice<Mission> findAllByCreatedDate(Pageable pageable);
+    Slice<MissionAllListResponseDto> findAllByCreatedDate(Pageable pageable);
     List<Mission> findAllByCreatedDate();
     /*
         @Override

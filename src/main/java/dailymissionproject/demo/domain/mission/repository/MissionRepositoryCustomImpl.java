@@ -1,6 +1,10 @@
 package dailymissionproject.demo.domain.mission.repository;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import dailymissionproject.demo.domain.mission.dto.response.MissionAllListResponseDto;
+import dailymissionproject.demo.domain.mission.dto.response.MissionHotListResponseDto;
+import dailymissionproject.demo.domain.mission.dto.response.MissionNewListResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -15,6 +19,7 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
 
     private final JPAQueryFactory queryFactory;
 
+    /*
     public Slice<Mission> findAllByParticipantSize(Pageable pageable){
         List<Mission> missionList = queryFactory
                 .select(mission)
@@ -32,9 +37,43 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
         return new SliceImpl<>(missionList, pageable, hasNext);
     }
 
-    public Slice<Mission> findAllByCreatedInMonth(Pageable pageable){
-        List<Mission> missionList = queryFactory
-                .select(mission)
+     */
+
+    public Slice<MissionHotListResponseDto> findAllByParticipantSize(Pageable pageable){
+
+        List<MissionHotListResponseDto> missionList = queryFactory
+                .select(Projections.fields(MissionHotListResponseDto.class,
+                        mission.id,
+                        mission.title,
+                        mission.content,
+                        mission.imageUrl,
+                        mission.user.name,
+                        mission.startDate,
+                        mission.endDate))
+                .from(mission)
+                .where(mission.deleted.isFalse().and(mission.ended.isFalse()))
+                .orderBy(mission.participants.size().desc(), mission.createdTime.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+        boolean hasNext = false;
+        if(missionList.size() > pageable.getPageSize()){
+            missionList.remove(pageable.getPageSize());
+            hasNext = true;
+        }
+        return new SliceImpl<>(missionList, pageable, hasNext);
+    }
+
+    public Slice<MissionNewListResponseDto> findAllByCreatedInMonth(Pageable pageable){
+        List<MissionNewListResponseDto> missionList = queryFactory
+                .select(Projections.fields(MissionNewListResponseDto.class,
+                        mission.id,
+                        mission.title,
+                        mission.content,
+                        mission.imageUrl,
+                        mission.user.name,
+                        mission.startDate,
+                        mission.endDate))
                 .from(mission)
                 .where(mission.deleted.isFalse().and(mission.ended.isFalse()))
                 .orderBy(mission.createdTime.desc())
@@ -49,9 +88,16 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
         return new SliceImpl<>(missionList, pageable, hasNext);
     }
 
-    public Slice<Mission> findAllByCreatedDate(Pageable pageable){
-        List<Mission> missionList = queryFactory
-                .select(mission)
+    public Slice<MissionAllListResponseDto> findAllByCreatedDate(Pageable pageable){
+        List<MissionAllListResponseDto> missionList = queryFactory
+                .select(Projections.fields(MissionAllListResponseDto.class,
+                        mission.id,
+                        mission.title,
+                        mission.content,
+                        mission.imageUrl,
+                        mission.user.name,
+                        mission.startDate,
+                        mission.endDate))
                 .from(mission)
                 .orderBy(mission.createdTime.desc())
                 .offset(pageable.getOffset())
