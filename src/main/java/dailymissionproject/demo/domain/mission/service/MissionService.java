@@ -6,6 +6,7 @@ import static dailymissionproject.demo.domain.mission.exception.MissionException
 import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
 
 import dailymissionproject.demo.domain.image.ImageService;
+import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
 import dailymissionproject.demo.domain.mission.dto.request.MissionSaveRequestDto;
 import dailymissionproject.demo.domain.mission.dto.response.*;
 import dailymissionproject.demo.domain.mission.exception.MissionException;
@@ -18,6 +19,9 @@ import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -54,6 +58,12 @@ public class MissionService {
 
     //== 미션 생성 ==//
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "missionLists", key = "'hot-' + #pageable.getPageNumber()"),
+            @CacheEvict(value = "missionLists", key = "'new-' + #pageable.getPageNumber()"),
+            @CacheEvict(value = "missionLists", key = "'all-' + #pageable.getPageNumber()"),
+            @CacheEvict(value = "mission", key = "'info'")
+    })
     public MissionSaveResponseDto save(String username, MissionSaveRequestDto missionReqDto, MultipartFile file) throws IOException {
 
         User findUser = userRepository.findByUsername(username)
@@ -92,6 +102,12 @@ public class MissionService {
     * 방장만 가능하고, 시작되지 않았고, 참여자가 없어야함
      */
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "missionLists", key = "'hot-' + #pageable.getPageNumber()"),
+            @CacheEvict(value = "missionLists", key = "'new-' + #pageable.getPageNumber()"),
+            @CacheEvict(value = "missionLists", key = "'all-' + #pageable.getPageNumber()"),
+            @CacheEvict(value = "mission", key = "'info'")
+    })
     public boolean delete(Long id, String username){
 
         Mission mission = missionRepository.findByIdAndDeletedIsFalse(id)
@@ -111,74 +127,38 @@ public class MissionService {
 
     //Hot 미션 불러오기 ==//
     @Transactional(readOnly = true)
-    public List<MissionHotListResponseDto> findHotList(Pageable pageable){
+    @Cacheable(value = "missionLists", key = "'hot-' + #pageable.getPageNumber()")
+    public PageResponseDto findHotList(Pageable pageable){
 
-        List<MissionHotListResponseDto> res = new ArrayList<>();
+        Slice<MissionHotListResponseDto> responseList = missionRepository.findAllByParticipantSize(pageable);
 
-        Slice<Mission> hotLists = missionRepository.findAllByParticipantSize(pageable);
-        for(Mission mission : hotLists){
-            MissionHotListResponseDto hotMission =
-                    MissionHotListResponseDto.builder()
-                                            .id(mission.getId())
-                                            .title(mission.getTitle())
-                                            .content(mission.getContent())
-                                            .imgUrl(mission.getImageUrl())
-                                            .name(mission.getUser().getName())
-                                            .startDate(mission.getStartDate())
-                                            .endDate(mission.getEndDate())
-                                            .build();
+        PageResponseDto pageResponseDto = new PageResponseDto(responseList.getContent(), responseList.hasNext());
 
-            res.add(hotMission);
-        }
-        return res;
+        return pageResponseDto;
     }
 
     //New 미션 불러오기 ==//
     @Transactional(readOnly = true)
-    public List<MissionNewListResponseDto> findNewList(Pageable pageable){
+    @Cacheable(value = "missionLists", key = "'new-' + #pageable.getPageNumber()")
+    public PageResponseDto findNewList(Pageable pageable){
 
-        List<MissionNewListResponseDto> res = new ArrayList<>();
+        Slice<MissionHotListResponseDto> responseList = missionRepository.findAllByParticipantSize(pageable);
 
-        Slice<Mission> newLists = missionRepository.findAllByCreatedInMonth(pageable);
-        for(Mission mission : newLists){
-            MissionNewListResponseDto newMission =
-                    MissionNewListResponseDto.builder()
-                                            .id(mission.getId())
-                                            .title(mission.getTitle())
-                                            .content(mission.getContent())
-                                            .imgUrl(mission.getImageUrl())
-                                            .name(mission.getUser().getName())
-                                            .startDate(mission.getStartDate())
-                                            .endDate(mission.getEndDate())
-                                            .build();
+        PageResponseDto pageResponseDto = new PageResponseDto(responseList.getContent(), responseList.hasNext());
 
-            res.add(newMission);
-        }
-        return res;
+        return pageResponseDto;
     }
 
     //모든 미션 불러오기 ==//
     @Transactional(readOnly = true)
-    public List<MissionAllListResponseDto> findAllList(Pageable pageable){
+    @Cacheable(value = "missionLists", key = "'all-' + #pageable.getPageNumber()")
+    public PageResponseDto findAllList(Pageable pageable){
 
-        List<MissionAllListResponseDto> res = new ArrayList<>();
+        Slice<MissionHotListResponseDto> responseList = missionRepository.findAllByParticipantSize(pageable);
 
-        Slice<Mission> allLists = missionRepository.findAllByCreatedDate(pageable);
-        for(Mission mission : allLists){
-            MissionAllListResponseDto allMission =
-                    MissionAllListResponseDto.builder()
-                                            .id(mission.getId())
-                                            .title(mission.getTitle())
-                                            .content(mission.getContent())
-                                            .imgUrl(mission.getImageUrl())
-                                            .name(mission.getUser().getName())
-                                            .startDate(mission.getStartDate())
-                                            .endDate(mission.getEndDate())
-                                            .build();
+        PageResponseDto pageResponseDto = new PageResponseDto(responseList.getContent(), responseList.hasNext());
 
-            res.add(allMission);
-        }
-        return res;
+        return pageResponseDto;
     }
 
     @Transactional(readOnly = true)
