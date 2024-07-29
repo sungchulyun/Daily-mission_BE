@@ -24,6 +24,9 @@ import dailymissionproject.demo.domain.user.exception.UserException;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,6 +49,12 @@ public class PostService {
     private final ImageService imageService;
 
     @Transactional
+    @Caching(evict = {
+            //전체 포스트
+            @CacheEvict(value = "postLists", key = "'all'"),
+            @CacheEvict(value = "postLists", key = "'user-' + #user.getUsername()" ),
+            @CacheEvict(value = "postLists", key = "'mission-' + #requestDto.missionId"),
+    })
     public Long save(String username, PostSaveRequestDto requestDto, MultipartFile file) throws IOException {
 
         Mission mission = missionRepository.findByIdAndDeletedIsFalse(requestDto.getMissionId())
@@ -67,6 +76,7 @@ public class PostService {
 
     //== 포스트 상세조회==//
     @Transactional(readOnly = true)
+    @Cacheable(value = "posts", key = "#id")
     public PostResponseDto findById(Long id){
 
         Post post = postRepository.findById(id).orElseThrow(() -> new PostException(POST_NOT_FOUND));
@@ -79,6 +89,7 @@ public class PostService {
 
     //== 사용자가 작성한 전체 포스트 조회==//
     @Transactional(readOnly = true)
+    @Cacheable(value = "postLists", key = "'user-' + #user.getUsername()")
     public List<PostResponseDto> findAllByUser(String username){
 
         User findUser = userRepository.findByUsername(username)
@@ -95,6 +106,7 @@ public class PostService {
 
     //== 미션별 작성된 전체 포스트 조회
     @Transactional(readOnly = true)
+    @Cacheable(value = "postLists", key = "'mission-' + #requestDto.missionId")
     public List<PostResponseDto> findAllByMission(Long id){
 
         Mission mission = missionRepository.findById(id)
@@ -143,6 +155,12 @@ public class PostService {
 
     //== 포스트 수정==//
     @Transactional
+    @Caching(evict = {
+            //전체 포스트
+            @CacheEvict(value = "postLists", key = "'all'"),
+            @CacheEvict(value = "postLists", key = "'user-' + #user.getUsername()" ),
+            @CacheEvict(value = "postLists", key = "'mission-' + #requestDto.missionId"),
+    })
     public Long updateById(Long id, MultipartFile file, PostUpdateRequestDto requestDto) throws IOException {
 
         Post post = postRepository.findById(id)
@@ -157,6 +175,12 @@ public class PostService {
 
     //== 포스트 삭제==//
     @Transactional
+    @Caching(evict = {
+            //전체 포스트
+            @CacheEvict(value = "postLists", key = "'all'"),
+            @CacheEvict(value = "postLists", key = "'user-' + #user.getUsername()" ),
+            @CacheEvict(value = "postLists", key = "'mission-' + #requestDto.missionId"),
+    })
     public boolean deleteById(Long id){
 
         Post post = postRepository.findById(id)
