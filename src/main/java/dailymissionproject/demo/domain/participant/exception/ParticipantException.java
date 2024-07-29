@@ -7,9 +7,8 @@ public class ParticipantException extends RuntimeException {
 
     private ParticipantExceptionCode participantExceptionCode;
 
-    public ParticipantException(ParticipantExceptionCode participantExceptionCode){
-        this.participantExceptionCode = participantExceptionCode;
+    public ParticipantException(ParticipantExceptionCode participantExceptionCode) {
+        super(participantExceptionCode.getMessage());
     }
-
 
 }
