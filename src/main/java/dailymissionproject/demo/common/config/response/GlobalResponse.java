@@ -3,6 +3,7 @@ package dailymissionproject.demo.common.config.response;
 import dailymissionproject.demo.common.meta.MetaInfos;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 
@@ -13,13 +14,14 @@ import static java.util.Collections.emptyList;
 
 @Getter
 @Slf4j
+@NoArgsConstructor
 public class GlobalResponse {
 
-    private final Boolean success;
-    private final Integer code;
-    private final Object data;
-    private final Object errors;
-    private final Map<String, Object> meta;
+    private Boolean success;
+    private Integer code;
+    private Object data;
+    private Object errors;
+    private Map<String, Object> meta;
 
     @Builder
     private GlobalResponse(Boolean success, Integer code, Object data, Object errors, Map<String, Object> meta){
