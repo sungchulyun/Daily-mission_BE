@@ -1,5 +1,6 @@
 package dailymissionproject.demo.domain.participant.controller;
 
+import dailymissionproject.demo.common.config.response.GlobalResponse;
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.participant.dto.request.ParticipantSaveRequestDto;
 import dailymissionproject.demo.domain.participant.service.ParticipantService;
@@ -8,9 +9,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import static dailymissionproject.demo.common.config.response.GlobalResponse.success;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,7 +34,7 @@ public class ParticipantController {
             @ApiResponse(responseCode = "404", description = "미션 참여에 실패하였습니다."),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
-    public boolean save(@AuthenticationPrincipal CustomOAuth2User user, @RequestBody ParticipantSaveRequestDto requestDto){
-        return participantService.save(user.getUsername(), requestDto);
+    public ResponseEntity<GlobalResponse> save(@AuthenticationPrincipal CustomOAuth2User user, @RequestBody ParticipantSaveRequestDto requestDto){
+        return ResponseEntity.ok(success(participantService.save(user.getUsername(), requestDto)));
     }
 }

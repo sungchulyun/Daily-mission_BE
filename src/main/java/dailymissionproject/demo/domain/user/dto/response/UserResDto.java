@@ -12,16 +12,13 @@ public class UserResDto {
     private final String name;
     @Schema(description = "유저 이메일")
     private final String email;
-    @Schema(description = "응답 코드")
-    private final int code;
-    @Schema(description = "응답 메시지 코드")
-    private final String msgCode;
+    @Schema(description = "유저 이미지 썸네일")
+    private final String imgUrl;
 
     @Builder
-    UserResDto(String name, String email, int code, String msgCode){
+    UserResDto(String name, String email, String imgUrl){
         this.name = name;
         this.email = email;
-        this.code = code;
-        this.msgCode = msgCode;
+        this.imgUrl = imgUrl;
     }
 }

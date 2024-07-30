@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
 @Entity
 @NoArgsConstructor
 @Table(name = "User")
@@ -22,7 +21,7 @@ public class User extends BaseTimeEntity {
 
     @Id @GeneratedValue
     @Column(name = "user_id")
-    private long id;
+    private Long id;
 
     @OneToMany(mappedBy = "user")
     List<Mission> missions = new ArrayList<>();
@@ -40,7 +39,7 @@ public class User extends BaseTimeEntity {
     private String username;
 
     @Column(name = "image_url")
-    private String imageUrl;
+    private String imgUrl;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -48,24 +47,36 @@ public class User extends BaseTimeEntity {
 
 
     @Builder
-    public User(String name, String email, String username, String imageUrl, Role role){
+    public User(String name, String email, String username, String imgUrl, Role role){
         this.name = name;
         this.email = email;
         this.username = username;
-        this.imageUrl = imageUrl;
+        this.imgUrl = imgUrl;
         this.role = role;
     }
 
     @Builder
-    public User(String name, String username, String email, String imageUrl){
+    public User(String name, String username, String email, String imgUrl){
         this.name = name;
         this.username = username;
         this.email = email;
-        this.imageUrl = imageUrl;
+        this.imgUrl = imgUrl;
     }
 
 
     public String getRoleKey(){
         return this.role.getKey();
+    }
+
+    public void setImg(String imgUrl){
+        this.imgUrl = imgUrl;
+    }
+
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public void setEmail(String email){
+        this.email = email;
     }
 }

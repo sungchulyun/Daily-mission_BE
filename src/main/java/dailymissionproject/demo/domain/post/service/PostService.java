@@ -1,6 +1,14 @@
 package dailymissionproject.demo.domain.post.service;
 
+
+import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.MISSION_NOT_FOUND;
+import static dailymissionproject.demo.domain.post.exception.PostExceptionCode.*;
+import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
+
 import dailymissionproject.demo.domain.image.ImageService;
+import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
+import dailymissionproject.demo.domain.mission.dto.response.MissionNewListResponseDto;
+import dailymissionproject.demo.domain.mission.exception.MissionException;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
 import dailymissionproject.demo.domain.missionRule.dto.DateDto;
@@ -10,15 +18,21 @@ import dailymissionproject.demo.domain.post.dto.PostSubmitDto;
 import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
 import dailymissionproject.demo.domain.post.dto.request.PostUpdateRequestDto;
 import dailymissionproject.demo.domain.post.dto.response.PostResponseDto;
+import dailymissionproject.demo.domain.post.exception.PostException;
 import dailymissionproject.demo.domain.post.repository.Post;
 import dailymissionproject.demo.domain.post.repository.PostRepository;
+import dailymissionproject.demo.domain.user.exception.UserException;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -26,7 +40,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -38,13 +51,19 @@ public class PostService {
     private final ImageService imageService;
 
     @Transactional
+    @Caching(evict = {
+            //전체 포스트
+            @CacheEvict(value = "postLists", key = "'all'"),
+            @CacheEvict(value = "postLists", key = "'user-' + #user.getUsername()" ),
+            @CacheEvict(value = "postLists", key = "'mission-' + #requestDto.missionId"),
+    })
     public Long save(String username, PostSaveRequestDto requestDto, MultipartFile file) throws IOException {
 
         Mission mission = missionRepository.findByIdAndDeletedIsFalse(requestDto.getMissionId())
-                .orElseThrow(() -> new NoSuchElementException("해당 미션이 존재하지 않습니다."));
+                .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
 
         User findUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         //미션 참여자인지 검증
         validIsParticipating(findUser, mission);
@@ -59,22 +78,42 @@ public class PostService {
 
     //== 포스트 상세조회==//
     @Transactional(readOnly = true)
+    @Cacheable(value = "posts", key = "#id")
     public PostResponseDto findById(Long id){
 
-        Post post = postRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 포스트가 존재하지 않습니다. id : " + id));
+        Post post = postRepository.findById(id).orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
-        PostResponseDto responseDto = PostResponseDto.builder()
-                                    .post(post)
-                                    .build();
+        PostResponseDto responseDto = new PostResponseDto(post);
         return responseDto;
     }
 
     //== 사용자가 작성한 전체 포스트 조회==//
     @Transactional(readOnly = true)
+    @Cacheable(value = "postLists", key = "'user-' + #username")
+    public PageResponseDto findAllByUser(String username, Pageable pageable){
+
+        User findUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+
+        Slice<PostResponseDto> userPostLists = postRepository.findAllByUser(pageable, findUser);
+        if(userPostLists.getContent().size() == 0){
+            throw new PostException(EMPTY_POST_HISTORY);
+        }
+        PageResponseDto pageResponseDto = new PageResponseDto(userPostLists.getContent(), userPostLists.hasNext());
+
+        /*List<PostResponseDto> responseList = new ArrayList<>();
+        for(Post post : userPostLists){
+            responseList.add(new PostResponseDto(post));
+        }
+        return responseList;
+         */
+        return pageResponseDto;
+    }
+    /*
     public List<PostResponseDto> findAllByUser(String username){
 
         User findUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         List<Post> lists = postRepository.findAllByUser(findUser);
 
@@ -84,20 +123,21 @@ public class PostService {
         }
         return responseList;
     }
+     */
 
     //== 미션별 작성된 전체 포스트 조회
     @Transactional(readOnly = true)
-    public List<PostResponseDto> findAllByMission(Long id){
+    @Cacheable(value = "postLists", key = "'mission-' + #id")
+    public PageResponseDto findAllByMission(Long id, Pageable pageable){
 
-        Mission mission = missionRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 미션이 존재하지 않습니다. id" + id));
+        Mission mission = missionRepository.findById(id)
+                .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
 
-        List<Post> lists = postRepository.findAllByMission(mission);
+        Slice<PostResponseDto> missionPostList = postRepository.findAllByMission(pageable, mission);
 
-        List<PostResponseDto> responseList = new ArrayList<>();
-        for(Post post : lists){
-            responseList.add(new PostResponseDto(post));
-        }
-        return responseList;
+        PageResponseDto pageResponseDto = new PageResponseDto<>(missionPostList.getContent(), missionPostList.hasNext());
+
+        return pageResponseDto;
     }
 
     //==포스트 제출 이력 조회==//
@@ -111,7 +151,7 @@ public class PostService {
         LocalDate startDate = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).minusWeeks(week);
 
         Mission mission = missionRepository.findByIdAndDeletedIsFalse(id)
-                .orElseThrow(() -> new NoSuchElementException("해당 미션은 존재하지 않거나 폐기되었습니다. id"+ id));
+                .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
 
         /*
         * Week주의 일주일간 날짜 & 제출의무 요일 확인
@@ -134,19 +174,37 @@ public class PostService {
 
     //== 포스트 수정==//
     @Transactional
-    public Long updateById(Long id, PostUpdateRequestDto requestDto){
+    @Caching(evict = {
+            //전체 포스트
+            @CacheEvict(value = "postLists", key = "'all'"),
+            @CacheEvict(value = "postLists", key = "'user-' + #user.getUsername()" ),
+            @CacheEvict(value = "postLists", key = "'mission-' + #requestDto.missionId"),
+    })
+    public Long updateById(Long id, MultipartFile file, PostUpdateRequestDto requestDto) throws IOException {
 
-        Post post = postRepository.findById(id).orElseThrow(() -> new NoSuchElementException("존재하지 않는 포스트입니다."+ id));
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
-        post.update(requestDto.getTitle(), requestDto.getContent());
+        String imgUrl = imageService.uploadImg(file);
+
+        post.update(requestDto.getTitle(), requestDto.getContent(), imgUrl);
+
         return postRepository.save(post).getId();
     }
 
     //== 포스트 삭제==//
     @Transactional
+    @Caching(evict = {
+            //전체 포스트
+            @CacheEvict(value = "postLists", key = "'all'"),
+            @CacheEvict(value = "postLists", key = "'user-' + #user.getUsername()" ),
+            @CacheEvict(value = "postLists", key = "'mission-' + #requestDto.missionId"),
+    })
     public boolean deleteById(Long id){
 
-        Post post = postRepository.findById(id).orElseThrow(() -> new NoSuchElementException("존재하지 않는 포스트입니다. id =" + id));
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new PostException(POST_NOT_FOUND));
+
         postRepository.deleteById(id);
         return true;
     }
@@ -157,7 +215,7 @@ public class PostService {
             if(p.getUser().getId() == user.getId())
                 return true;
         }
-        throw new RuntimeException("참여중이지 않은 미션에 인증 글을 작성할 수 없습니다.");
+        throw new PostException(INVALID_POST_SAVE_REQUEST);
     }
 
     @Transactional(readOnly = true)

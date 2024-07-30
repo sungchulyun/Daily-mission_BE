@@ -20,7 +20,7 @@ public class UserDto {
         return User.builder()
                 .name(userDto.getName())
                 .username(userDto.getUsername())
-                .imageUrl(userDto.getImageUrl())
+                .imgUrl(userDto.getImageUrl())
                 .email(userDto.getEmail())
                 .role(Role.valueOf(userDto.getRole()))
                 .build();

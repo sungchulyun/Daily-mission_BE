@@ -24,7 +24,6 @@ public class MissionSaveRequestDto {
 
     @Schema(description = "미션 내용")
     private final String content;
-    //private MultipartFile file;
 
     @Schema(description = "미션 시작일자")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -40,13 +39,14 @@ public class MissionSaveRequestDto {
         this.week = week;
         this.title = title;
         this.content = content;
-       // this.file = file;
         this.startDate = startDate;
         this.endDate = endDate;
     }
 
     public Mission toEntity(User user){
-        MissionRule missionRule = MissionRule.builder().week(week).build();
+        MissionRule missionRule = MissionRule.builder()
+                                             .week(week)
+                                             .build();
 
         return Mission.builder()
                 .user(user)

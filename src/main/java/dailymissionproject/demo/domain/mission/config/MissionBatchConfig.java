@@ -1,6 +1,6 @@
 package dailymissionproject.demo.domain.mission.config;
 
-import dailymissionproject.demo.domain.mission.Service.MissionService;
+import dailymissionproject.demo.domain.mission.service.MissionService;
 import dailymissionproject.demo.domain.mission.dto.response.MissionAllListResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

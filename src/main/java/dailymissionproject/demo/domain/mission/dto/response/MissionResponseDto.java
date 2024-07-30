@@ -25,8 +25,6 @@ public class MissionResponseDto {
     private String content;
     @Schema(description = "미션 썸네일 이미지")
     private String imgUrl;
-    @Schema(description = "방장 PK ID")
-    private Long userId;
     @Schema(description = "방장 이름")
     private String name;
 
@@ -50,7 +48,6 @@ public class MissionResponseDto {
         this.title = mission.getTitle();
         this.content = mission.getContent();
         this.imgUrl = mission.getImageUrl();
-        this.userId = mission.getUser().getId();
         this.name = mission.getUser().getName();
         this.participants = mission.getAllParticipantUser();
         this.startDate = mission.getStartDate();
