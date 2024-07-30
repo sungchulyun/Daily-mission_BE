@@ -64,7 +64,7 @@ jobs:
       uses: appleboy/ssh-action@v0.1.10
       with:
         host: ${{ secrets.HOST }}
-        username: ec2-user
+        username: ubuntu
         key: ${{ secrets.EC2_SSH_PRIVATE_KEY }} # pem key
         script: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/spring-boot-server
