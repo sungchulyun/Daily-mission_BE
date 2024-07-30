@@ -12,6 +12,8 @@ import dailymissionproject.demo.domain.user.exception.UserException;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
@@ -37,6 +39,9 @@ public class ParticipantService {
 
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "mission", key = "'info'")
+    })
     public boolean save(String username, ParticipantSaveRequestDto requestDto){
 
         //미션 null값 검증
