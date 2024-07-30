@@ -8,7 +8,7 @@ public class MissionException extends RuntimeException {
     private MissionExceptionCode missionExceptionCode;
 
     public MissionException(MissionExceptionCode missionExceptionCode){
-        this.missionExceptionCode = missionExceptionCode;
+        super(missionExceptionCode.getMessage());
     }
 
 
