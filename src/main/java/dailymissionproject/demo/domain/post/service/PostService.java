@@ -2,11 +2,12 @@ package dailymissionproject.demo.domain.post.service;
 
 
 import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.MISSION_NOT_FOUND;
-import static dailymissionproject.demo.domain.post.exception.PostExceptionCode.INVALID_POST_SAVE_REQUEST;
-import static dailymissionproject.demo.domain.post.exception.PostExceptionCode.POST_NOT_FOUND;
+import static dailymissionproject.demo.domain.post.exception.PostExceptionCode.*;
 import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
 
 import dailymissionproject.demo.domain.image.ImageService;
+import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
+import dailymissionproject.demo.domain.mission.dto.response.MissionNewListResponseDto;
 import dailymissionproject.demo.domain.mission.exception.MissionException;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
@@ -27,6 +28,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -89,7 +92,27 @@ public class PostService {
 
     //== 사용자가 작성한 전체 포스트 조회==//
     @Transactional(readOnly = true)
-    @Cacheable(value = "postLists", key = "'user-' + #user.getUsername()")
+    @Cacheable(value = "postLists", key = "'user-' + #username")
+    public PageResponseDto findAllByUser(String username, Pageable pageable){
+
+        User findUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+
+        Slice<PostResponseDto> userPostLists = postRepository.findAllByUser(pageable, findUser);
+        if(userPostLists.getContent().size() == 0){
+            throw new PostException(EMPTY_POST_HISTORY);
+        }
+        PageResponseDto pageResponseDto = new PageResponseDto(userPostLists.getContent(), userPostLists.hasNext());
+
+        /*List<PostResponseDto> responseList = new ArrayList<>();
+        for(Post post : userPostLists){
+            responseList.add(new PostResponseDto(post));
+        }
+        return responseList;
+         */
+        return pageResponseDto;
+    }
+    /*
     public List<PostResponseDto> findAllByUser(String username){
 
         User findUser = userRepository.findByUsername(username)
@@ -103,22 +126,21 @@ public class PostService {
         }
         return responseList;
     }
+     */
 
     //== 미션별 작성된 전체 포스트 조회
     @Transactional(readOnly = true)
-    @Cacheable(value = "postLists", key = "'mission-' + #requestDto.missionId")
-    public List<PostResponseDto> findAllByMission(Long id){
+    @Cacheable(value = "postLists", key = "'mission-' + #id")
+    public PageResponseDto findAllByMission(Long id, Pageable pageable){
 
         Mission mission = missionRepository.findById(id)
                 .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
 
-        List<Post> lists = postRepository.findAllByMission(mission);
+        Slice<PostResponseDto> missionPostList = postRepository.findAllByMission(pageable, mission);
 
-        List<PostResponseDto> responseList = new ArrayList<>();
-        for(Post post : lists){
-            responseList.add(new PostResponseDto(post));
-        }
-        return responseList;
+        PageResponseDto pageResponseDto = new PageResponseDto<>(missionPostList.getContent(), missionPostList.hasNext());
+
+        return pageResponseDto;
     }
 
     //==포스트 제출 이력 조회==//
