@@ -142,7 +142,7 @@ public class MissionService {
     @Cacheable(value = "missionLists", key = "'new-' + #pageable.getPageNumber()")
     public PageResponseDto findNewList(Pageable pageable){
 
-        Slice<MissionHotListResponseDto> responseList = missionRepository.findAllByParticipantSize(pageable);
+        Slice<MissionNewListResponseDto> responseList = missionRepository.findAllByCreatedInMonth(pageable);
 
         PageResponseDto pageResponseDto = new PageResponseDto(responseList.getContent(), responseList.hasNext());
 
@@ -154,7 +154,7 @@ public class MissionService {
     @Cacheable(value = "missionLists", key = "'all-' + #pageable.getPageNumber()")
     public PageResponseDto findAllList(Pageable pageable){
 
-        Slice<MissionHotListResponseDto> responseList = missionRepository.findAllByParticipantSize(pageable);
+        Slice<MissionAllListResponseDto> responseList = missionRepository.findAllByCreatedDate(pageable);
 
         PageResponseDto pageResponseDto = new PageResponseDto(responseList.getContent(), responseList.hasNext());
 
