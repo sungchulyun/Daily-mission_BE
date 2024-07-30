@@ -40,7 +40,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -84,9 +83,7 @@ public class PostService {
 
         Post post = postRepository.findById(id).orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
-        PostResponseDto responseDto = PostResponseDto.builder()
-                                    .post(post)
-                                    .build();
+        PostResponseDto responseDto = new PostResponseDto(post);
         return responseDto;
     }
 
