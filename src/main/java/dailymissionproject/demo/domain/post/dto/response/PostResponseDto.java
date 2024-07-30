@@ -17,10 +17,10 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @Schema(description = "포스트 상세 응답 DTO")
-public class PostResponseDto implements Serializable {
+public class PostResponseDto {
 
     @Schema(description = "포스트 PK ID")
-    private Long postId;
+    private Long id;
 
     @Schema(description = "포스트 미션 ID")
     private Long missionId;
@@ -53,18 +53,30 @@ public class PostResponseDto implements Serializable {
 
     @Builder
     public PostResponseDto (Post post){
-        this.postId = post.getId();
+        this.id = post.getId();
         this.missionId = post.getMission().getId();
         this.missionTitle = post.getMission().getTitle();
-
         this.userName = post.getUser().getName();
         this.userImgUrl = post.getUser().getImgUrl();
-
         this.title = post.getTitle();
         this.content = post.getContent();
         this.imgUrl = post.getImageUrl();
-
         this.createdDate = post.getCreatedDate();
         this.modifiedDate = post.getModifiedDate();
+    }
+
+    @Builder
+    public PostResponseDto(Long id, Long missionId, String missionTitle, String name, String userImgUrl, String title
+                        ,String content, String imgUrl, LocalDateTime createdDate, LocalDateTime modifiedDate){
+        this.id = id;
+        this.missionId = missionId;
+        this.missionTitle = missionTitle;
+        this.userName = name;
+        this.userImgUrl = userImgUrl;
+        this.title = title;
+        this.content = content;
+        this.imgUrl = imgUrl;
+        this.createdDate = createdDate;
+        this.modifiedDate = modifiedDate;
     }
 }

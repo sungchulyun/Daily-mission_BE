@@ -36,12 +36,12 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
                 .fetch();
     }
 
-    //==미션별 포스트 목록 조회==//
+    //==유저별 포스트 목록 조회==//
     @Override
     public Slice<PostResponseDto> findAllByUser(Pageable pageable, User user) {
 
         List<PostResponseDto> postList = queryFactory
-                .select(Projections.fields(PostResponseDto.class,
+                .select(Projections.constructor(PostResponseDto.class,
                         post.id,
                         post.mission.id,
                         post.mission.title,
@@ -54,6 +54,8 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
                         post.modifiedDate))
                 .from(post)
                 .where(post.user.eq(user).and(post.deleted.isFalse()))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
                 .orderBy(post.createdDate.desc())
                 .fetch();
 
@@ -78,12 +80,12 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
 
 
      */
-    //==유저별 포스트 목록 조회==//
+    //==미션별 포스트 목록 조회==//
     @Override
     public Slice<PostResponseDto> findAllByMission(Pageable pageable, Mission mission) {
 
         List<PostResponseDto> postList = queryFactory
-                .select(Projections.fields(PostResponseDto.class,
+                .select(Projections.constructor(PostResponseDto.class,
                         post.id,
                         post.mission.id,
                         post.mission.title,
@@ -97,6 +99,8 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
                 .from(post)
                 .where(post.mission.eq(mission).and(post.deleted.isFalse()))
                 .orderBy(post.createdDate.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
                 .fetch();
 
         boolean hasNext = false;
