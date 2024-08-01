@@ -46,6 +46,7 @@ public class MissionService {
 
     //==미션 상세 조회==//
     @Transactional(readOnly = true)
+    @Cacheable(value = "mission", key = "'info-' + #id")
     public MissionResponseDto findById(Long id){
 
         Mission mission = missionRepository.findByIdAndDeletedIsFalse(id)
@@ -62,7 +63,7 @@ public class MissionService {
             @CacheEvict(value = "missionLists", key = "'hot-' + #pageable.getPageNumber()"),
             @CacheEvict(value = "missionLists", key = "'new-' + #pageable.getPageNumber()"),
             @CacheEvict(value = "missionLists", key = "'all-' + #pageable.getPageNumber()"),
-            @CacheEvict(value = "mission", key = "'info'")
+            @CacheEvict(value = "mission", key = "'info-' + #id")
     })
     public MissionSaveResponseDto save(String username, MissionSaveRequestDto missionReqDto, MultipartFile file) throws IOException {
 
@@ -81,7 +82,7 @@ public class MissionService {
         //미션 시작일자 검증
         mission.isValidStartDate(LocalDate.now());
 
-        missionRepository.save(mission);
+        Long id = missionRepository.save(mission).getId();
 
         //미션 생성 시 방장은 자동 참여
         Participant participant = Participant.builder()

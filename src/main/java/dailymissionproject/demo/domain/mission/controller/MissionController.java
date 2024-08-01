@@ -55,7 +55,6 @@ public class MissionController {
     //== 미션 상세 조회 ==//
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/{id}")
-    @Cacheable(value = "mission", key = "'info'")
     @Operation(summary = "미션 상세 정보 확인", description = "각 미션에 대한 상세정보를 확인하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공!"),
