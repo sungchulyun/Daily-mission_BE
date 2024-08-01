@@ -1,12 +1,9 @@
 package dailymissionproject.demo.domain.participant.exception;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import dailymissionproject.demo.common.exception.code.ExceptionCode;
 import org.springframework.http.HttpStatus;
 
-@Getter
-@RequiredArgsConstructor
-public enum ParticipantExceptionCode {
+public enum ParticipantExceptionCode implements ExceptionCode {
 
     SUCCESS(HttpStatus.OK, "OK"),
     BAN_HISTORY_EXISTS(HttpStatus.BAD_REQUEST, "강퇴당한 미션에는 재참여가 불가능합니다."),
@@ -15,6 +12,21 @@ public enum ParticipantExceptionCode {
     INVALID_PARTICIPATE_REQUEST(HttpStatus.BAD_REQUEST, "해당 미션은 참여가 불가능한 미션입니다.");
 
 
-    private final HttpStatus status;
+    private final HttpStatus httpStatus;
     private final String message;
+
+    ParticipantExceptionCode(HttpStatus httpStatus, String message){
+        this.httpStatus = httpStatus;
+        this.message = message;
+    }
+
+    @Override
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
+    }
+
+    @Override
+    public String getMessage(){
+        return message;
+    }
 }

@@ -1,14 +1,14 @@
 package dailymissionproject.demo.domain.user.exception;
 
-import lombok.Getter;
 
-@Getter
-public class UserException extends RuntimeException {
+import dailymissionproject.demo.common.exception.AbstractCustomException;
+
+public class UserException extends AbstractCustomException {
 
     private UserExceptionCode exceptionCode;
 
-    public UserException(UserExceptionCode exceptionCode){
-        super(exceptionCode.getMessage());
+    public UserException(UserExceptionCode code){
+        super(code);
     }
 
 

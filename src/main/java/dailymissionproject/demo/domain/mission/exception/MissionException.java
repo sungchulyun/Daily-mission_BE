@@ -1,14 +1,12 @@
 package dailymissionproject.demo.domain.mission.exception;
 
+import dailymissionproject.demo.common.exception.AbstractCustomException;
 import lombok.Getter;
 
 @Getter
-public class MissionException extends RuntimeException {
-
-    private MissionExceptionCode missionExceptionCode;
-
-    public MissionException(MissionExceptionCode missionExceptionCode){
-        super(missionExceptionCode.getMessage());
+public class MissionException extends AbstractCustomException {
+    public MissionException(MissionExceptionCode code){
+        super(code);
     }
 
 

@@ -1,12 +1,9 @@
 package dailymissionproject.demo.domain.mission.exception;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import dailymissionproject.demo.common.exception.code.ExceptionCode;
 import org.springframework.http.HttpStatus;
 
-@Getter
-@RequiredArgsConstructor
-public enum MissionExceptionCode {
+public enum MissionExceptionCode implements ExceptionCode {
 
     SUCCESS(HttpStatus.OK, "OK"),
     MISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 미션은 존재하지 않거나 폐기되었습니다."),
@@ -18,6 +15,21 @@ public enum MissionExceptionCode {
     INPUT_DELETE_VALUE_IS_NOT_VALID(HttpStatus.BAD_REQUEST, "미션 종료일자는 현재보다 느릴 수 없습니다.");
 
 
-    private final HttpStatus status;
+    private final HttpStatus httpStatus;
     private final String message;
+
+    MissionExceptionCode(HttpStatus httpStatus, String message){
+        this.httpStatus = httpStatus;
+        this.message = message;
+    }
+
+    @Override
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
+    }
+
+    @Override
+    public String getMessage(){
+        return message;
+    }
 }

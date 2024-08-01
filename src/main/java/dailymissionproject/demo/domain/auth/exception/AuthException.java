@@ -1,14 +1,11 @@
 package dailymissionproject.demo.domain.auth.exception;
 
-import lombok.Getter;
+import dailymissionproject.demo.common.exception.AbstractCustomException;
 
-@Getter
-public class AuthException extends RuntimeException {
+public class AuthException extends AbstractCustomException {
 
-    private AuthExceptionCode errorCode;
-
-    public AuthException(AuthExceptionCode errorCode){
-        super(errorCode.getMessage());
+    public AuthException(AuthExceptionCode code){
+        super(code);
     }
 
 }
