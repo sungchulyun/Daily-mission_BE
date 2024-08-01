@@ -18,7 +18,7 @@ import static dailymissionproject.demo.common.config.response.GlobalResponse.suc
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/participant")
+@RequestMapping("/api/v1/participant")
 @Tag(name = "미션 참여", description = "미션 참여 관련 API입니다.")
 public class ParticipantController {
 
