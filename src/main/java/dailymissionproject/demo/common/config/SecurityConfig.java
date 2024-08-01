@@ -2,6 +2,7 @@ package dailymissionproject.demo.common.config;
 
 import dailymissionproject.demo.domain.auth.jwt.JWTFilter;
 import dailymissionproject.demo.domain.auth.jwt.JWTUtil;
+import dailymissionproject.demo.domain.auth.jwt.JwtAuthenticationEntryPoint;
 import dailymissionproject.demo.domain.auth.oauth2.CustomSuccessHandler;
 import dailymissionproject.demo.domain.auth.service.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -82,6 +83,10 @@ public class SecurityConfig {
         http
                 .addFilterAfter(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
+        http
+                .exceptionHandling(e -> e
+                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
+
         //oauth2
         http
                 .oauth2Login((oauth2) -> oauth2
@@ -102,6 +107,7 @@ public class SecurityConfig {
         http
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
 
         return http.build();
     }
