@@ -83,9 +83,9 @@ public class SecurityConfig {
         http
                 .addFilterAfter(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
-        http
-                .exceptionHandling(e -> e
-                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
+        //http
+        //        .exceptionHandling(e -> e
+        //                .authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
 
         //oauth2
         http

@@ -36,7 +36,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     private void setResponse(HttpServletResponse response, AuthExceptionCode authExceptionCode) throws IOException {
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json;charset-UTF-8");
-        response.setStatus(authExceptionCode.getStatus().value());
+        response.setStatus(authExceptionCode.getHttpStatus().value());
 
         GlobalResponse globalResponse = GlobalResponse.fail(authExceptionCode.getMessage());
         String result = new ObjectMapper().writeValueAsString(globalResponse);

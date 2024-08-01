@@ -2,9 +2,6 @@ package dailymissionproject.demo.domain.auth.jwt;
 
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.auth.dto.UserDto;
-import dailymissionproject.demo.domain.auth.exception.AuthExceptionCode;
-import dailymissionproject.demo.domain.user.repository.Role;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -16,10 +13,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
-import java.security.SignatureException;
-import java.util.Objects;
+
 
 @RequiredArgsConstructor
 @Slf4j
@@ -61,13 +56,11 @@ public class JWTFilter extends OncePerRequestFilter {
 
         String token = authorization;
 
-        try{
-            if(jwtUtil.isExpired(token)){
+            if(jwtUtil.isExpired(token)) {
                 log.info("token is expired");
                 filterChain.doFilter(request, response);
                 return;
             }
-
             String username = jwtUtil.getUsername(token);
             String role = jwtUtil.getRole(token);
 
@@ -89,16 +82,5 @@ public class JWTFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authToken);
 
             filterChain.doFilter(request, response);
-        } catch (ExpiredJwtException e){
-            request.setAttribute("exception", AuthExceptionCode.EXPIRED_TOKEN.name());
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-
-        filterChain.doFilter(request, response);
     }
-
-
-
 }
