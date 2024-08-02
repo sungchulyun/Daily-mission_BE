@@ -10,7 +10,7 @@ public class CorsMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry corsRegistry){
 
-        corsRegistry.addMapping("/api/**")
+        corsRegistry.addMapping("/**")
                 .exposedHeaders("Set-Cookie")
                 .allowedOrigins("http://localhost:3000", "https://daily-mission.leey00nsu.site", "https://daily-mission.site")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
