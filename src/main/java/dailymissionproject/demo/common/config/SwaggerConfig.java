@@ -14,8 +14,8 @@ public class SwaggerConfig {
     public OpenAPI openApi(){
         return new OpenAPI()
                 .components(new Components())
-                .info(apiInfo());
-                //.addServersItem(new Server().url("https://daily-mission.site"));
+                .info(apiInfo())
+                .addServersItem(new Server().url("/"));
     }
 
     private Info apiInfo(){
