@@ -40,7 +40,7 @@ public class ParticipantService {
 
     @Transactional
     @Caching(evict = {
-            @CacheEvict(value = "mission", key = "'info'")
+            @CacheEvict(value = "mission", allEntries = true)
     })
     public boolean save(String username, ParticipantSaveRequestDto requestDto){
 

@@ -53,9 +53,8 @@ public class PostService {
     @Transactional
     @Caching(evict = {
             //전체 포스트
-            @CacheEvict(value = "postLists", key = "'all'"),
-            @CacheEvict(value = "postLists", key = "'user-' + #user.getUsername()" ),
-            @CacheEvict(value = "postLists", key = "'mission-' + #requestDto.missionId"),
+            @CacheEvict(value = "postLists", allEntries = true),
+            @CacheEvict(value = "posts", allEntries = true)
     })
     public Long save(String username, PostSaveRequestDto requestDto, MultipartFile file) throws IOException {
 
@@ -176,9 +175,8 @@ public class PostService {
     @Transactional
     @Caching(evict = {
             //전체 포스트
-            @CacheEvict(value = "postLists", key = "'all'"),
-            @CacheEvict(value = "postLists", key = "'user-' + #user.getUsername()" ),
-            @CacheEvict(value = "postLists", key = "'mission-' + #requestDto.missionId"),
+            @CacheEvict(value = "postLists", allEntries = true),
+            @CacheEvict(value = "posts", allEntries = true)
     })
     public Long updateById(Long id, MultipartFile file, PostUpdateRequestDto requestDto) throws IOException {
 
@@ -196,9 +194,8 @@ public class PostService {
     @Transactional
     @Caching(evict = {
             //전체 포스트
-            @CacheEvict(value = "postLists", key = "'all'"),
-            @CacheEvict(value = "postLists", key = "'user-' + #user.getUsername()" ),
-            @CacheEvict(value = "postLists", key = "'mission-' + #requestDto.missionId"),
+            @CacheEvict(value = "postLists", allEntries = true),
+            @CacheEvict(value = "posts", allEntries = true)
     })
     public boolean deleteById(Long id){
 

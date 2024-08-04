@@ -32,8 +32,6 @@ import java.time.LocalDate;
 import java.util.*;
 
 
-
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -60,10 +58,8 @@ public class MissionService {
     //== 미션 생성 ==//
     @Transactional
     @Caching(evict = {
-            @CacheEvict(value = "missionLists", key = "'hot-' + #pageable.getPageNumber()"),
-            @CacheEvict(value = "missionLists", key = "'new-' + #pageable.getPageNumber()"),
-            @CacheEvict(value = "missionLists", key = "'all-' + #pageable.getPageNumber()"),
-            @CacheEvict(value = "mission", key = "'info-' + #id")
+            @CacheEvict(value = "missionLists", allEntries = true),
+            @CacheEvict(value = "mission", allEntries = true)
     })
     public MissionSaveResponseDto save(String username, MissionSaveRequestDto missionReqDto, MultipartFile file) throws IOException {
 
@@ -104,10 +100,8 @@ public class MissionService {
      */
     @Transactional
     @Caching(evict = {
-            @CacheEvict(value = "missionLists", key = "'hot-' + #pageable.getPageNumber()"),
-            @CacheEvict(value = "missionLists", key = "'new-' + #pageable.getPageNumber()"),
-            @CacheEvict(value = "missionLists", key = "'all-' + #pageable.getPageNumber()"),
-            @CacheEvict(value = "mission", key = "'info'")
+            @CacheEvict(value = "missionLists", allEntries = true),
+            @CacheEvict(value = "mission", allEntries = true)
     })
     public boolean delete(Long id, String username){
 
