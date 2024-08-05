@@ -2,6 +2,10 @@ package dailymissionproject.demo.domain.auth.jwt;
 
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.auth.dto.UserDto;
+import dailymissionproject.demo.domain.auth.exception.AuthException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -14,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
+import java.security.SignatureException;
 
 
 @RequiredArgsConstructor
@@ -56,11 +61,8 @@ public class JWTFilter extends OncePerRequestFilter {
 
         String token = authorization;
 
-            if(jwtUtil.isExpired(token)) {
-                log.info("token is expired");
-                filterChain.doFilter(request, response);
-                return;
-            }
+        try{
+
             String username = jwtUtil.getUsername(token);
             String role = jwtUtil.getRole(token);
 
@@ -73,6 +75,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
             if(!jwtUtil.validToken(token, customOAuth2User)){
                 log.info("token is invalid");
+                request.setAttribute("exception", new MalformedJwtException("토큰이 유효하지 않습니다."));
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -81,6 +84,23 @@ public class JWTFilter extends OncePerRequestFilter {
             Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authToken);
 
-            filterChain.doFilter(request, response);
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e){
+            log.warn("잘못된 JWT 서명입니다.");
+            request.setAttribute("exception", e);
+        } catch (UnsupportedJwtException e){
+            log.warn("지원되지 않는 JWT 토큰입니다.");
+            request.setAttribute("exception", e);
+        } catch (ExpiredJwtException e){
+            log.warn("만료된 JWT 토큰입니다.");
+            request.setAttribute("exception", e);
+        } catch (IllegalArgumentException e){
+            log.warn("잘못된 JWT 토큰입니다.");
+            request.setAttribute("exception", e);
+        } catch (AuthException e){
+            log.warn("JWT 토큰이 존재하지 않습니다.");
+            request.setAttribute("exception", e);
+        }
+
+        filterChain.doFilter(request, response);
     }
 }

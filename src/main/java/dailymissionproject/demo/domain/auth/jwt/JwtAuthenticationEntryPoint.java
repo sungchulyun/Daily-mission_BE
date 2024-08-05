@@ -1,45 +1,35 @@
 package dailymissionproject.demo.domain.auth.jwt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import dailymissionproject.demo.common.config.response.GlobalResponse;
-import dailymissionproject.demo.domain.auth.exception.AuthException;
-import dailymissionproject.demo.domain.auth.exception.AuthExceptionCode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
-
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.IOException;
 
-import static dailymissionproject.demo.domain.auth.exception.AuthExceptionCode.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
 
-        String exception = String.valueOf(request.getAttribute("exception"));
+    private final HandlerExceptionResolver resolver;
 
-        if(exception == null){
-            setResponse(response, TOKEN_NOT_EXIST);
-        } else if(exception.equals(EXPIRED_TOKEN.name())){
-            setResponse(response, EXPIRED_TOKEN);
-        } else if(exception.equals(INVALID_TOKEN.name())){
-            setResponse(response, INVALID_TOKEN);
-        } else {
-            setResponse(response, INVALID_TOKEN);
-        }
+    public JwtAuthenticationEntryPoint(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
+        this.resolver = resolver;
     }
-    private void setResponse(HttpServletResponse response, AuthExceptionCode authExceptionCode) throws IOException {
-        response.setCharacterEncoding("utf-8");
-        response.setContentType("application/json;charset-UTF-8");
-        response.setStatus(authExceptionCode.getHttpStatus().value());
+    @Override
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException){
 
-        GlobalResponse globalResponse = GlobalResponse.fail(authExceptionCode.getMessage());
-        String result = new ObjectMapper().writeValueAsString(globalResponse);
-        response.getWriter().write(result);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType(APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
+
+        Exception exception = (Exception) request.getAttribute("exception");
+
+        resolver.resolveException(request, response, null, exception);
+
     }
 }

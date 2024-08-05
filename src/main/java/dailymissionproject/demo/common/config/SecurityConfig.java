@@ -35,20 +35,29 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
     private final JWTUtil jwtUtil;
-
-    //인증, 인가 없이 swagger 접근 가능
-    /*
-    @Bean
-    public WebSecurityCustomizer configure() {
-        return (web) -> web.ignoring()
-                .requestMatchers("/swagger-ui/**");
-    }
-     */
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain config(HttpSecurity http) throws Exception{
 
-        http
+        return http
+                .csrf((auth) -> auth.disable())
+                .formLogin((auth) -> auth.disable())
+                .httpBasic((auth) -> auth.disable())
+
+                .oauth2Login((oauth2) -> oauth2
+                        //.loginPage("https://daily-mission.leey00nsu.site/login")
+                        .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig
+                                .userService(customOAuth2UserService)))
+                        .successHandler(customSuccessHandler)
+                )
+                .authorizeHttpRequests((auth) -> auth
+                        //.requestMatchers("/swagger-ui","/swagger-ui/**").permitAll()
+                        .requestMatchers("/", "/error").permitAll()
+                        .anyRequest().authenticated())
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
                 .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
@@ -67,50 +76,10 @@ public class SecurityConfig {
 
                         return configuration;
                     }
-                }));
+                }))
+                .addFilterAfter(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                .build();
 
-       //csrf disable
-        http
-                .csrf((auth) -> auth.disable());
-
-        //Form 로그인 방식 disable
-        http
-                .formLogin((auth) -> auth.disable());
-
-        //Http Basic 인증 방식 disable
-        http
-                .httpBasic((auth) -> auth.disable());
-
-        //JWT 필터 추가
-        http
-                .addFilterAfter(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-
-        //http
-        //        .exceptionHandling(e -> e
-        //                .authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
-
-        //oauth2
-        http
-                .oauth2Login((oauth2) -> oauth2
-                        //.loginPage("https://daily-mission.leey00nsu.site/login")
-                        .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig
-                                .userService(customOAuth2UserService)))
-                        .successHandler(customSuccessHandler)
-                );
-
-        //경로별 인가 작업
-        http
-                .authorizeHttpRequests((auth) -> auth
-                        //.requestMatchers("/swagger-ui","/swagger-ui/**").permitAll()
-                        .requestMatchers("/", "/error").permitAll()
-                        .anyRequest().authenticated());
-
-        //세션 설정 : STATELESS
-        http
-                .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-
-        return http.build();
     }
 }

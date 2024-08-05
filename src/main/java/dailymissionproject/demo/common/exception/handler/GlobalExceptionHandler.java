@@ -3,13 +3,18 @@ package dailymissionproject.demo.common.exception.handler;
 
 import dailymissionproject.demo.common.config.response.GlobalResponse;
 import dailymissionproject.demo.common.exception.AbstractCustomException;
+import dailymissionproject.demo.common.meta.MetaService;
+import dailymissionproject.demo.domain.auth.exception.AuthExceptionCode;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.security.SignatureException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-
 import java.util.Map;
 import java.util.Objects;
 
@@ -67,5 +72,34 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(GlobalResponse.error(HttpStatus.BAD_REQUEST.value(), message), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(value = {SignatureException.class, MalformedJwtException.class, ExpiredJwtException.class, UnsupportedJwtException.class, IllegalArgumentException.class})
+    public ResponseEntity<GlobalResponse> jwtTokenException(Exception e){
+
+        AuthExceptionCode exceptionType = getJwtExceptionType(e);
+
+        GlobalResponse fail = GlobalResponse.fail(
+                exceptionType.getHttpStatus().value(),
+                exceptionType.getMessage(),
+                MetaService.createMetaInfo().add("login-url", "/login")
+        );
+
+        return ResponseEntity
+                .status(exceptionType.getHttpStatus())
+                .body(fail);
+    }
+
+    private AuthExceptionCode getJwtExceptionType(Exception e){
+        if(e instanceof SignatureException){
+            return AuthExceptionCode.INVALID_SIGNATURE;
+        } else if(e instanceof MalformedJwtException){
+            return AuthExceptionCode.MALFORMED_TOKEN;
+        } else if(e instanceof ExpiredJwtException){
+            return AuthExceptionCode.EXPIRE_TOKEN;
+        } else if(e instanceof IllegalArgumentException){
+            return AuthExceptionCode.ILLEGAL_ARGUMENT;
+        } else {
+            return AuthExceptionCode.UNKNOWN_ERROR;
+        }
+    }
 
 }

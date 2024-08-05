@@ -5,10 +5,11 @@ import org.springframework.http.HttpStatus;
 
 public enum AuthExceptionCode implements ExceptionCode {
 
-    SUCCESS(HttpStatus.OK, "OK"),
-    TOKEN_NOT_EXIST(HttpStatus.UNAUTHORIZED, "토큰이 존재하지 않습니다."),
-    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
-    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다.");
+    INVALID_SIGNATURE(HttpStatus.UNAUTHORIZED, "잘못된 JWT 서명입니다."),
+    MALFORMED_TOKEN(HttpStatus.UNAUTHORIZED,"잘못된 JWT 토큰입니다."),
+    EXPIRE_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 JWT 토큰입니다."),
+    ILLEGAL_ARGUMENT(HttpStatus.UNAUTHORIZED, "잘못된 JWT 토큰입니다."),
+    UNKNOWN_ERROR(HttpStatus.UNAUTHORIZED, "JWT 처리 중 알 수 없는 오류가 발생했습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
@@ -17,12 +18,10 @@ public enum AuthExceptionCode implements ExceptionCode {
         this.message = message;
     }
 
-    @Override
     public HttpStatus getHttpStatus() {
         return httpStatus;
     }
 
-    @Override
     public String getMessage(){
         return message;
     }
