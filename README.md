@@ -14,11 +14,8 @@
  - JPA & QueryDSL (ORM)
  - Redis (Cache)
  - AWS S3 (Object Storage)
- - Jenkins & GitLab (CI/CD) - 추후 적용 예정 😢
+ - Github-Action (CI/CD) - 추후 적용 예정 😢
  - AWS EC2(Ubuntu), Docker (Infra)
  - Swagger(API Docs)
 
-<details>
-  <summary>ERD 모델링 🖼️ </summary>
  <img src="https://github.com/sungchulyun/Daily-mission/assets/97434717/3ccad2e0-b28b-4935-9c38-8dfbf9a597cd">
-</details>
