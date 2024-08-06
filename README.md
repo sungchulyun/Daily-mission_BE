@@ -14,7 +14,7 @@
  - JPA & QueryDSL (ORM)
  - Redis (Cache)
  - AWS S3 (Object Storage)
- - Github-Action (CI/CD) - 추후 적용 예정 😢
+ - Github-Action (CI/CD)
  - AWS EC2(Ubuntu), Docker (Infra)
  - Swagger(API Docs)
 
