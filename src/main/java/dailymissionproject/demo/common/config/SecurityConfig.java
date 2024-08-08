@@ -46,26 +46,25 @@ public class SecurityConfig {
                 .httpBasic((auth) -> auth.disable())
 
                 .oauth2Login((oauth2) -> oauth2
-                        //.loginPage("https://daily-mission.leey00nsu.site/login")
+                        .loginPage("https://daily-mission.leey00nsu.site/login")
                         .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService)))
                         .successHandler(customSuccessHandler)
                 )
                 .authorizeHttpRequests((auth) -> auth
                         //.requestMatchers("/swagger-ui","/swagger-ui/**").permitAll()
-                        .requestMatchers("/", "/error").permitAll()
+                        .requestMatchers( "/error", "/").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
                 .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
 
                         CorsConfiguration configuration = new CorsConfiguration();
 
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-                        //configuration.setAllowedOrigins(Arrays.asList("https://daily-mission.site", "https://daily-mission.leey00nsu.site/"));
+                        //configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                        configuration.setAllowedOrigins(Arrays.asList("https://daily-mission.site/", "https://daily-mission.leey00nsu.site/"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
