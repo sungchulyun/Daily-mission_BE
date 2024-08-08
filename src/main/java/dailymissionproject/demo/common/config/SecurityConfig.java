@@ -46,14 +46,15 @@ public class SecurityConfig {
                 .httpBasic((auth) -> auth.disable())
 
                 .oauth2Login((oauth2) -> oauth2
-                        .loginPage("https://daily-mission.leey00nsu.site/login")
+                        //.loginPage("https://daily-mission.leey00nsu.site/login")
+                        .defaultSuccessUrl("/api/v1/user/detail", true)
                         .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService)))
                         .successHandler(customSuccessHandler)
                 )
                 .authorizeHttpRequests((auth) -> auth
                         //.requestMatchers("/swagger-ui","/swagger-ui/**").permitAll()
-                        .requestMatchers( "/error", "/").permitAll()
+                        .requestMatchers( "/login", "/error", "/").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -77,7 +78,7 @@ public class SecurityConfig {
                     }
                 }))
                 .addFilterAfter(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                //.exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .build();
 
     }
