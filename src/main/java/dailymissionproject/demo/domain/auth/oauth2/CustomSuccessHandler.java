@@ -8,6 +8,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -38,17 +39,28 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String role = auth.getAuthority();
         String token = jwtUtil.createJwt(username, role,3600*60*60L);
 
-        response.addCookie(createCookie("Authorization", token));
+        //response.addCookie(createCookie("Authorization", token));
+        createCookie(response, "Authorization", token);
         response.sendRedirect("/api/v1/user/home");
-        //response.sendRedirect("localhost:8080");
     }
 
-    private Cookie createCookie(String key, String value){
+    public static void createCookie(HttpServletResponse response, String key, String value){
 
-        Cookie cookie =  new Cookie(key, value);
+        /*Cookie cookie =  new Cookie(key, value);
         cookie.setMaxAge(60*60*60);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         return cookie;
+         */
+
+        ResponseCookie responseCookie = ResponseCookie.from(key, value)
+                .path("/")
+                .sameSite("None")
+                .httpOnly(false)
+                .secure(true)
+                .maxAge(60*60*60)
+                .build();
+
+        response.addHeader("Set-Cookie", responseCookie.toString());
     }
 }
