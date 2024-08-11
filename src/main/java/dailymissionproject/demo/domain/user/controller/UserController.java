@@ -7,11 +7,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+
 import static dailymissionproject.demo.common.config.response.GlobalResponse.success;
 
 @RestController
@@ -23,6 +27,18 @@ public class UserController {
 
     private final UserService userService;
 
+    @GetMapping("/home")
+    @Operation(summary = "사용자 개인 정보 확인", description = "사용자가 프로필 정보를 확인하고 싶을 때 사용하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공!"),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
+            @ApiResponse(responseCode = "404", description = "해당 사용자가 존재하지 않습니다."),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
+    })
+    public void home(HttpServletResponse httpServletResponse) throws IOException {
+
+        httpServletResponse.sendRedirect("https://daily-mission.leey00nsu.site/sign-in/callback");
+    }
 
     @GetMapping("/detail")
     @Operation(summary = "사용자 개인 정보 확인", description = "사용자가 프로필 정보를 확인하고 싶을 때 사용하는 API입니다.")
@@ -32,7 +48,6 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "해당 사용자가 존재하지 않습니다."),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
-
     public ResponseEntity<GlobalResponse> getUser(@AuthenticationPrincipal CustomOAuth2User user){
 
         return ResponseEntity.ok(success(userService.detail(user.getUsername())));
