@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
-import java.util.NoSuchElementException;
 import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
 
 @Service
@@ -24,7 +23,9 @@ public class UserService {
     private final ImageService imageService;
 
     /**
-     *
+     * 유저 정보 확인
+     * @param username
+     * @return userResDto
      */
     @Transactional(readOnly = true)
     public UserResDto detail(String username){
@@ -40,14 +41,22 @@ public class UserService {
 
         return res;
     }
+
+    /**
+     * 유저 정보 업데이트
+     * @param username
+     * @param file
+     * @return user pk Id
+     */
     @Transactional
-    public void updateProfile(String username, MultipartFile file) throws IOException {
+    public Long updateProfile(String username, MultipartFile file) throws IOException {
 
         User findUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         String imgUrl = imageService.uploadImg(file);
         findUser.setImg(imgUrl);
-        userRepository.save(findUser);
+
+        return userRepository.save(findUser).getId();
     }
 }

@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -48,9 +49,23 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "해당 사용자가 존재하지 않습니다."),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
+
     public ResponseEntity<GlobalResponse> getUser(@AuthenticationPrincipal CustomOAuth2User user){
 
         return ResponseEntity.ok(success(userService.detail(user.getUsername())));
+    }
+
+    @PutMapping("/profile")
+    @Operation(summary = "사용자 개인 정보 업데이트", description = "사용자가 프로필 정보를 수정하고 싶을 때 사용하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공!"),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
+            @ApiResponse(responseCode = "404", description = "해당 사용자가 존재하지 않습니다."),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
+    })
+    public ResponseEntity<GlobalResponse> update(@AuthenticationPrincipal CustomOAuth2User user, @RequestPart("file") MultipartFile file)throws IOException {
+
+        return ResponseEntity.ok(success(userService.updateProfile(user.getUsername(), file)));
     }
 
     //유저 마이페이지에서 참여중인 미션, 참여했는데 종료된 미션, 제출한 포스트 목록 무한스크롤
