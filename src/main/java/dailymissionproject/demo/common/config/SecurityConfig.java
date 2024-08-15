@@ -47,10 +47,11 @@ public class SecurityConfig {
 
                 .oauth2Login((oauth2) -> oauth2
                         //.loginPage("https://daily-mission.leey00nsu.site/login")
-                        .defaultSuccessUrl("/api/v1/user/detail", true)
+
                         .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService)))
                         .successHandler(customSuccessHandler)
+                        .defaultSuccessUrl("/api/v1/user/detail", true)
                 )
                 .authorizeHttpRequests((auth) -> auth
                         //.requestMatchers("/swagger-ui","/swagger-ui/**").permitAll()
