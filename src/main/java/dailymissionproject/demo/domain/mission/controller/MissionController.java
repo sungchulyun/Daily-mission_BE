@@ -4,8 +4,8 @@ import dailymissionproject.demo.common.config.response.GlobalResponse;
 import dailymissionproject.demo.common.meta.MetaService;
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
-import dailymissionproject.demo.domain.mission.service.MissionService;
 import dailymissionproject.demo.domain.mission.dto.request.MissionSaveRequestDto;
+import dailymissionproject.demo.domain.mission.service.MissionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -13,13 +13,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 
 import static dailymissionproject.demo.common.config.response.GlobalResponse.success;
@@ -116,7 +116,7 @@ public class MissionController {
     })
     public ResponseEntity<GlobalResponse> findNewList(Pageable pageable){
 
-        PageResponseDto response = missionService.findHotList(pageable);
+        PageResponseDto response = missionService.findNewList(pageable);
 
         return ResponseEntity.ok(success(response.content(), MetaService.createMetaInfo().add("isNext", response.next())));
     }
@@ -131,7 +131,7 @@ public class MissionController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
     public ResponseEntity<GlobalResponse> findAllList(Pageable pageable){
-        PageResponseDto response = missionService.findHotList(pageable);
+        PageResponseDto response = missionService.findAllList(pageable);
 
         return ResponseEntity.ok(success(response.content(), MetaService.createMetaInfo().add("isNext", response.next())));
     }
