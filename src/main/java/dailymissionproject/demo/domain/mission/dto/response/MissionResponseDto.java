@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import dailymissionproject.demo.domain.mission.repository.Mission;
+import dailymissionproject.demo.domain.missionRule.repository.MissionRule;
 import dailymissionproject.demo.domain.participant.dto.response.ParticipantUserDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -46,8 +47,11 @@ public class MissionResponseDto {
     @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate endDate;
 
+    @Schema(description = "미션 규칙")
+    private MissionRule missionRule;
+
     @Builder
-    public MissionResponseDto(Mission mission){
+    public MissionResponseDto (Mission mission){
         this.title = mission.getTitle();
         this.content = mission.getContent();
         this.imgUrl = mission.getImageUrl();
@@ -55,5 +59,6 @@ public class MissionResponseDto {
         this.participants = mission.getAllParticipantUser();
         this.startDate = mission.getStartDate();
         this.endDate = mission.getEndDate();
+        this.missionRule = mission.getMissionRule();
     }
 }
