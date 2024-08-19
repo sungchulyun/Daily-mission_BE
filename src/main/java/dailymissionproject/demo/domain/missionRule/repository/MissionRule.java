@@ -1,5 +1,6 @@
 package dailymissionproject.demo.domain.missionRule.repository;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -32,6 +33,7 @@ public class MissionRule {
     }
 
     @OneToOne(mappedBy = "missionRule")
+    @JsonBackReference
     private Mission mission;
 
     public void update(Week week){
