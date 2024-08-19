@@ -1,5 +1,6 @@
 package dailymissionproject.demo.domain.mission.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -39,12 +40,14 @@ public class MissionResponseDto {
     @Schema(description = "미션 시작일자")
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
     private LocalDate startDate;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Schema(description = "미션 종료일자")
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
     private LocalDate endDate;
 
     @Schema(description = "미션 규칙")
