@@ -97,7 +97,8 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
                         mission.imageUrl,
                         mission.user.name,
                         mission.startDate,
-                        mission.endDate))
+                        mission.endDate,
+                        mission.ended))
                 .from(mission)
                 .orderBy(mission.createdTime.desc())
                 .offset(pageable.getOffset())
