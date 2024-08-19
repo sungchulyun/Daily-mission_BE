@@ -7,8 +7,10 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.participant.dto.response.ParticipantUserDto;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Schema(description = "미션 상세 정보 응답 DTO")
 public class MissionResponseDto {
 

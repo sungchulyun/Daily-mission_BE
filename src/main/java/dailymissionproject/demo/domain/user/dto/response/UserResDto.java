@@ -3,17 +3,19 @@ package dailymissionproject.demo.domain.user.dto.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 @Schema(description = "유저 정보 응답 DTO")
 public class UserResDto {
 
     @Schema(description = "유저 닉네임")
-    private final String name;
+    private  String name;
     @Schema(description = "유저 이메일")
-    private final String email;
+    private  String email;
     @Schema(description = "유저 이미지 썸네일")
-    private final String imgUrl;
+    private  String imgUrl;
 
     @Builder
     UserResDto(String name, String email, String imgUrl){
