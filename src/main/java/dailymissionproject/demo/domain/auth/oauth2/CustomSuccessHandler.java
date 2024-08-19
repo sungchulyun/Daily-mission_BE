@@ -2,9 +2,7 @@ package dailymissionproject.demo.domain.auth.oauth2;
 
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.auth.jwt.JWTUtil;
-import dailymissionproject.demo.domain.user.repository.Role;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +39,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         //response.addCookie(createCookie("Authorization", token));
         createCookie(response, "Authorization", token);
-        response.sendRedirect("/api/v1/user/home");
+        response.sendRedirect("https://daily-mission.leey00nsu.site/sign-in/callback");
     }
 
     public static void createCookie(HttpServletResponse response, String key, String value){
