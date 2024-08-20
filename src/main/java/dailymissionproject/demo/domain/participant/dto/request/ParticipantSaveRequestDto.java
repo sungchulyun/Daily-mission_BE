@@ -12,18 +12,18 @@ import lombok.Getter;
 public class ParticipantSaveRequestDto {
 
     @Schema(description = "참여하고자 하는 미션")
-    private final Mission mission;
+    private final Long missionId;
 
     @Schema(description = "참여하고자 하는 미션의 참여코드")
     private final String credential;
 
     @Builder
-    public ParticipantSaveRequestDto(Mission mission, String credential){
-        this.mission = mission;
+    public ParticipantSaveRequestDto(Long missionId, String credential){
+        this.missionId = missionId;
         this.credential = credential;
     }
 
-    public Participant toEntity(User user){
+    public Participant toEntity(User user, Mission mission) {
         return Participant.builder()
                 .mission(mission)
                 .user(user)

@@ -16,14 +16,12 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.INPUT_VALUE_IS_EMPTY;
 import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.MISSION_NOT_FOUND;
 import static dailymissionproject.demo.domain.participant.exception.ParticipantExceptionCode.*;
 import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
@@ -44,20 +42,13 @@ public class ParticipantService {
     })
     public boolean save(String username, ParticipantSaveRequestDto requestDto){
 
-        //미션 null값 검증
-        if(requestDto.getMission() == null){
-            throw new MissionException(INPUT_VALUE_IS_EMPTY);
-        }
-
-        //미션 id 유효한지 검증
-        Mission mission = missionRepository.findById(requestDto.getMission().getId())
-                .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
+        Mission findMission = missionRepository.findById(requestDto.getMissionId()).orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
 
         User findUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         //해당 사용자가 해당 미션에 참여한 이력이 있는지 검증
-        Optional<Participant> optional = participantRepository.findByMissionAndUser(mission, findUser);
+        Optional<Participant> optional = participantRepository.findByMissionAndUser(findMission, findUser);
         if(optional.isPresent()){
             if(optional.get().isBanned()){
                 throw new ParticipantException(BAN_HISTORY_EXISTS);
@@ -75,15 +66,15 @@ public class ParticipantService {
          */
 
         //참여 코드 검증
-        if(!requestDto.getCredential().equals(mission.getCredential())){
+        if(!requestDto.getCredential().equals(findMission.getCredential())){
             throw new ParticipantException(INVALID_INPUT_VALUE_CREDENTIAL);
         }
 
-        if(!(mission.isPossibleToParticipate(LocalDate.now()))){
+        if(!(findMission.isPossibleToParticipate(LocalDate.now()))){
             throw new ParticipantException(INVALID_PARTICIPATE_REQUEST);
         }
 
-        Participant participant = requestDto.toEntity(findUser);
+        Participant participant = requestDto.toEntity(findUser, findMission);
         participantRepository.save(participant);
         return true;
     }
