@@ -3,9 +3,11 @@ package dailymissionproject.demo.domain.participant.dto.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Schema(description = "참여자 목록 DTO")
+@NoArgsConstructor(force = true)
 public class ParticipantUserDto {
 
     @Schema(description = "참여자 PK ID")

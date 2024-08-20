@@ -1,10 +1,6 @@
 package dailymissionproject.demo.domain.mission.service;
 
 
-import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.INVALID_DELETE_REQUEST;
-import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.MISSION_NOT_FOUND;
-import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
-
 import dailymissionproject.demo.domain.image.ImageService;
 import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
 import dailymissionproject.demo.domain.mission.dto.request.MissionSaveRequestDto;
@@ -27,9 +23,16 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.INVALID_DELETE_REQUEST;
+import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.MISSION_NOT_FOUND;
+import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
 
 
 @Service
@@ -47,11 +50,13 @@ public class MissionService {
     @Cacheable(value = "mission", key = "'info-' + #id")
     public MissionResponseDto findById(Long id){
 
-        Mission mission = missionRepository.findByIdAndDeletedIsFalse(id)
+        Mission findMission = missionRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
 
-        MissionResponseDto responseDto = new MissionResponseDto(mission);
-        return responseDto;
+        MissionResponseDto missionResponseDto = MissionResponseDto.of(findMission);
+        missionResponseDto.setParticipants(findMission.getAllParticipantUser());
+
+        return missionResponseDto;
     }
 
 
