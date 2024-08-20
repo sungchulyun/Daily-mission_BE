@@ -73,7 +73,6 @@ public class MissionController {
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
-    @CacheEvict(value = "mission", key = "'info'")
     @Operation(summary = "미션 삭제", description = "사용자가 미션을 삭제하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공!"),
