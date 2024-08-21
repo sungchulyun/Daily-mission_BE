@@ -55,7 +55,7 @@ public class UserService {
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         String imageUrl = imageService.uploadImg(file);
-        findUser.setImg(imageUrl);
+        findUser.setImageUrl(imageUrl);
 
         return userRepository.save(findUser).getId();
     }
