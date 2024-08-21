@@ -22,6 +22,7 @@ bin/
 application.properties
 application-dev.properties
 application-prod.properties
+data.sql
 .idea
 *.iws
 *.iml
