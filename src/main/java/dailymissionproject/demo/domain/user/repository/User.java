@@ -67,7 +67,7 @@ public class User extends BaseTimeEntity {
         return this.role.getKey();
     }
 
-    public void setImg(String imgUrl){
+    public void setImageUrl(String imageUrl){
         this.imageUrl = imageUrl;
     }
 
