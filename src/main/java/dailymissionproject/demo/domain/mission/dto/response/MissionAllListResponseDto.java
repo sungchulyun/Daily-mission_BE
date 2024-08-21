@@ -24,7 +24,7 @@ public class MissionAllListResponseDto {
     @Schema(description = "미션 내용")
     private String content;
     @Schema(description = "미션 썸네일")
-    private String imgUrl;
+    private String imageUrl;
     @Schema(description = "미션 방장")
     private String name;
 
@@ -44,11 +44,11 @@ public class MissionAllListResponseDto {
     private boolean ended;
 
     @Builder
-    MissionAllListResponseDto(Long id, String title, String content, String imgUrl, String name, LocalDate startDate, LocalDate endDate, boolean ended) {
+    MissionAllListResponseDto(Long id, String title, String content, String imageUrl, String name, LocalDate startDate, LocalDate endDate, boolean ended) {
         this.id = id;
         this.title = title;
         this.content = content;
-        this.imgUrl = imgUrl;
+        this.imageUrl = imageUrl;
         this.name = name;
 
         this.startDate = startDate;

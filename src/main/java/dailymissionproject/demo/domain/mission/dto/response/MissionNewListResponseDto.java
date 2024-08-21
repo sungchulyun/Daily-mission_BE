@@ -24,7 +24,7 @@ public class MissionNewListResponseDto {
     @Schema(description = "미션 내용")
     private String content;
     @Schema(description = "미션 썸네일")
-    private String imgUrl;
+    private String imageUrl;
     @Schema(description = "미션 방장")
     private String name;
 
@@ -41,11 +41,11 @@ public class MissionNewListResponseDto {
     private LocalDate endDate;
 
     @Builder
-    MissionNewListResponseDto(Long id, String title, String content, String imgUrl, String name, LocalDate startDate, LocalDate endDate) {
+    MissionNewListResponseDto(Long id, String title, String content, String imageUrl, String name, LocalDate startDate, LocalDate endDate) {
         this.id = id;
         this.title = title;
         this.content = content;
-        this.imgUrl = imgUrl;
+        this.imageUrl = imageUrl;
         this.name = name;
 
         this.startDate = startDate;
