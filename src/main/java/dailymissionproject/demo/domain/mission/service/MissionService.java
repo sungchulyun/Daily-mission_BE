@@ -174,7 +174,7 @@ public class MissionService {
                                             .id(mission.getId())
                                             .title(mission.getTitle())
                                             .content(mission.getContent())
-                                            .imgUrl(mission.getImageUrl())
+                                            .imageUrl(mission.getImageUrl())
                                             .name(mission.getUser().getName())
                                             .startDate(mission.getStartDate())
                                             .endDate(mission.getEndDate())
