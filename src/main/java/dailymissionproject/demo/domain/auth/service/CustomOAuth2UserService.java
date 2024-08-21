@@ -1,7 +1,6 @@
 package dailymissionproject.demo.domain.auth.service;
 
 import dailymissionproject.demo.domain.auth.dto.*;
-import dailymissionproject.demo.domain.user.repository.Role;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +11,6 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -60,7 +57,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         } else {
             User user = findUser.get();
             user.setEmail(oAuth2Response.getEmail());
-            user.setImg(oAuth2Response.getProfileImage());
+            user.setImageUrl(oAuth2Response.getProfileImage());
             user.setName(oAuth2Response.getName());
 
             userRepository.save(user);
