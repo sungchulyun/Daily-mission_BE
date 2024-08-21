@@ -143,7 +143,7 @@ public class Mission extends BaseTimeEntity {
 
             ParticipantUserDto participantUser = ParticipantUserDto.builder()
                     .id(user.getId())
-                    .userName(user.getName())
+                    .username(user.getUsername())
                     .imageUrl(user.getImageUrl())
                     .banned(p.isBanned())
                     .build();

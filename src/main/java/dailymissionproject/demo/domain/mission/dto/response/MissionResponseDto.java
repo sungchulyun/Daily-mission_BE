@@ -32,7 +32,7 @@ public class MissionResponseDto {
     @Schema(description = "미션 썸네일 이미지")
     private final String imageUrl;
     @Schema(description = "방장 이름")
-    private final String name;
+    private final String username;
 
     @Schema(description = "참여자들 목록")
     private List<ParticipantUserDto> participantDto = new ArrayList<>();
@@ -60,7 +60,7 @@ public class MissionResponseDto {
                 mission.getTitle(),
                 mission.getContent(),
                 mission.getImageUrl(),
-                mission.getUser().getName(),
+                mission.getUser().getUsername(),
                 mission.getStartDate(),
                 mission.getEndDate(),
                 MissionRuleResponseDto.of(mission.getMissionRule())
