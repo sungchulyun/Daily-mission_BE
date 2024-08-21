@@ -8,7 +8,7 @@ public class UserObjectFixture {
         return UserResDto.builder()
                 .name("윤성철")
                 .email("proattacker641@gmail.com")
-                .imgUrl("https://aws-s3.jpg")
+                .imageUrl("https://aws-s3.jpg")
                 .build();
     }
 }

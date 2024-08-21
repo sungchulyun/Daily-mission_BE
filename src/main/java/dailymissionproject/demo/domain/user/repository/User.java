@@ -1,14 +1,13 @@
 package dailymissionproject.demo.domain.user.repository;
 
-import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.common.repository.BaseTimeEntity;
+import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.participant.repository.Participant;
 import dailymissionproject.demo.domain.post.repository.Post;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +38,7 @@ public class User extends BaseTimeEntity {
     private String username;
 
     @Column(name = "image_url")
-    private String imgUrl;
+    private String imageUrl;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -47,20 +46,20 @@ public class User extends BaseTimeEntity {
 
 
     @Builder
-    public User(String name, String email, String username, String imgUrl, Role role){
+    public User(String name, String email, String username, String imageUrl, Role role){
         this.name = name;
         this.email = email;
         this.username = username;
-        this.imgUrl = imgUrl;
+        this.imageUrl = imageUrl;
         this.role = role;
     }
 
     @Builder
-    public User(String name, String username, String email, String imgUrl){
+    public User(String name, String username, String email, String imageUrl){
         this.name = name;
         this.username = username;
         this.email = email;
-        this.imgUrl = imgUrl;
+        this.imageUrl = imageUrl;
     }
 
 
@@ -69,7 +68,7 @@ public class User extends BaseTimeEntity {
     }
 
     public void setImg(String imgUrl){
-        this.imgUrl = imgUrl;
+        this.imageUrl = imageUrl;
     }
 
     public void setName(String name){

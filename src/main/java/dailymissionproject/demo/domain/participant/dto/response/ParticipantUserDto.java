@@ -15,15 +15,15 @@ public class ParticipantUserDto {
     @Schema(description = "참여자 이름")
     private final String userName;
     @Schema(description = "참여자 이미지 썸네일")
-    private final String imgUrl;
+    private final String imageUrl;
     @Schema(description = "참여자 강퇴여부")
     private final Boolean banned;
 
     @Builder
-    public ParticipantUserDto(Long id, String userName, String imgUrl, Boolean banned) {
+    public ParticipantUserDto(Long id, String userName, String imageUrl, Boolean banned) {
         this.id = id;
         this.userName = userName;
-        this.imgUrl = imgUrl;
+        this.imageUrl = imageUrl;
         this.banned = banned;
     }
 }

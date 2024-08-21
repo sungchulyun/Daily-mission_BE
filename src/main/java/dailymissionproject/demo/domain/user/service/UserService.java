@@ -36,7 +36,7 @@ public class UserService {
         UserResDto res = UserResDto.builder()
                 .name(username)
                 .email(findUser.getEmail())
-                .imgUrl(findUser.getImgUrl())
+                .imageUrl(findUser.getImageUrl())
                 .build();
 
         return res;
@@ -54,8 +54,8 @@ public class UserService {
         User findUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
-        String imgUrl = imageService.uploadImg(file);
-        findUser.setImg(imgUrl);
+        String imageUrl = imageService.uploadImg(file);
+        findUser.setImg(imageUrl);
 
         return userRepository.save(findUser).getId();
     }

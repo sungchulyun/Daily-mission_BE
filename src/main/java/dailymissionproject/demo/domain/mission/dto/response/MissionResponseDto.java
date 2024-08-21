@@ -30,7 +30,7 @@ public class MissionResponseDto {
     @Schema(description = "미션 내용")
     private final String content;
     @Schema(description = "미션 썸네일 이미지")
-    private final String imgUrl;
+    private final String imageUrl;
     @Schema(description = "방장 이름")
     private final String name;
 

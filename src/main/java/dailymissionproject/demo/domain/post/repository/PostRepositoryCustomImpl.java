@@ -2,7 +2,6 @@ package dailymissionproject.demo.domain.post.repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import dailymissionproject.demo.domain.mission.dto.response.MissionNewListResponseDto;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.post.dto.PostSubmitDto;
 import dailymissionproject.demo.domain.post.dto.response.PostResponseDto;
@@ -16,7 +15,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static dailymissionproject.demo.domain.mission.repository.QMission.mission;
 import static dailymissionproject.demo.domain.post.repository.QPost.post;
 
 @RequiredArgsConstructor
@@ -46,7 +44,7 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
                         post.mission.id,
                         post.mission.title,
                         post.mission.user.name,
-                        post.user.imgUrl,
+                        post.user.imageUrl,
                         post.title,
                         post.content,
                         post.imageUrl,
@@ -90,7 +88,7 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
                         post.mission.id,
                         post.mission.title,
                         post.mission.user.name,
-                        post.user.imgUrl,
+                        post.user.imageUrl,
                         post.title,
                         post.content,
                         post.imageUrl,
@@ -138,7 +136,7 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
                         post.createdDate.as("date"),
                         post.user.id.as("userId"),
                         post.user.name.as("username"),
-                        post.user.imgUrl.as("imageUrl")
+                        post.user.imageUrl.as("imageUrl")
                         ))
                 .from(post)
                 .where(post.mission.id.eq(id).and(post.createdDate.after(startDateTime).and(post.createdDate.before(endDateTime))))

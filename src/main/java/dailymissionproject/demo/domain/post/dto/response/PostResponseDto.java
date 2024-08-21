@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
@@ -29,17 +28,17 @@ public class PostResponseDto {
     private String missionTitle;
 
     @Schema(description = "포스트 작성자 이름")
-    private String userName;
+    private String username;
 
     @Schema(description = "포스트 작성자 이미지")
-    private String userImgUrl;
+    private String userImageUrl;
 
     @Schema(description = "포스트 제목")
     private String title;
     @Schema(description = "포스트 내용")
     private String content;
     @Schema(description = "포스트 썸네일")
-    private String imgUrl;
+    private String imageUrl;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -56,26 +55,26 @@ public class PostResponseDto {
         this.id = post.getId();
         this.missionId = post.getMission().getId();
         this.missionTitle = post.getMission().getTitle();
-        this.userName = post.getUser().getName();
-        this.userImgUrl = post.getUser().getImgUrl();
+        this.username = post.getUser().getUsername();
+        this.userImageUrl = post.getUser().getImageUrl();
         this.title = post.getTitle();
         this.content = post.getContent();
-        this.imgUrl = post.getImageUrl();
+        this.imageUrl = post.getImageUrl();
         this.createdDate = post.getCreatedDate();
         this.modifiedDate = post.getModifiedDate();
     }
 
     @Builder
-    public PostResponseDto(Long id, Long missionId, String missionTitle, String name, String userImgUrl, String title
-                        ,String content, String imgUrl, LocalDateTime createdDate, LocalDateTime modifiedDate){
+    public PostResponseDto(Long id, Long missionId, String missionTitle, String username, String userImageUrl, String title
+                        ,String content, String imageUrl, LocalDateTime createdDate, LocalDateTime modifiedDate){
         this.id = id;
         this.missionId = missionId;
         this.missionTitle = missionTitle;
-        this.userName = name;
-        this.userImgUrl = userImgUrl;
+        this.username = username;
+        this.userImageUrl = userImageUrl;
         this.title = title;
         this.content = content;
-        this.imgUrl = imgUrl;
+        this.imageUrl = imageUrl;
         this.createdDate = createdDate;
         this.modifiedDate = modifiedDate;
     }

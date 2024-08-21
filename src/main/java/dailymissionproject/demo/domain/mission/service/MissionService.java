@@ -73,11 +73,11 @@ public class MissionService {
 
         //참여 코드 5글자로 설정
         String credential = String.valueOf(UUID.randomUUID()).substring(0, 5);
-        String imgUrl = imageService.uploadImg(file);
+        String imageUrl = imageService.uploadImg(file);
 
         Mission mission = missionReqDto.toEntity(findUser);
 
-        mission.setImgUrl(imgUrl);
+        mission.setImageUrl(imageUrl);
         mission.setCredential(credential);
 
         //미션 시작일자 검증

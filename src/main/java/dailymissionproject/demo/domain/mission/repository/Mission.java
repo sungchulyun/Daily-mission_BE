@@ -85,8 +85,8 @@ public class Mission extends BaseTimeEntity {
         this.credential = credential;
     }
 
-    public void setImgUrl(String imgUrl){
-        this.imageUrl = imgUrl;
+    public void setImageUrl(String imageUrl){
+        this.imageUrl = imageUrl;
     }
 
     /**
@@ -144,7 +144,7 @@ public class Mission extends BaseTimeEntity {
             ParticipantUserDto participantUser = ParticipantUserDto.builder()
                     .id(user.getId())
                     .userName(user.getName())
-                    .imgUrl(user.getImgUrl())
+                    .imageUrl(user.getImageUrl())
                     .banned(p.isBanned())
                     .build();
 
