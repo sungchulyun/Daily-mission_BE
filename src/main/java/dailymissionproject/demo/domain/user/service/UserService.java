@@ -1,5 +1,6 @@
 package dailymissionproject.demo.domain.user.service;
 
+import dailymissionproject.demo.common.util.S3Util;
 import dailymissionproject.demo.domain.image.ImageService;
 import dailymissionproject.demo.domain.user.dto.response.UserResDto;
 import dailymissionproject.demo.domain.user.exception.UserException;
@@ -21,6 +22,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ImageService imageService;
+    private final S3Util s3Util;
 
     /**
      * 유저 정보 확인
@@ -54,7 +56,7 @@ public class UserService {
         User findUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
-        String imageUrl = imageService.uploadImg(file);
+        String imageUrl = imageService.uploadUserS3(file, username);
         findUser.setImageUrl(imageUrl);
 
         return userRepository.save(findUser).getId();

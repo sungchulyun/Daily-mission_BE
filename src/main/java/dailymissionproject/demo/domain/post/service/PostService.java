@@ -1,13 +1,8 @@
 package dailymissionproject.demo.domain.post.service;
 
 
-import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.MISSION_NOT_FOUND;
-import static dailymissionproject.demo.domain.post.exception.PostExceptionCode.*;
-import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
-
 import dailymissionproject.demo.domain.image.ImageService;
 import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
-import dailymissionproject.demo.domain.mission.dto.response.MissionNewListResponseDto;
 import dailymissionproject.demo.domain.mission.exception.MissionException;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
@@ -33,13 +28,17 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
 import java.util.List;
+
+import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.MISSION_NOT_FOUND;
+import static dailymissionproject.demo.domain.post.exception.PostExceptionCode.*;
+import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -67,7 +66,7 @@ public class PostService {
         //미션 참여자인지 검증
         validIsParticipating(findUser, mission);
 
-        String imgUrl = imageService.uploadImg(file);
+        String imgUrl = imageService.uploadPostS3(file, requestDto.getTitle());
 
         Post post = requestDto.toEntity(findUser, mission);
         post.setImageUrl(imgUrl);
@@ -183,7 +182,7 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
-        String imgUrl = imageService.uploadImg(file);
+        String imgUrl = imageService.uploadPostS3(file, requestDto.getTitle());
 
         post.update(requestDto.getTitle(), requestDto.getContent(), imgUrl);
 
