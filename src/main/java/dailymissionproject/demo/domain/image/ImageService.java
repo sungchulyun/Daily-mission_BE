@@ -1,28 +1,57 @@
 package dailymissionproject.demo.domain.image;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectMetadata;
+import dailymissionproject.demo.common.util.S3Util;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.time.LocalDateTime;
+import java.util.Calendar;
 
 @Service
 @RequiredArgsConstructor
 public class ImageService {
 
-    private final AmazonS3 amazonS3;
+    private final S3Util s3Util;
 
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
 
-    @Value("${cloud.aws.s3.bucket.url}")
-    private String bucketUrl;
+    /**
+     * POST Thumbnail 디렉토리 생성
+     * @return
+     */
+    public String getPostDir(){
+        Calendar calendar = Calendar.getInstance();
 
+        String yearPath = "/" + calendar.get(Calendar.YEAR);
+        String monthPath = yearPath + "/" + new DecimalFormat("00").format(calendar.get(Calendar.MONTH) + 1);
+        String datePath = monthPath + "/" + new DecimalFormat("00").format(calendar.get(Calendar.DATE));
+
+        return datePath;
+    }
+
+    /**
+     * Post 썸네일 업로드
+     */
+    public String uploadPostS3(MultipartFile multipartFile, String dirName) throws IOException {
+        return s3Util.upload(multipartFile, dirName + getPostDir());
+    }
+
+    /**
+     * User 썸네일 업로드
+     */
+    public String uploadUserS3(MultipartFile multipartFile, String dirName) throws IOException {
+        return s3Util.upload(multipartFile, dirName);
+    }
+
+    /**
+     * Mission 썸네일 업로드
+     */
+    public String uploadMissionS3(MultipartFile multipartFile, String dirName) throws IOException {
+        return s3Util.upload(multipartFile, dirName);
+    }
+
+    /*
     public String uploadImg(MultipartFile file)throws IOException {
         try {
             String fileName = file.getOriginalFilename();
@@ -37,4 +66,6 @@ public class ImageService {
             throw new RuntimeException("이미지 업로드에 실패했습니다.");
         }
     }
+
+     */
 }
