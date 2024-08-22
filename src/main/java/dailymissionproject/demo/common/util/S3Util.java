@@ -1,6 +1,8 @@
 package dailymissionproject.demo.common.util;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,7 +61,8 @@ public class S3Util {
 
     private String putS3(File uploadFile, String fileName){
 
-        amazonS3Client.putObject(bucket, bucketUrl + fileName, uploadFile);
+        //amazonS3Client.putObject(bucket, bucketUrl + fileName, uploadFile);
+        amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
 
