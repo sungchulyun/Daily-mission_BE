@@ -1,6 +1,8 @@
 package dailymissionproject.demo.common.util;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -59,8 +63,12 @@ public class S3Util {
 
     private String putS3(File uploadFile, String fileName){
 
-        amazonS3Client.putObject(bucket, bucketUrl + fileName, uploadFile);
-        return amazonS3Client.getUrl(bucket, fileName).toString();
+        //amazonS3Client.putObject(bucket, bucketUrl + fileName, uploadFile);
+        amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
+        String url = URLDecoder.decode(amazonS3Client.getUrl(bucket, fileName).toString(), StandardCharsets.UTF_8);
+
+        //log.info(url);
+        return url;
     }
 
     /**
