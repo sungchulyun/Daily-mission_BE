@@ -38,7 +38,7 @@ public class UserController {
     })
     public void home(HttpServletResponse httpServletResponse) throws IOException {
 
-        httpServletResponse.sendRedirect("https://daily-mission.leey00nsu.site/sign-in/callback");
+        httpServletResponse.sendRedirect("https://daily-mission.leey00nsu.com/sign-in/callback");
     }
 
     @GetMapping("/detail")
