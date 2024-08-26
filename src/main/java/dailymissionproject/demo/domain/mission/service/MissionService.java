@@ -127,7 +127,7 @@ public class MissionService {
 
     //Hot 미션 불러오기 ==//
     @Transactional(readOnly = true)
-    @Cacheable(value = "missionLists", key = "'hot-' + #pageable.getPageNumber()")
+    @Cacheable(value = "missionLists", key = "'hot-' + 'page-' + #pageable.getPageNumber() + 'size-' + #pageable.getPageSize()")
     public PageResponseDto findHotList(Pageable pageable){
 
         Slice<MissionHotListResponseDto> responseList = missionRepository.findAllByParticipantSize(pageable);
@@ -139,7 +139,7 @@ public class MissionService {
 
     //New 미션 불러오기 ==//
     @Transactional(readOnly = true)
-    @Cacheable(value = "missionLists", key = "'new-' + #pageable.getPageNumber()")
+    @Cacheable(value = "missionLists", key = "'new-' + 'page-' + #pageable.getPageNumber() + 'size-' + #pageable.getPageSize()")
     public PageResponseDto findNewList(Pageable pageable){
 
         Slice<MissionNewListResponseDto> responseList = missionRepository.findAllByCreatedInMonth(pageable);
@@ -151,7 +151,7 @@ public class MissionService {
 
     //모든 미션 불러오기 ==//
     @Transactional(readOnly = true)
-    @Cacheable(value = "missionLists", key = "'all-' + #pageable.getPageNumber()")
+    @Cacheable(value = "missionLists", key = "'all-' + 'page-' + #pageable.getPageNumber() + 'size-' + #pageable.getPageSize()")
     public PageResponseDto findAllList(Pageable pageable){
 
         Slice<MissionAllListResponseDto> responseList = missionRepository.findAllByCreatedDate(pageable);
