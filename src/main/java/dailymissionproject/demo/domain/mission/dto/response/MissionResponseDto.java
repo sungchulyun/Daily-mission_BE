@@ -9,10 +9,7 @@ import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.missionRule.dto.MissionRuleResponseDto;
 import dailymissionproject.demo.domain.participant.dto.response.ParticipantUserDto;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -65,6 +62,19 @@ public class MissionResponseDto {
                 mission.getEndDate(),
                 MissionRuleResponseDto.of(mission.getMissionRule())
         );
+    }
+
+    @Builder
+    public MissionResponseDto(String title, String content, String imageUrl,String username, ParticipantUserDto participantUserDto
+            , LocalDate startDate, LocalDate endDate, MissionRuleResponseDto missionRuleResponseDto ) {
+        this.title = title;
+        this.content = content;
+        this.imageUrl = imageUrl;
+        this.username = username;
+        this.participantDto.add(participantUserDto);
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.missionRuleResponseDto = missionRuleResponseDto;
     }
 
     public void setParticipants(List<ParticipantUserDto> participants) {
