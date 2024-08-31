@@ -38,6 +38,8 @@ public class QUser extends EntityPathBase<User> {
 
     public final StringPath name = createString("name");
 
+    public final StringPath nickname = createString("nickname");
+
     public final ListPath<dailymissionproject.demo.domain.participant.repository.Participant, dailymissionproject.demo.domain.participant.repository.QParticipant> participants = this.<dailymissionproject.demo.domain.participant.repository.Participant, dailymissionproject.demo.domain.participant.repository.QParticipant>createList("participants", dailymissionproject.demo.domain.participant.repository.Participant.class, dailymissionproject.demo.domain.participant.repository.QParticipant.class, PathInits.DIRECT2);
 
     public final ListPath<dailymissionproject.demo.domain.post.repository.Post, dailymissionproject.demo.domain.post.repository.QPost> posts = this.<dailymissionproject.demo.domain.post.repository.Post, dailymissionproject.demo.domain.post.repository.QPost>createList("posts", dailymissionproject.demo.domain.post.repository.Post.class, dailymissionproject.demo.domain.post.repository.QPost.class, PathInits.DIRECT2);
