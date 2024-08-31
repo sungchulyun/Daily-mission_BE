@@ -46,6 +46,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userDto.setUsername(username);
             userDto.setName(oAuth2Response.getName());
             userDto.setEmail(oAuth2Response.getEmail());
+            userDto.setNickname(oAuth2Response.getNickname());
             userDto.setImageUrl(oAuth2Response.getProfileImage());
             userDto.setRole("USER");
 
@@ -59,6 +60,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             user.setEmail(oAuth2Response.getEmail());
             user.setImageUrl(oAuth2Response.getProfileImage());
             user.setName(oAuth2Response.getName());
+            user.setNickname(oAuth2Response.getNickname());
 
             userRepository.save(user);
 
@@ -66,6 +68,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userDto.setUsername(user.getUsername());
             userDto.setName(oAuth2User.getName());
             userDto.setEmail(oAuth2Response.getEmail());
+            userDto.setNickname(oAuth2Response.getNickname());
             userDto.setImageUrl(oAuth2Response.getProfileImage());
             userDto.setRole("ROLE_USER");
 

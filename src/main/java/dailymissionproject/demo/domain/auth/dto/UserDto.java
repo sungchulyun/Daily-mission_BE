@@ -12,6 +12,7 @@ public class UserDto {
     private String role;
     private String name;
     private String username;
+    private String nickname;
     private String imageUrl;
     private String email;
 
@@ -20,6 +21,7 @@ public class UserDto {
         return User.builder()
                 .name(userDto.getName())
                 .username(userDto.getUsername())
+                .nickname(userDto.getNickname())
                 .imageUrl(userDto.getImageUrl())
                 .email(userDto.getEmail())
                 .role(Role.valueOf(userDto.getRole()))
