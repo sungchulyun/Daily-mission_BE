@@ -9,6 +9,7 @@ import lombok.Setter;
 @Getter @Setter
 public class UserDto {
 
+    private Long id;
     private String role;
     private String name;
     private String username;
@@ -26,5 +27,9 @@ public class UserDto {
                 .email(userDto.getEmail())
                 .role(Role.valueOf(userDto.getRole()))
                 .build();
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

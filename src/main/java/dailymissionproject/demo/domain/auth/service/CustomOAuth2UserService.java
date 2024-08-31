@@ -53,6 +53,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             User user = userDto.toEntity(userDto);
             userRepository.save(user);
 
+            userDto.setId(user.getId());
             return new CustomOAuth2User(userDto);
 
         } else {
@@ -71,6 +72,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userDto.setNickname(oAuth2Response.getNickname());
             userDto.setImageUrl(oAuth2Response.getProfileImage());
             userDto.setRole("ROLE_USER");
+            userDto.setId(user.getId());
 
             return new CustomOAuth2User(userDto);
         }
