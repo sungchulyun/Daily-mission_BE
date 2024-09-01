@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .httpBasic((auth) -> auth.disable())
 
                 .oauth2Login((oauth2) -> oauth2
-                        //.loginPage("https://daily-mission.leey00nsu.site/login")
+                        .loginPage("https://daily-mission.leey00nsu.com/login")
 
                         .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService)))
@@ -51,7 +51,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests((auth) -> auth
                         //.requestMatchers("/swagger-ui","/swagger-ui/**").permitAll()
-                        .requestMatchers( "/login", "/error", "/").permitAll()
+                        .requestMatchers( "/login", "/error", "/favicon.ico","/").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
