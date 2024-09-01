@@ -1,6 +1,7 @@
 package dailymissionproject.demo.domain.post.service;
 
 
+import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.image.ImageService;
 import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
 import dailymissionproject.demo.domain.mission.exception.MissionException;
@@ -55,12 +56,12 @@ public class PostService {
             @CacheEvict(value = "postLists", allEntries = true),
             @CacheEvict(value = "posts", allEntries = true)
     })
-    public Long save(String username, PostSaveRequestDto requestDto, MultipartFile file) throws IOException {
+    public Long save(CustomOAuth2User user, PostSaveRequestDto requestDto, MultipartFile file) throws IOException {
 
         Mission mission = missionRepository.findByIdAndDeletedIsFalse(requestDto.getMissionId())
                 .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
 
-        User findUser = userRepository.findByUsername(username)
+        User findUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         //미션 참여자인지 검증
@@ -87,10 +88,10 @@ public class PostService {
 
     //== 사용자가 작성한 전체 포스트 조회==//
     @Transactional(readOnly = true)
-    @Cacheable(value = "postLists", key = "'user-' + #username")
-    public PageResponseDto findAllByUser(String username, Pageable pageable){
+    @Cacheable(value = "postLists", key = "'user-' + #user.getId()")
+    public PageResponseDto findAllByUser(CustomOAuth2User user, Pageable pageable){
 
-        User findUser = userRepository.findByUsername(username)
+        User findUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         Slice<PostResponseDto> userPostLists = postRepository.findAllByUser(pageable, findUser);

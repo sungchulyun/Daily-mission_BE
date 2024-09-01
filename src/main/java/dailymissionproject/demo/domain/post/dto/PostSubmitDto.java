@@ -13,15 +13,15 @@ import java.time.LocalDateTime;
 public class PostSubmitDto {
 
     private Long userId;
-    private String username;
+    private String nickname;
     private String imageUrl;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
     @Builder
-    public PostSubmitDto(LocalDateTime dateTime, Long userId, String username, String imageUrl){
+    public PostSubmitDto(LocalDateTime dateTime, Long userId, String nickname, String imageUrl){
         this.userId = userId;
-        this.username = username;
+        this.nickname = nickname;
         this.imageUrl = imageUrl;
 
         LocalDateTime check = LocalDateTime.of(dateTime.getYear(), dateTime.getMonth(), dateTime.getDayOfMonth(), 3, 0,0);

@@ -16,16 +16,16 @@ import java.util.List;
 public class PostHistoryDto {
 
     private Long userId;
-    private String username;
+    private String nickname;
     private String imageUrl;
     private Boolean banned;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private List<LocalDate> date = new ArrayList<>();
 
     @Builder
-    public PostHistoryDto(Long userId, String username, String imageUrl, Boolean banned){
+    public PostHistoryDto(Long userId, String nickname, String imageUrl, Boolean banned){
         this.userId = userId;
-        this.username = username;
+        this.nickname = nickname;
         this.imageUrl = imageUrl;
         this.banned = banned;
     }

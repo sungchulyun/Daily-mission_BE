@@ -2,6 +2,7 @@ package dailymissionproject.demo.domain.mission.controller;
 
 import dailymissionproject.demo.common.config.response.GlobalResponse;
 import dailymissionproject.demo.common.meta.MetaService;
+import dailymissionproject.demo.common.repository.CurrentUser;
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
 import dailymissionproject.demo.domain.mission.dto.request.MissionSaveRequestDto;
@@ -12,11 +13,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,11 +44,11 @@ public class MissionController {
             @ApiResponse(responseCode = "404", description = "미션 생성에 실패하였습니다."),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
-    public ResponseEntity<GlobalResponse> save(@AuthenticationPrincipal CustomOAuth2User user
+    public ResponseEntity<GlobalResponse> save(@CurrentUser CustomOAuth2User user
                                                 , @RequestPart MissionSaveRequestDto missionReqDto
                                                 , @RequestPart MultipartFile file) throws IOException {
 
-        return ResponseEntity.ok(success(missionService.save((user.getUsername()), missionReqDto, file)));
+        return ResponseEntity.ok(success(missionService.save(user, missionReqDto, file)));
     }
 
     //== 미션 상세 조회 ==//
@@ -80,9 +79,9 @@ public class MissionController {
             @ApiResponse(responseCode = "404", description = "해당 미션이 존재하지 않습니다."),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
-    public ResponseEntity<GlobalResponse> delete(@PathVariable("id")Long id, @AuthenticationPrincipal CustomOAuth2User user){
+    public ResponseEntity<GlobalResponse> delete(@PathVariable("id")Long id, @CurrentUser CustomOAuth2User user){
 
-        return ResponseEntity.ok(success(missionService.delete(id, user.getUsername())));
+        return ResponseEntity.ok(success(missionService.delete(id, user)));
     }
 
 

@@ -2,6 +2,7 @@ package dailymissionproject.demo.domain.post.controller;
 
 import dailymissionproject.demo.common.config.response.GlobalResponse;
 import dailymissionproject.demo.common.meta.MetaService;
+import dailymissionproject.demo.common.repository.CurrentUser;
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
 import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
@@ -16,11 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
-import java.util.List;
 
 import static dailymissionproject.demo.common.config.response.GlobalResponse.success;
 @RestController
@@ -42,11 +42,11 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "포스트 생성에 실패하였습니다."),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
-    public ResponseEntity<GlobalResponse> save(@AuthenticationPrincipal CustomOAuth2User user
+    public ResponseEntity<GlobalResponse> save(@CurrentUser CustomOAuth2User user
                     , @RequestPart PostSaveRequestDto postSaveReqDto
                     , @RequestPart MultipartFile file)throws IOException {
 
-        return ResponseEntity.ok(success(postService.save(user.getUsername(), postSaveReqDto, file)));
+        return ResponseEntity.ok(success(postService.save(user, postSaveReqDto, file)));
     }
 
     //== 인증 글 상세 조회==//
@@ -73,8 +73,8 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "포스트 조회에 실패하였습니다."),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
-    public ResponseEntity<GlobalResponse> findByUser(@AuthenticationPrincipal CustomOAuth2User user, Pageable pageable){
-        PageResponseDto response = postService.findAllByUser(user.getUsername(), pageable);
+    public ResponseEntity<GlobalResponse> findByUser(@CurrentUser CustomOAuth2User user, Pageable pageable){
+        PageResponseDto response = postService.findAllByUser(user, pageable);
 
         return ResponseEntity.ok(success(response.content(), MetaService.createMetaInfo().add("isNext", response.next())));
     }
