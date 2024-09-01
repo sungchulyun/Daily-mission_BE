@@ -1,6 +1,7 @@
 package dailymissionproject.demo.domain.user.controller;
 
 import dailymissionproject.demo.common.config.response.GlobalResponse;
+import dailymissionproject.demo.common.repository.CurrentUser;
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,9 +51,9 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
 
-    public ResponseEntity<GlobalResponse> getUser(@AuthenticationPrincipal CustomOAuth2User user){
+    public ResponseEntity<GlobalResponse> getUser(@CurrentUser CustomOAuth2User user){
 
-        return ResponseEntity.ok(success(userService.detail(user.getUsername())));
+        return ResponseEntity.ok(success(userService.detail(user)));
     }
 
     @PutMapping("/profile")
