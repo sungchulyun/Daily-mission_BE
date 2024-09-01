@@ -33,11 +33,12 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserDetailResponseDto detail(CustomOAuth2User user) {
 
-        User findUser = userRepository.findByUsername(user.getUsername())
+        log.info("user.id = {}", user.getId());
+        User findUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         return UserDetailResponseDto.builder()
-                .userNickname(findUser.getNickname())
+                .nickname(findUser.getNickname())
                 .email(findUser.getEmail())
                 .imageUrl(findUser.getImageUrl())
                 .build();

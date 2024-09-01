@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
 @Schema(description = "미션 상세 정보 응답 DTO")
-public class MissionResponseDto {
+public class MissionDetailResponseDto {
 
     @Schema(description = "미션 제목")
     private final String title;
@@ -28,8 +28,8 @@ public class MissionResponseDto {
     private final String content;
     @Schema(description = "미션 썸네일 이미지")
     private final String imageUrl;
-    @Schema(description = "방장 이름")
-    private final String username;
+    @Schema(description = "방장 닉네임")
+    private final String nickname;
 
     @Schema(description = "참여자들 목록")
     private List<ParticipantUserDto> participantDto = new ArrayList<>();
@@ -52,12 +52,12 @@ public class MissionResponseDto {
     private final MissionRuleResponseDto missionRuleResponseDto;
 
 
-    public static MissionResponseDto of(Mission mission){
-        return new MissionResponseDto(
+    public static MissionDetailResponseDto of(Mission mission){
+        return new MissionDetailResponseDto(
                 mission.getTitle(),
                 mission.getContent(),
                 mission.getImageUrl(),
-                mission.getUser().getUsername(),
+                mission.getUser().getNickname(),
                 mission.getStartDate(),
                 mission.getEndDate(),
                 MissionRuleResponseDto.of(mission.getMissionRule())
@@ -65,13 +65,13 @@ public class MissionResponseDto {
     }
 
     @Builder
-    public MissionResponseDto(String title, String content, String imageUrl,String username, ParticipantUserDto participantUserDto
+    public MissionDetailResponseDto(String title, String content, String imageUrl, String nickname, List<ParticipantUserDto> participantUserDto
             , LocalDate startDate, LocalDate endDate, MissionRuleResponseDto missionRuleResponseDto ) {
         this.title = title;
         this.content = content;
         this.imageUrl = imageUrl;
-        this.username = username;
-        this.participantDto.add(participantUserDto);
+        this.nickname = nickname;
+        this.participantDto = participantUserDto;;
         this.startDate = startDate;
         this.endDate = endDate;
         this.missionRuleResponseDto = missionRuleResponseDto;
