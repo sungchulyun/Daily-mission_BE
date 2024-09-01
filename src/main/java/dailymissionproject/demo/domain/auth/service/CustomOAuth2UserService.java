@@ -54,7 +54,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userRepository.save(user);
 
             userDto.setId(user.getId());
-            return new CustomOAuth2User(userDto);
+            return CustomOAuth2User.create(userDto);
 
         } else {
             User user = findUser.get();
@@ -74,7 +74,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userDto.setRole("ROLE_USER");
             userDto.setId(user.getId());
 
-            return new CustomOAuth2User(userDto);
+            return CustomOAuth2User.create(userDto, oAuth2User.getAttributes());
         }
 
     }

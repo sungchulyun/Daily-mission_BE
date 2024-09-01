@@ -17,8 +17,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+
 import java.io.IOException;
-import java.security.SignatureException;
 
 
 @RequiredArgsConstructor
@@ -65,13 +65,16 @@ public class JWTFilter extends OncePerRequestFilter {
 
             String username = jwtUtil.getUsername(token);
             String role = jwtUtil.getRole(token);
+            Long id = Long.parseLong(jwtUtil.getUserId(token));
 
             UserDto userDto = new UserDto();
+            userDto.setId(id);
             userDto.setUsername(username);
             userDto.setRole("ROLE_USER");
 
             //인증 객체 담기
-            CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDto);
+            //CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDto);
+            CustomOAuth2User customOAuth2User = CustomOAuth2User.create(userDto);
 
             if(!jwtUtil.validToken(token, customOAuth2User)){
                 log.info("token is invalid");

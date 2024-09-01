@@ -27,6 +27,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         throws IOException, ServletException {
 
         CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
+        Long id = customUserDetails.getId();
         String username = customUserDetails.getUsername();
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
@@ -35,7 +36,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         //Role role = Role.valueOf(auth.getAuthority());
 
         String role = auth.getAuthority();
-        String token = jwtUtil.createJwt(username, role,3600*60*60L);
+        String token = jwtUtil.createJwt(id, username, role,3600*60*60L);
 
         //response.addCookie(createCookie("Authorization", token));
         createCookie(response, "Authorization", token);

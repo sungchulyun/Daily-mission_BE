@@ -1,7 +1,6 @@
 package dailymissionproject.demo.domain.auth.jwt;
 
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
-import dailymissionproject.demo.domain.user.repository.Role;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,9 +21,10 @@ public class JWTUtil {
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
     }
 
-    public String createJwt(String username, String role, Long expireMs){
+    public String createJwt(Long id, String username, String role, Long expireMs){
 
         return Jwts.builder()
+                .claim("id", Long.toString(id))
                 .claim("username", username)
                 .claim("role" , role)
                 .issuedAt(new Date(System.currentTimeMillis()))
@@ -39,6 +39,10 @@ public class JWTUtil {
     }
     public String getUsername(String token){
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
+    }
+
+    public String getUserId(String token){
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("id", String.class);
     }
 
     public String getRole(String token){
