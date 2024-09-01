@@ -6,7 +6,7 @@ public class UserObjectFixture {
 
     public static UserDetailResponseDto getUserResponse(){
         return UserDetailResponseDto.builder()
-                .userNickname("윤성철")
+                .nickname("윤성철")
                 .email("proattacker641@gmail.com")
                 .imageUrl("https://aws-s3.jpg")
                 .build();
