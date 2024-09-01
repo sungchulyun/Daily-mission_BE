@@ -6,20 +6,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @Schema(description = "유저 정보 응답 DTO")
-public class UserResDto {
+public class UserDetailResponseDto {
 
     @Schema(description = "유저 닉네임")
-    private  String name;
+    private final String nickname;
     @Schema(description = "유저 이메일")
-    private  String email;
+    private final String email;
     @Schema(description = "유저 이미지 썸네일")
-    private  String imageUrl;
+    private final String imageUrl;
 
     @Builder
-    UserResDto(String name, String email, String imageUrl){
-        this.name = name;
+    public UserDetailResponseDto(String nickname, String email, String imageUrl) {
+        this.nickname = nickname;
         this.email = email;
         this.imageUrl = imageUrl;
     }

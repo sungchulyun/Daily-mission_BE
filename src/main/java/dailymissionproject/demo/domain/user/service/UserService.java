@@ -1,8 +1,9 @@
 package dailymissionproject.demo.domain.user.service;
 
 import dailymissionproject.demo.common.util.S3Util;
+import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.image.ImageService;
-import dailymissionproject.demo.domain.user.dto.response.UserResDto;
+import dailymissionproject.demo.domain.user.dto.response.UserDetailResponseDto;
 import dailymissionproject.demo.domain.user.exception.UserException;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
@@ -26,22 +27,21 @@ public class UserService {
 
     /**
      * 유저 정보 확인
-     * @param username
+     * @param user
      * @return userResDto
      */
     @Transactional(readOnly = true)
-    public UserResDto detail(String username){
+    public UserDetailResponseDto detail(CustomOAuth2User user) {
 
-        User findUser = userRepository.findByUsername(username)
+        log.info("user.id = {}", user.getId());
+        User findUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
-        UserResDto res = UserResDto.builder()
-                .name(username)
+        return UserDetailResponseDto.builder()
+                .nickname(findUser.getNickname())
                 .email(findUser.getEmail())
                 .imageUrl(findUser.getImageUrl())
                 .build();
-
-        return res;
     }
 
     /**

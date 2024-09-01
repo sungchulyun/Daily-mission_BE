@@ -3,7 +3,7 @@ package dailymissionproject.demo.domain.user.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.user.WithMockCustomUser;
-import dailymissionproject.demo.domain.user.dto.response.UserResDto;
+import dailymissionproject.demo.domain.user.dto.response.UserDetailResponseDto;
 import dailymissionproject.demo.domain.user.fixture.UserObjectFixture;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
 import dailymissionproject.demo.domain.user.service.UserService;
@@ -45,7 +45,7 @@ public class UserControllerTest {
     @MockBean
     private UserRepository userRepository;
 
-    private final UserResDto response = UserObjectFixture.getUserResponse();
+    private final UserDetailResponseDto response = UserObjectFixture.getUserResponse();
 
 
     @Test
@@ -63,6 +63,6 @@ public class UserControllerTest {
 
         resultActions.andExpect(jsonPath("$.success").value("true"));
         resultActions.andExpect(jsonPath("$.code").value("200"));
-        resultActions.andExpect(jsonPath("$.data.name").value("윤성철"));
+        resultActions.andExpect(jsonPath("$.data.nickname").value("윤성철"));
     }
 }

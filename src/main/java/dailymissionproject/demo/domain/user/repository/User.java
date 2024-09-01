@@ -33,6 +33,7 @@ public class User extends BaseTimeEntity {
 
     private String name;
     private String email;
+    private String nickname;
 
     @Column(name = "username")
     private String username;
@@ -46,18 +47,20 @@ public class User extends BaseTimeEntity {
 
 
     @Builder
-    public User(String name, String email, String username, String imageUrl, Role role){
+    public User(String name, String email, String username, String nickname, String imageUrl, Role role){
         this.name = name;
         this.email = email;
         this.username = username;
+        this.nickname = nickname;
         this.imageUrl = imageUrl;
         this.role = role;
     }
 
     @Builder
-    public User(String name, String username, String email, String imageUrl){
+    public User(String name, String username, String nickname, String email, String imageUrl){
         this.name = name;
         this.username = username;
+        this.nickname = nickname;
         this.email = email;
         this.imageUrl = imageUrl;
     }
@@ -77,5 +80,9 @@ public class User extends BaseTimeEntity {
 
     public void setEmail(String email){
         this.email = email;
+    }
+
+    public void setNickname(String nickname){
+        this.nickname = nickname;
     }
 }

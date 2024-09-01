@@ -47,7 +47,7 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
                         mission.title,
                         mission.content,
                         mission.imageUrl,
-                        mission.user.username,
+                        mission.user.nickname,
                         mission.startDate,
                         mission.endDate))
                 .from(mission)
@@ -71,7 +71,7 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
                         mission.title,
                         mission.content,
                         mission.imageUrl,
-                        mission.user.username,
+                        mission.user.nickname,
                         mission.startDate,
                         mission.endDate))
                 .from(mission)
@@ -95,7 +95,7 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
                         mission.title,
                         mission.content,
                         mission.imageUrl,
-                        mission.user.username,
+                        mission.user.nickname,
                         mission.startDate,
                         mission.endDate,
                         mission.ended))

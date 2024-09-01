@@ -27,8 +27,8 @@ public class PostResponseDto {
     @Schema(description = "포스트 미션 제목")
     private String missionTitle;
 
-    @Schema(description = "포스트 작성자 이름")
-    private String username;
+    @Schema(description = "포스트 작성자 닉네임")
+    private String nickname;
 
     @Schema(description = "포스트 작성자 이미지")
     private String userImageUrl;
@@ -55,7 +55,7 @@ public class PostResponseDto {
         this.id = post.getId();
         this.missionId = post.getMission().getId();
         this.missionTitle = post.getMission().getTitle();
-        this.username = post.getUser().getUsername();
+        this.nickname = post.getUser().getNickname();
         this.userImageUrl = post.getUser().getImageUrl();
         this.title = post.getTitle();
         this.content = post.getContent();
@@ -65,12 +65,12 @@ public class PostResponseDto {
     }
 
     @Builder
-    public PostResponseDto(Long id, Long missionId, String missionTitle, String username, String userImageUrl, String title
+    public PostResponseDto(Long id, Long missionId, String missionTitle, String nickname, String userImageUrl, String title
                         ,String content, String imageUrl, LocalDateTime createdDate, LocalDateTime modifiedDate){
         this.id = id;
         this.missionId = missionId;
         this.missionTitle = missionTitle;
-        this.username = username;
+        this.nickname = nickname;
         this.userImageUrl = userImageUrl;
         this.title = title;
         this.content = content;

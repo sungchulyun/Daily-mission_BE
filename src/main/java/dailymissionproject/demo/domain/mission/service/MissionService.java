@@ -1,6 +1,7 @@
 package dailymissionproject.demo.domain.mission.service;
 
 
+import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.image.ImageService;
 import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
 import dailymissionproject.demo.domain.mission.dto.request.MissionSaveRequestDto;
@@ -8,6 +9,7 @@ import dailymissionproject.demo.domain.mission.dto.response.*;
 import dailymissionproject.demo.domain.mission.exception.MissionException;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
+import dailymissionproject.demo.domain.missionRule.dto.MissionRuleResponseDto;
 import dailymissionproject.demo.domain.participant.repository.Participant;
 import dailymissionproject.demo.domain.participant.repository.ParticipantRepository;
 import dailymissionproject.demo.domain.user.exception.UserException;
@@ -48,15 +50,21 @@ public class MissionService {
     //==미션 상세 조회==//
     @Transactional(readOnly = true)
     @Cacheable(value = "mission", key = "'info-' + #id")
-    public MissionResponseDto findById(Long id){
+    public MissionDetailResponseDto findById(Long id){
 
         Mission findMission = missionRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
 
-        MissionResponseDto missionResponseDto = MissionResponseDto.of(findMission);
-        missionResponseDto.setParticipants(findMission.getAllParticipantUser());
-
-        return missionResponseDto;
+       return MissionDetailResponseDto.builder()
+                .title(findMission.getTitle())
+                .content(findMission.getContent())
+                .imageUrl(findMission.getImageUrl())
+                .nickname(findMission.getUser().getNickname())
+                .participantUserDto(findMission.getAllParticipantUser())
+                .startDate(findMission.getStartDate())
+                .endDate(findMission.getEndDate())
+                .missionRuleResponseDto(MissionRuleResponseDto.of(findMission.getMissionRule()))
+                .build();
     }
 
 
@@ -66,9 +74,9 @@ public class MissionService {
             @CacheEvict(value = "missionLists", allEntries = true),
             @CacheEvict(value = "mission", allEntries = true)
     })
-    public MissionSaveResponseDto save(String username, MissionSaveRequestDto missionReqDto, MultipartFile file) throws IOException {
+    public MissionSaveResponseDto save(CustomOAuth2User user, MissionSaveRequestDto missionReqDto, MultipartFile file) throws IOException {
 
-        User findUser = userRepository.findByUsername(username)
+        User findUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         //참여 코드 5글자로 설정
@@ -80,12 +88,8 @@ public class MissionService {
         mission.setImageUrl(imageUrl);
         mission.setCredential(credential);
 
-        //미션 시작일자 검증
         mission.isValidStartDate(LocalDate.now());
 
-        Long id = missionRepository.save(mission).getId();
-
-        //미션 생성 시 방장은 자동 참여
         Participant participant = Participant.builder()
                                              .mission(mission)
                                              .user(findUser)
@@ -108,12 +112,12 @@ public class MissionService {
             @CacheEvict(value = "missionLists", allEntries = true),
             @CacheEvict(value = "mission", allEntries = true)
     })
-    public boolean delete(Long id, String username){
+    public boolean delete(Long id, CustomOAuth2User user){
 
         Mission mission = missionRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
 
-        User findUser = userRepository.findByUsername(username)
+        User findUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         mission.isDeletable(findUser);
@@ -175,7 +179,7 @@ public class MissionService {
                                             .title(mission.getTitle())
                                             .content(mission.getContent())
                                             .imageUrl(mission.getImageUrl())
-                                            .username(mission.getUser().getUsername())
+                                            .nickname(mission.getUser().getNickname())
                                             .startDate(mission.getStartDate())
                                             .endDate(mission.getEndDate())
                                             .build();

@@ -43,7 +43,7 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
                         post.id,
                         post.mission.id,
                         post.mission.title,
-                        post.mission.user.username,
+                        post.mission.user.nickname,
                         post.user.imageUrl,
                         post.title,
                         post.content,
@@ -87,7 +87,7 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
                         post.id,
                         post.mission.id,
                         post.mission.title,
-                        post.mission.user.username,
+                        post.mission.user.nickname,
                         post.user.imageUrl,
                         post.title,
                         post.content,
@@ -135,7 +135,7 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
                 .select(Projections.constructor(PostSubmitDto.class,
                         post.createdDate.as("date"),
                         post.user.id.as("userId"),
-                        post.user.username.as("username"),
+                        post.user.nickname.as("nickname"),
                         post.user.imageUrl.as("imageUrl")
                         ))
                 .from(post)

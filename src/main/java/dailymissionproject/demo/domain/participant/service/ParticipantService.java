@@ -1,5 +1,6 @@
 package dailymissionproject.demo.domain.participant.service;
 
+import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.mission.exception.MissionException;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
@@ -40,15 +41,16 @@ public class ParticipantService {
     @Caching(evict = {
             @CacheEvict(value = "mission", allEntries = true)
     })
-    public boolean save(String username, ParticipantSaveRequestDto requestDto){
+    public boolean save(CustomOAuth2User user, ParticipantSaveRequestDto requestDto){
 
         Mission findMission = missionRepository.findById(requestDto.getMissionId()).orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
 
-        User findUser = userRepository.findByUsername(username)
+        User findUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         //해당 사용자가 해당 미션에 참여한 이력이 있는지 검증
         Optional<Participant> optional = participantRepository.findByMissionAndUser(findMission, findUser);
+
         if(optional.isPresent()){
             if(optional.get().isBanned()){
                 throw new ParticipantException(BAN_HISTORY_EXISTS);

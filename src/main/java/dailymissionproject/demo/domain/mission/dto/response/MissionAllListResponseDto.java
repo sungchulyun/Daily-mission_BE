@@ -25,8 +25,8 @@ public class MissionAllListResponseDto {
     private String content;
     @Schema(description = "미션 썸네일")
     private String imageUrl;
-    @Schema(description = "미션 방장")
-    private String username;
+    @Schema(description = "미션 방장 닉네임")
+    private String nickname;
 
     @Schema(description = "미션 시작일자")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -44,12 +44,12 @@ public class MissionAllListResponseDto {
     private boolean ended;
 
     @Builder
-    MissionAllListResponseDto(Long id, String title, String content, String imageUrl, String username, LocalDate startDate, LocalDate endDate, boolean ended) {
+    MissionAllListResponseDto(Long id, String title, String content, String imageUrl, String nickname, LocalDate startDate, LocalDate endDate, boolean ended) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.imageUrl = imageUrl;
-        this.username = username;
+        this.nickname = nickname;
 
         this.startDate = startDate;
         this.endDate = endDate;

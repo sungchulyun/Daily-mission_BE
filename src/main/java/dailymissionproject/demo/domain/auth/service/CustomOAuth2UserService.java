@@ -46,19 +46,22 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userDto.setUsername(username);
             userDto.setName(oAuth2Response.getName());
             userDto.setEmail(oAuth2Response.getEmail());
+            userDto.setNickname(oAuth2Response.getNickname());
             userDto.setImageUrl(oAuth2Response.getProfileImage());
             userDto.setRole("USER");
 
             User user = userDto.toEntity(userDto);
             userRepository.save(user);
 
-            return new CustomOAuth2User(userDto);
+            userDto.setId(user.getId());
+            return CustomOAuth2User.create(userDto);
 
         } else {
             User user = findUser.get();
             user.setEmail(oAuth2Response.getEmail());
             user.setImageUrl(oAuth2Response.getProfileImage());
             user.setName(oAuth2Response.getName());
+            user.setNickname(oAuth2Response.getNickname());
 
             userRepository.save(user);
 
@@ -66,10 +69,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userDto.setUsername(user.getUsername());
             userDto.setName(oAuth2User.getName());
             userDto.setEmail(oAuth2Response.getEmail());
+            userDto.setNickname(oAuth2Response.getNickname());
             userDto.setImageUrl(oAuth2Response.getProfileImage());
             userDto.setRole("ROLE_USER");
+            userDto.setId(user.getId());
 
-            return new CustomOAuth2User(userDto);
+            return CustomOAuth2User.create(userDto, oAuth2User.getAttributes());
         }
 
     }
