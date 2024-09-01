@@ -63,6 +63,6 @@ public class UserControllerTest {
 
         resultActions.andExpect(jsonPath("$.success").value("true"));
         resultActions.andExpect(jsonPath("$.code").value("200"));
-        resultActions.andExpect(jsonPath("$.data.userNickname").value("윤성철"));
+        resultActions.andExpect(jsonPath("$.data.nickname").value("윤성철"));
     }
 }
