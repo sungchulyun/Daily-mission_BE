@@ -95,7 +95,4 @@ public class CustomOAuth2User implements OAuth2User {
         this.attributes = attributes;
     }
 
-    public String getNickname(){
-        return userDto.getNickname();
-    }
 }
