@@ -29,6 +29,21 @@ public class UserController {
 
     private final UserService userService;
 
+    /*
+    @GetMapping("/login")
+    @Operation(summary = "로그인 페이지 이동", description = "로그인 요청 시 사용하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공!"),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
+            @ApiResponse(responseCode = "404", description = "해당 사용자가 존재하지 않습니다."),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
+    })
+    public void login(HttpServletResponse httpServletResponse) throws IOException {
+        httpServletResponse.sendRedirect("https://daily-mission.leey00nsu.com/sign-in/");
+    }
+
+
+     */
     @GetMapping("/home")
     @Operation(summary = "사용자 개인 정보 확인", description = "사용자가 프로필 정보를 확인하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
