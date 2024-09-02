@@ -51,9 +51,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userDto.setRole("USER");
 
             User user = userDto.toEntity(userDto);
-            userRepository.save(user);
+            Long id = userRepository.save(user).getId();
 
-            userDto.setId(user.getId());
+            userDto.setId(id);
             return CustomOAuth2User.create(userDto);
 
         } else {
