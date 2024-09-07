@@ -1,8 +1,14 @@
 package dailymissionproject.demo.domain.user.dto.response;
 
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-public class UserUpdateResponseDto {
+import java.io.Serializable;
+
+@Getter
+@NoArgsConstructor(force = true)
+public class UserUpdateResponseDto implements Serializable {
 
     private final String username;
     private final String nickname;

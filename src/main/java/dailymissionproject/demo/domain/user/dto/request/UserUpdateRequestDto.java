@@ -10,11 +10,9 @@ import java.io.Serializable;
 @NoArgsConstructor(force = true)
 public class UserUpdateRequestDto implements Serializable {
     private final String nickname;
-    private final String imageUrl;
 
     @Builder
     UserUpdateRequestDto(String nickname, String imageUrl){
         this.nickname = nickname;
-        this.imageUrl = imageUrl;
     }
 }

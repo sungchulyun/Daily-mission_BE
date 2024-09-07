@@ -57,10 +57,10 @@ public class UserService {
 
         User findUser = userRepository.findById(user.getId()).orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
-        String imageUrl = imageService.uploadUserS3(file, request.getImageUrl());
+        String imageUrl = imageService.uploadUserS3(file, findUser.getUsername());
 
         findUser.setImageUrl(imageUrl);
-        findUser.setNickname(user.getNickname());
+        findUser.setNickname(request.getNickname());
 
         userRepository.save(findUser);
 
