@@ -22,7 +22,7 @@ public class Participant extends BaseTimeEntity {
     @Column(name = "participant_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "mission_id")
     private Mission mission;
 
@@ -50,5 +50,17 @@ public class Participant extends BaseTimeEntity {
 
     public void ban(){
         this.banned = true;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+
+        Participant participant = (Participant) obj;
+
+        if(participant != null && participant.user.equals(this.user)){
+            return true;
+        } else {
+            return false;
+        }
     }
 }
