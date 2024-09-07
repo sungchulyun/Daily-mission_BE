@@ -30,10 +30,8 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.INVALID_DELETE_REQUEST;
-import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.MISSION_NOT_FOUND;
+import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.*;
 import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
 
 
@@ -60,6 +58,7 @@ public class MissionService {
                 .content(findMission.getContent())
                 .imageUrl(findMission.getImageUrl())
                 .nickname(findMission.getUser().getNickname())
+                .hint(findMission.getHint())
                 .participantUserDto(findMission.getAllParticipantUser())
                 .startDate(findMission.getStartDate())
                 .endDate(findMission.getEndDate())
@@ -79,14 +78,11 @@ public class MissionService {
         User findUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
-        //참여 코드 5글자로 설정
-        String credential = String.valueOf(UUID.randomUUID()).substring(0, 5);
         String imageUrl = imageService.uploadMissionS3(file, missionReqDto.getTitle());
 
         Mission mission = missionReqDto.toEntity(findUser);
 
         mission.setImageUrl(imageUrl);
-        mission.setCredential(credential);
 
         mission.isValidStartDate(LocalDate.now());
 
@@ -98,7 +94,7 @@ public class MissionService {
         participantRepository.save(participant);
 
         MissionSaveResponseDto responseDto = MissionSaveResponseDto.builder()
-                                                                    .credential(credential)
+                                                                    .credential(mission.getCredential())
                                                                     .build();
         return responseDto;
     }
@@ -165,6 +161,44 @@ public class MissionService {
         return pageResponseDto;
     }
 
+    //유저가 참여중인 미션 불러오기==//
+    @Transactional(readOnly = true)
+    public List<MissionUserListResponseDto> findByUserList(CustomOAuth2User user){
+        User findUser = userRepository.findById(user.getId()).orElseThrow(() -> new UserException(USER_NOT_FOUND));
+
+        List<MissionUserListResponseDto> responses = new ArrayList<>();;
+
+        List<Mission> MissionList = missionRepository.findAll();
+
+        for(Mission mission : MissionList){
+            List<Participant> participantList = mission.getParticipants();
+
+            for(Participant p : participantList) {
+
+                if (p.getUser().equals(findUser)) {
+
+                    MissionUserListResponseDto dto = MissionUserListResponseDto.builder()
+                            .id(mission.getId())
+                            .title(mission.getTitle())
+                            .content(mission.getContent())
+                            .imageUrl(mission.getImageUrl())
+                            .nickname(mission.getUser().getNickname())
+                            .startDate(mission.getStartDate())
+                            .endDate(mission.getEndDate())
+                            .ended(mission.isEnded())
+                            .build();
+
+                    responses.add(dto);
+                }
+            }
+
+
+        }
+        if(!isParticipating(responses)) throw new MissionException(PARTICIPATING_MISSION_NOT_FOUND);
+
+        return responses;
+    }
+
     @Transactional(readOnly = true)
     public List<MissionAllListResponseDto> findAllList(){
 
@@ -187,6 +221,11 @@ public class MissionService {
             res.add(allMission);
         }
         return res;
+    }
+
+    private boolean isParticipating(List<MissionUserListResponseDto> list){
+        if(list.size() < 1) return false;
+        return true;
     }
 
     @Transactional
