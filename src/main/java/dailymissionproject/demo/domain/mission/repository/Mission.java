@@ -39,7 +39,7 @@ public class Mission extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "mission")
+    @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Participant> participants = new ArrayList<>();
 
@@ -50,6 +50,7 @@ public class Mission extends BaseTimeEntity {
     private String content;
     @Column(name = "image_url")
     private String imageUrl;
+    private String hint;
     private String credential;
 
     @Column(name = "start_date")
@@ -65,12 +66,13 @@ public class Mission extends BaseTimeEntity {
 
     //== 생성 메서드 ==//
     @Builder
-    public Mission(User user, MissionRule missionRule, String title, String content, String imageUrl, String credential,
+    public Mission(User user, MissionRule missionRule, String title, String content, String imageUrl, String hint, String credential,
                    LocalDate startDate, LocalDate endDate){
         this.user = user;
         this.missionRule = missionRule;
         this.title = title;
         this.content = content;
+        this.hint = hint;
         this.credential = credential;
         //s3
         this.imageUrl = imageUrl;

@@ -30,6 +30,8 @@ public class MissionDetailResponseDto {
     private final String imageUrl;
     @Schema(description = "방장 닉네임")
     private final String nickname;
+    @Schema(description = "미션 힌트")
+    private final String hint;
 
     @Schema(description = "참여자들 목록")
     private List<ParticipantUserDto> participantDto = new ArrayList<>();
@@ -58,6 +60,7 @@ public class MissionDetailResponseDto {
                 mission.getContent(),
                 mission.getImageUrl(),
                 mission.getUser().getNickname(),
+                mission.getHint(),
                 mission.getStartDate(),
                 mission.getEndDate(),
                 MissionRuleResponseDto.of(mission.getMissionRule())
@@ -65,12 +68,13 @@ public class MissionDetailResponseDto {
     }
 
     @Builder
-    public MissionDetailResponseDto(String title, String content, String imageUrl, String nickname, List<ParticipantUserDto> participantUserDto
+    public MissionDetailResponseDto(String title, String content, String imageUrl, String nickname, String hint, List<ParticipantUserDto> participantUserDto
             , LocalDate startDate, LocalDate endDate, MissionRuleResponseDto missionRuleResponseDto ) {
         this.title = title;
         this.content = content;
         this.imageUrl = imageUrl;
         this.nickname = nickname;
+        this.hint = hint;
         this.participantDto = participantUserDto;;
         this.startDate = startDate;
         this.endDate = endDate;

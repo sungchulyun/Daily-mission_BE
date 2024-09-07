@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
@@ -25,6 +24,12 @@ public class MissionSaveRequestDto {
     @Schema(description = "미션 내용")
     private final String content;
 
+    @Schema(description = "미션 참여코드 힌트")
+    private final String hint;
+
+    @Schema(description = "미션 참여코드 힌트")
+    private final String credential;
+
     @Schema(description = "미션 시작일자")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
@@ -34,11 +39,13 @@ public class MissionSaveRequestDto {
     private LocalDate endDate;
 
     @Builder
-    private MissionSaveRequestDto(Week week, String title, String content
+    private MissionSaveRequestDto(Week week, String title, String content, String hint, String credential
                                 , LocalDate startDate, LocalDate endDate){
         this.week = week;
         this.title = title;
         this.content = content;
+        this.hint = hint;
+        this.credential = credential;
         this.startDate = startDate;
         this.endDate = endDate;
     }
@@ -53,6 +60,8 @@ public class MissionSaveRequestDto {
                 .missionRule(missionRule)
                 .title(title)
                 .content(content)
+                .hint(hint)
+                .credential(credential)
                 .startDate(startDate)
                 .endDate(endDate)
                 .build();
