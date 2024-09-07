@@ -6,6 +6,7 @@ import dailymissionproject.demo.common.repository.CurrentUser;
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
 import dailymissionproject.demo.domain.mission.dto.request.MissionSaveRequestDto;
+import dailymissionproject.demo.domain.mission.dto.response.MissionUserListResponseDto;
 import dailymissionproject.demo.domain.mission.service.MissionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 import static dailymissionproject.demo.common.config.response.GlobalResponse.success;
 
@@ -133,5 +135,23 @@ public class MissionController {
 
         return ResponseEntity.ok(success(response.content(), MetaService.createMetaInfo().add("isNext", response.next())));
     }
+
+
+    //==사용자가 참여중인 미션 리스트==//
+    @GetMapping("/user")
+    @Operation(summary = "사용자가 참여중인 미션 확인", description = "사용자가 참여 중인 미션 목록을 확인하고 싶을 때 사용하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공!"),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
+            @ApiResponse(responseCode = "404", description = "권한을 확인해주세요."),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
+    })
+    public ResponseEntity<GlobalResponse> findAllByUser(Pageable pageable, @CurrentUser CustomOAuth2User user){
+        List<MissionUserListResponseDto> response = missionService.findByUserList(user);
+
+        return ResponseEntity.ok(success(response));
+    }
+
+
 
 }

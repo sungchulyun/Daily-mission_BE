@@ -37,6 +37,8 @@ public class QMission extends EntityPathBase<Mission> {
 
     public final BooleanPath ended = createBoolean("ended");
 
+    public final StringPath hint = createString("hint");
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final StringPath imageUrl = createString("imageUrl");
