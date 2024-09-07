@@ -3,6 +3,7 @@ package dailymissionproject.demo.domain.user.controller;
 import dailymissionproject.demo.common.config.response.GlobalResponse;
 import dailymissionproject.demo.common.repository.CurrentUser;
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
+import dailymissionproject.demo.domain.user.dto.request.UserUpdateRequestDto;
 import dailymissionproject.demo.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,7 +13,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -79,9 +79,11 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "해당 사용자가 존재하지 않습니다."),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
-    public ResponseEntity<GlobalResponse> update(@AuthenticationPrincipal CustomOAuth2User user, @RequestPart("file") MultipartFile file)throws IOException {
+    public ResponseEntity<GlobalResponse> update(@CurrentUser CustomOAuth2User user
+                                                , @RequestPart UserUpdateRequestDto requestDto
+                                                , @RequestPart MultipartFile file)throws IOException {
 
-        return ResponseEntity.ok(success(userService.updateProfile(user.getUsername(), file)));
+        return ResponseEntity.ok(success(userService.updateProfile(user, requestDto, file)));
     }
 
     //유저 마이페이지에서 참여중인 미션, 참여했는데 종료된 미션, 제출한 포스트 목록 무한스크롤
