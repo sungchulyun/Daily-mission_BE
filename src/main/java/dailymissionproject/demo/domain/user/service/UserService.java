@@ -3,7 +3,9 @@ package dailymissionproject.demo.domain.user.service;
 import dailymissionproject.demo.common.util.S3Util;
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.image.ImageService;
+import dailymissionproject.demo.domain.user.dto.request.UserUpdateRequestDto;
 import dailymissionproject.demo.domain.user.dto.response.UserDetailResponseDto;
+import dailymissionproject.demo.domain.user.dto.response.UserUpdateResponseDto;
 import dailymissionproject.demo.domain.user.exception.UserException;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
@@ -46,19 +48,26 @@ public class UserService {
 
     /**
      * 유저 정보 업데이트
-     * @param username
+     * @param
      * @param file
      * @return user pk Id
      */
     @Transactional
-    public Long updateProfile(String username, MultipartFile file) throws IOException {
+    public UserUpdateResponseDto updateProfile(CustomOAuth2User user, UserUpdateRequestDto request, MultipartFile file) throws IOException {
 
-        User findUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+        User findUser = userRepository.findById(user.getId()).orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
-        String imageUrl = imageService.uploadUserS3(file, username);
+        String imageUrl = imageService.uploadUserS3(file, request.getImageUrl());
+
         findUser.setImageUrl(imageUrl);
+        findUser.setNickname(user.getNickname());
 
-        return userRepository.save(findUser).getId();
+        userRepository.save(findUser);
+
+        return UserUpdateResponseDto.builder()
+                .username(findUser.getUsername())
+                .nickname(findUser.getNickname())
+                .imageUrl(findUser.getImageUrl())
+                .build();
     }
 }
