@@ -81,7 +81,7 @@ public class UserController {
     })
     public ResponseEntity<GlobalResponse> update(@CurrentUser CustomOAuth2User user
                                                 , @RequestPart UserUpdateRequestDto requestDto
-                                                , @RequestPart MultipartFile file)throws IOException {
+                                                , @RequestPart(required = false) MultipartFile file)throws IOException {
 
         return ResponseEntity.ok(success(userService.updateProfile(user, requestDto, file)));
     }
