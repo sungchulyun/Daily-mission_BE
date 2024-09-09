@@ -37,6 +37,13 @@ public class ParticipantService {
     private final PostService postService;
 
 
+    /**
+     *
+     * @param user
+     * @param requestDto
+     * 미션 참여 기능
+     * @return boolean
+     */
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "mission", allEntries = true)
