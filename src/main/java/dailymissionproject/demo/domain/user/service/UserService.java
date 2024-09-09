@@ -57,7 +57,7 @@ public class UserService {
 
         User findUser = userRepository.findById(user.getId()).orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
-        if(!file.isEmpty()){
+        if(file.isEmpty()){
             findUser.setNickname(request.getNickname());
 
             userRepository.save(findUser);
