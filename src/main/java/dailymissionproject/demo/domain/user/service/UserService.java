@@ -1,6 +1,5 @@
 package dailymissionproject.demo.domain.user.service;
 
-import dailymissionproject.demo.common.util.S3Util;
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.image.ImageService;
 import dailymissionproject.demo.domain.user.dto.request.UserUpdateRequestDto;
@@ -14,7 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
+
 import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
 
 @Service
@@ -25,12 +26,11 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ImageService imageService;
-    private final S3Util s3Util;
 
     /**
-     * 유저 정보 확인
+     * 유저 세부 정보 확인하는 메서드
      * @param user
-     * @return userResDto
+     * @return UserDetailResponseDto
      */
     @Transactional(readOnly = true)
     public UserDetailResponseDto detail(CustomOAuth2User user) {
@@ -47,38 +47,35 @@ public class UserService {
     }
 
     /**
-     * 유저 정보 업데이트
+     * 유저 정보 업데이트 메서드
      * @param
      * @param file
-     * @return user pk Id
+     * @return UserUpdateResponseDto
      */
     @Transactional
     public UserUpdateResponseDto updateProfile(CustomOAuth2User user, UserUpdateRequestDto request, MultipartFile file) throws IOException {
 
         User findUser = userRepository.findById(user.getId()).orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
-        if(file.isEmpty()){
-            findUser.setNickname(request.getNickname());
+        //수정할 프로필 이미지 존재 유무 검증
+        if(file != null){
+            String updatedImageUrl = imageService.uploadUserS3(file, findUser.getUsername());
 
-            userRepository.save(findUser);
+            findUser.setImageUrl(updatedImageUrl);
+            findUser.setNickname(request.getNickname());
 
             return UserUpdateResponseDto.builder()
                     .username(findUser.getUsername())
                     .nickname(findUser.getNickname())
+                    .imageUrl(findUser.getImageUrl())
                     .build();
         }
 
-        String imageUrl = imageService.uploadUserS3(file, findUser.getUsername());
-
-        findUser.setImageUrl(imageUrl);
         findUser.setNickname(request.getNickname());
-
-        userRepository.save(findUser);
 
         return UserUpdateResponseDto.builder()
                 .username(findUser.getUsername())
                 .nickname(findUser.getNickname())
-                .imageUrl(findUser.getImageUrl())
                 .build();
     }
 }
