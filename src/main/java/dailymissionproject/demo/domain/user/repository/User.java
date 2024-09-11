@@ -102,4 +102,11 @@ public class User extends BaseTimeEntity {
     public int hashCode() {
         return Objects.hash(getId());
     }
+
+    @Override
+    public String toString() {
+        return "email is: " + this.getEmail()+
+                "\n" + "name is" + this.getName() +
+                "\n" + "nickname is:" + this.getNickname();
+    }
 }
