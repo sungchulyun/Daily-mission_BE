@@ -64,7 +64,6 @@ public class Mission extends BaseTimeEntity {
     private boolean deleted;
 
 
-    //== 생성 메서드 ==//
     @Builder
     public Mission(User user, MissionRule missionRule, String title, String content, String imageUrl, String hint, String credential,
                    LocalDate startDate, LocalDate endDate){
@@ -117,8 +116,8 @@ public class Mission extends BaseTimeEntity {
         return true;
     }
 
-    /*
-    * 설명 : 미션 delete 시 자동으로 end
+    /**
+     * 미션 삭제할 때 사용하는 메서드
      */
     public void delete(){
 
@@ -127,7 +126,9 @@ public class Mission extends BaseTimeEntity {
 
     }
 
-    // 종료
+    /**
+     * 미션 종료할 때 사용하는 메서드
+     */
     public void end(){
         this.ended = true;
     }
@@ -155,8 +156,9 @@ public class Mission extends BaseTimeEntity {
         return participantUserList;
     }
 
-    /*
-    *미션에 참여중인 유저 중 강퇴당하지 않은 사용자들 count
+    /**
+     * 미션 수행중 강퇴당하지 않은 참여자 수를 구하는 메서드
+     * @return count
      */
     public int getParticipantCountNotBanned(){
         int count = 0;
@@ -166,14 +168,12 @@ public class Mission extends BaseTimeEntity {
         return count;
     }
 
-    /*
-    *미션 삭제 가능 검증
+    /**
+     * 미션 삭제할 수 있는지 검증하는 메서드
+     * @param user
+     * @return
      */
     public boolean isDeletable(User user){
-
-        if(this.user.getId() != user.getId()){
-            throw new MissionException(INVALID_USER_DELETE_REQUEST);
-        }
 
         if(this.deleted){
             throw new MissionException(MISSION_ALREADY_DELETED);
@@ -182,8 +182,13 @@ public class Mission extends BaseTimeEntity {
         return true;
     }
 
-    /*
-    미션 시작 날짜 검증
+
+    /**
+     * 미션 시작날짜를 검증하는 메서드
+     * 설명 : 미션 시작일자는 미션 생성하는 시점의 날짜보다 빠를 수 없음
+     * ex) 9월 10일에 미션을 생성하는데, 시작 날짜가 9월 9일일 수 없음
+     * @param now
+     * @return
      */
     public boolean isValidStartDate(LocalDate now){
         if(this.startDate.isBefore(now)){
@@ -215,13 +220,14 @@ public class Mission extends BaseTimeEntity {
         return false;
     }
 
-    /*
-    * 설명 : week 주의 일주일간 날짜 + 제출의무 요일인지 반환
-    *   ex) 메서드 호출 일자 : 2024-07-02 /
-    *       -> 2024-06-30 ~ 2024-07-06
-    *       -> true/true/true/true/true/false/false
+    /**
+     * 설명 : week 주의 일주일간 날짜 + 제출의무 요일인지 반환
+     *  ex) 메서드 호출 일자 : 2024-07-02 /
+     *   -> 2024-06-30 ~ 2024-07-06
+     *   -> true/true/true/true/true/false/false
+     * @param startDate
+     * @return
      */
-
     public List<DateDto> getWeekDates(LocalDate startDate){
 
         // result list
