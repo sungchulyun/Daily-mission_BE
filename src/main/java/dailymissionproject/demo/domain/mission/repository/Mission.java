@@ -174,10 +174,11 @@ public class Mission extends BaseTimeEntity {
      * @return
      */
     public boolean isDeletable(User user){
-
-        if(this.deleted){
+        if(this.deleted)
             throw new MissionException(MISSION_ALREADY_DELETED);
-        }
+
+        if(getParticipantCountNotBanned() > 1)
+            throw new MissionException(INVALID_DELETE_REQUEST);
 
         return true;
     }
