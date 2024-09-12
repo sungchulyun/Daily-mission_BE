@@ -6,6 +6,7 @@ import dailymissionproject.demo.common.repository.CurrentUser;
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
 import dailymissionproject.demo.domain.mission.dto.request.MissionSaveRequestDto;
+import dailymissionproject.demo.domain.mission.dto.request.MissionUpdateRequestDto;
 import dailymissionproject.demo.domain.mission.dto.response.MissionUserListResponseDto;
 import dailymissionproject.demo.domain.mission.service.MissionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,7 +54,7 @@ public class MissionController {
             @ApiResponse(responseCode = "404", description = "미션 생성에 실패하였습니다."),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
-    public ResponseEntity<GlobalResponse> save(@CurrentUser CustomOAuth2User user
+    public ResponseEntity<GlobalResponse> create(@CurrentUser CustomOAuth2User user
                                                 , @RequestPart MissionSaveRequestDto missionReqDto
                                                 , @RequestPart MultipartFile file) throws IOException {
 
@@ -74,7 +75,7 @@ public class MissionController {
             @ApiResponse(responseCode = "404", description = "해당 미션이 존재하지 않습니다."),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
-    public ResponseEntity<GlobalResponse> findById(@PathVariable Long id){
+    public ResponseEntity<GlobalResponse> get(@PathVariable Long id){
 
         return ResponseEntity.ok(success(missionService.findById(id)));
     }
@@ -84,8 +85,20 @@ public class MissionController {
      * @Param id
      * @return
      */
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PutMapping("/{id}")
+    @Operation(summary = "미션 수정", description = "사용자가 미션을 수정하고 싶을 때 사용하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공!"),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
+            @ApiResponse(responseCode = "404", description = "해당 미션이 존재하지 않습니다."),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
+    })
+    public ResponseEntity<GlobalResponse> update(@PathVariable("id")Long id, @CurrentUser CustomOAuth2User user,
+                                                 @RequestBody MissionUpdateRequestDto requestDto){
 
-
+        return ResponseEntity.ok(success(missionService.update(id, user, requestDto)));
+    }
 
     /**
      * 미션 삭제
@@ -93,8 +106,8 @@ public class MissionController {
      * @param user
      * @return
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PostMapping("/{id}")
     @Operation(summary = "미션 삭제", description = "사용자가 미션을 삭제하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공!"),

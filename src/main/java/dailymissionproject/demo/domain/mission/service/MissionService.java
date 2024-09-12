@@ -5,6 +5,7 @@ import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.image.ImageService;
 import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
 import dailymissionproject.demo.domain.mission.dto.request.MissionSaveRequestDto;
+import dailymissionproject.demo.domain.mission.dto.request.MissionUpdateRequestDto;
 import dailymissionproject.demo.domain.mission.dto.response.*;
 import dailymissionproject.demo.domain.mission.exception.MissionException;
 import dailymissionproject.demo.domain.mission.repository.Mission;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.*;
 import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
@@ -111,6 +113,53 @@ public class MissionService {
     }
 
     /**
+     * 미션 수정할 때 사용하는 메서드
+     * 설명 : 참여자가 방장을 제외하고 한명도 없을 때만, 방장의 권한으로 삭제가 가능하다.
+     * @param id : 미션의 sequence ID
+     * @param user : 현재 로그인한 유저
+     * @return boolean
+     */
+    @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "missionLists", allEntries = true),
+            @CacheEvict(value = "mission", allEntries = true)
+    })
+    public MissionUpdateResponseDto update(Long id, CustomOAuth2User user, MissionUpdateRequestDto request){
+
+        User findUser = userRepository.findById(user.getId())
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+
+        Mission findMission = missionRepository.findByIdAndDeletedIsFalse(id)
+                .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
+
+        log.info("로그인한 유저 정보 : {}", findUser.toString());
+        log.info("수정할 미션의 방장 정보 : {}", findMission.getUser().toString());
+
+        isUserHost(findMission, findUser);
+
+        if(Objects.isNull(request.getCredential()) && Objects.isNull(request.getHint())){
+            throw new MissionException(UPDATE_INPUT_IS_EMPTY);
+        }
+
+        if(request.getCredential() != null){
+            findMission.setCredential(request.getCredential());
+        }
+
+        if(request.getHint() != null){
+            findMission.setHint(request.getHint());
+        }
+
+        //Predicate<MissionUpdateRequestDto> predicate = (MissionUpdateRequestDto dto) -> Objects.isNull(dto.getHint()) &&
+
+        //missionRepository.save(findMission);
+
+        return MissionUpdateResponseDto.builder()
+                .hint(request.getHint())
+                .credential(request.getCredential())
+                .build();
+    }
+
+    /**
      * 미션 삭제할 때 사용하는 메서드
      * 설명 : 참여자가 방장을 제외하고 한명도 없을 때만, 방장의 권한으로 삭제가 가능하다.
      * @param id : 미션의 sequence ID
@@ -123,19 +172,21 @@ public class MissionService {
             @CacheEvict(value = "mission", allEntries = true)
     })
     public boolean delete(Long id, CustomOAuth2User user){
-
-        Mission mission = missionRepository.findByIdAndDeletedIsFalse(id)
-                .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
-
         User findUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
-        mission.isDeletable(findUser);
+        Mission findMission = missionRepository.findByIdAndDeletedIsFalse(id)
+                .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
 
-        if(mission.getParticipantCountNotBanned() > 1){
-            throw new MissionException(INVALID_DELETE_REQUEST);
-        }
-        missionRepository.delete(mission);
+        log.info("로그인한 유저 정보 : {}", findUser.toString());
+        log.info("수정할 미션의 방장 정보 : {}", findMission.getUser().toString());
+
+        isUserHost(findMission, findUser);
+
+        findMission.isDeletable(findUser);
+
+        findMission.delete();
+
         return true;
     }
 
@@ -174,7 +225,7 @@ public class MissionService {
     }
 
     /**
-     * 신규 미션 리스트 조회할 때 사용하는 API
+     * 전체 미션 리스트 조회할 때 사용하는 API
      * 설명 : 조회 결과를 Slice객체로 받아 다음 페이지가 있는지 여부와 함께 DTO에 담는다.
      * @param pageable : 쿼리스트링으로 Size, Page를 받는다.
      * @return PageResponseDto
@@ -288,6 +339,18 @@ public class MissionService {
                 mission.end();
             }
         }
+    }
 
+    /**
+     * 사용자가 수정 및 삭제 요청할 미션의 방장인지 여부를 검증하는 메서드
+     * @param mission
+     * @param user
+     * @return
+     */
+    private boolean isUserHost(Mission mission, User user){
+        if(!mission.getUser().equals(user)){
+            throw new MissionException(INVALID_USER_REQUEST);
+        }
+        return true;
     }
 }
