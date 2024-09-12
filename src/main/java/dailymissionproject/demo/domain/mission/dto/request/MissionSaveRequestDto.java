@@ -27,7 +27,7 @@ public class MissionSaveRequestDto {
     @Schema(description = "미션 참여코드 힌트")
     private final String hint;
 
-    @Schema(description = "미션 참여코드 힌트")
+    @Schema(description = "미션 참여코드")
     private final String credential;
 
     @Schema(description = "미션 시작일자")
