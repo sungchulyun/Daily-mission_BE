@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Entity
@@ -84,5 +85,28 @@ public class User extends BaseTimeEntity {
 
     public void setNickname(String nickname){
         this.nickname = nickname;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+
+        if (!(o instanceof User user))
+            return false;
+
+        return Objects.equals(getId(), user.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
+
+    @Override
+    public String toString() {
+        return "email is: " + this.getEmail()+
+                "\n" + "name is" + this.getName() +
+                "\n" + "nickname is:" + this.getNickname();
     }
 }
