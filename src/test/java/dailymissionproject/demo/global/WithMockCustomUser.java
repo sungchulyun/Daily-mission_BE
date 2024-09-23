@@ -1,6 +1,5 @@
-package dailymissionproject.demo.domain.user;
+package dailymissionproject.demo.global;
 
-import dailymissionproject.demo.domain.WithMockCustomUserSecurityContextFactory;
 import org.springframework.security.test.context.support.WithSecurityContext;
 
 import java.lang.annotation.ElementType;
