@@ -23,8 +23,7 @@
  <img src="https://github.com/sungchulyun/Daily-mission/assets/97434717/3ccad2e0-b28b-4935-9c38-8dfbf9a597cd">
  <br>
  
-#### 🚚 CI/CD 
-> 아키텍처 구성도
->
+#### 🚚 아키텍처 구성도
 
-![image](https://github.com/user-attachments/assets/f65803b6-9f3e-4bf8-aa2c-49d8503e7fed)
+![image](https://github.com/user-attachments/assets/5faa99e3-0e2a-483d-8d23-f3624fd94c19)
+
