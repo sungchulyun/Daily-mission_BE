@@ -1,13 +1,13 @@
 package dailymissionproject.demo.domain.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dailymissionproject.demo.domain.user.WithMockCustomUser;
 import dailymissionproject.demo.domain.user.dto.request.UserUpdateRequestDto;
 import dailymissionproject.demo.domain.user.dto.response.UserDetailResponseDto;
 import dailymissionproject.demo.domain.user.dto.response.UserUpdateResponseDto;
 import dailymissionproject.demo.domain.user.fixture.UserObjectFixture;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
 import dailymissionproject.demo.domain.user.service.UserService;
+import dailymissionproject.demo.global.WithMockCustomUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -77,8 +77,10 @@ class UserControllerTest {
         MockMultipartFile file = new MockMultipartFile("file", fileName, contentType, "test data".getBytes(StandardCharsets.UTF_8));
         MockMultipartFile requestDto = new MockMultipartFile("requestDto", "request.json", "application/json", mapper.writeValueAsBytes(updateRequest));
 
+        //given
         when(userService.updateProfile(any(), eq(updateRequest), eq(file))).thenReturn(updateResponse);
 
+        //when
         mockMvc.perform(multipart(HttpMethod.PUT,"/api/v1/user/profile")
                 .file(file)
                 .file(requestDto)
@@ -86,6 +88,7 @@ class UserControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
 
+        //then
         verify(userService, description("updateProfile 메서드가 정상적으로 호출됨"))
                 .updateProfile(any(), any(UserUpdateRequestDto.class), eq(file));
     }

@@ -2,7 +2,7 @@ package dailymissionproject.demo.domain.mission.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dailymissionproject.demo.domain.mission.service.MissionService;
-import dailymissionproject.demo.domain.user.WithMockCustomUser;
+import dailymissionproject.demo.global.WithMockCustomUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
