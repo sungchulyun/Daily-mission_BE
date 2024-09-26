@@ -8,6 +8,7 @@ import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.missionRule.dto.MissionRuleResponseDto;
 import dailymissionproject.demo.domain.missionRule.repository.MissionRule;
 import dailymissionproject.demo.domain.missionRule.repository.Week;
+import dailymissionproject.demo.domain.participant.dto.response.ParticipantUserDto;
 import dailymissionproject.demo.domain.user.repository.Role;
 import dailymissionproject.demo.domain.user.repository.User;
 import org.springframework.data.domain.PageRequest;
@@ -45,6 +46,10 @@ public class MissionObjectFixture {
                 .build();
     }
 
+    public static MissionRuleResponseDto getMissionRuleResponseFixture(){
+        return MissionRuleResponseDto.of(getMissionRuleFixture());
+    }
+
     /**
      * 미션 엔티티 fixture를 반환합니다.
      * @return Mission
@@ -61,6 +66,21 @@ public class MissionObjectFixture {
                 .missionRule(getMissionRuleFixture())
                 .user(getUserFixture())
                 .build();
+    }
+
+    /**
+     * 참여자 DTO fixture를 반환합니다.
+     * @return
+     */
+    public static List<ParticipantUserDto> getParticipantUserFixture(){
+        ParticipantUserDto participant = ParticipantUserDto.builder()
+                .id(1L)
+                .nickname("sungchul")
+                .imageUrl("https://aws-s3.jpg")
+                .banned(false)
+                .build();
+
+        return List.of(participant);
     }
 
     /**
@@ -103,7 +123,7 @@ public class MissionObjectFixture {
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusDays(10))
                 .missionRuleResponseDto(MissionRuleResponseDto.of(getMissionRuleFixture()))
-                .participantUserDto(getMissionRuleFixture().getMission().getAllParticipantUser())
+                .participantUserDto(getParticipantUserFixture())
                 .build();
     }
 
