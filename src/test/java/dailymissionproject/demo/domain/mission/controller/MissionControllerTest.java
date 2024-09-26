@@ -7,6 +7,8 @@ import dailymissionproject.demo.domain.mission.dto.request.MissionUpdateRequestD
 import dailymissionproject.demo.domain.mission.dto.response.MissionDetailResponseDto;
 import dailymissionproject.demo.domain.mission.dto.response.MissionSaveResponseDto;
 import dailymissionproject.demo.domain.mission.dto.response.MissionUpdateResponseDto;
+import dailymissionproject.demo.domain.mission.exception.MissionException;
+import dailymissionproject.demo.domain.mission.exception.MissionExceptionCode;
 import dailymissionproject.demo.domain.mission.fixture.MissionObjectFixture;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.service.MissionService;
@@ -19,6 +21,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -28,6 +31,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
 
+import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.MISSION_NOT_FOUND;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -103,5 +107,16 @@ class MissionControllerTest {
         }
     }
 
+    @Test
+    @DisplayName("미션이 존재하지 않으면 상세 조회에 실패한다.")
+    void detail_read_mission_fail_when_mission_not_exits() throws Exception {
 
+        when(missionService.findById(any()))
+                .thenThrow(new MissionException(MISSION_NOT_FOUND));
+
+        mockMvc.perform(get("/api/v1/mission/{missionId}", missionId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(csrf()))
+                .andExpect(status().isBadRequest());
+    }
 }
