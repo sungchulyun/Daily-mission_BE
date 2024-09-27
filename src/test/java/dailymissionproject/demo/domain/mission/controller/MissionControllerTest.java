@@ -324,7 +324,24 @@ class MissionControllerTest {
                     .update(anyLong(), any(), any(MissionUpdateRequestDto.class));
         }
 
+        /*
+        @Test
+        @DisplayName("방장이 아니라면 미션을 수정할 수 없다.")
+        void update_mission_fail_user_is_not_host() throws Exception {
 
+            when(missionService.update(eq(missionId), any(CustomOAuth2User.class), eq(missionUpdateRequest)))
+                    .thenThrow(new MissionException(INVALID_USER_REQUEST));
+
+            mockMvc.perform(put("/api/v1/mission/{missionId}", missionId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsBytes(missionUpdateRequest))
+                    .with(csrf()))
+                    .andExpect(status().isBadRequest())
+                    .andDo(print());
+
+           //verify(missionService.isUserHost(getMissionFixture, getUserFixture), description("isUser 메서드가 호출됨"));
+        }
+         */
     }
 }
 
