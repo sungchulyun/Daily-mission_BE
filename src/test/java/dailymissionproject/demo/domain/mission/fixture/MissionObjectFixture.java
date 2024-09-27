@@ -64,7 +64,14 @@ public class MissionObjectFixture {
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusDays(10))
                 .missionRule(getMissionRuleFixture())
-                .user(getUserFixture())
+                .user(User.builder()
+                        .username("Naver 1923819273")
+                        .email("naver@naver.com")
+                        .nickname("sung")
+                        .imageUrl("https://aws-s3.jpg")
+                        .name("김성처")
+                        .role(Role.USER)
+                        .build())
                 .build();
     }
 
@@ -252,5 +259,19 @@ public class MissionObjectFixture {
         Slice<MissionAllListResponseDto> allMissionListResponse = new SliceImpl<>(listResponse, pageable ,hasNext);
         PageResponseDto pageResponse = new PageResponseDto(allMissionListResponse.getContent(), allMissionListResponse.hasNext());
         return pageResponse;
+    }
+
+    public static List<MissionUserListResponseDto> getUserMissionList(){
+        MissionUserListResponseDto userMissionResponse = MissionUserListResponseDto.builder()
+                .id(1L)
+                .title("TITLE")
+                .content("CONTENT")
+                .imageUrl("THUMBNAIL.jpg")
+                .nickname("yoonsu")
+                .startDate(LocalDate.now().minusDays(5))
+                .endDate(LocalDate.now().plusDays(5))
+                .ended(false)
+                .build();
+        return List.of(userMissionResponse);
     }
 }
