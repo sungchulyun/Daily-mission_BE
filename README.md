@@ -25,7 +25,9 @@
  
 #### 🚚 아키텍처 구성도
 
-![image](https://github.com/user-attachments/assets/8549bce2-2df2-4142-80af-e91903781466)
+![image](https://github.com/user-attachments/assets/77874474-0790-4166-914f-2a96db26867e)
+
+
 
 
 
