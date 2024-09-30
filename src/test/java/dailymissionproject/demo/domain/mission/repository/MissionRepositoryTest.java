@@ -4,7 +4,9 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import dailymissionproject.demo.common.config.JPAConfig;
 import dailymissionproject.demo.common.config.QueryDSLConfig;
+import dailymissionproject.demo.domain.mission.dto.response.MissionAllListResponseDto;
 import dailymissionproject.demo.domain.mission.dto.response.MissionHotListResponseDto;
+import dailymissionproject.demo.domain.mission.dto.response.MissionNewListResponseDto;
 import dailymissionproject.demo.domain.mission.fixture.MissionObjectFixture;
 import dailymissionproject.demo.domain.missionRule.repository.MissionRule;
 import dailymissionproject.demo.domain.user.repository.User;
@@ -24,6 +26,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static dailymissionproject.demo.domain.mission.repository.QMission.mission;
@@ -112,13 +115,86 @@ class MissionRepositoryTest {
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize() + 1)
                     .fetch();
+
             boolean hasNext = false;
+
             if(missionList.size() > pageable.getPageSize()){
                 missionList.remove(pageable.getPageSize());
                 hasNext = true;
             }
 
             Slice<MissionHotListResponseDto> sliceList = new SliceImpl<>(missionList, pageable, hasNext);
+
+            assertThat(sliceList.getContent().size()).isEqualTo(1);
+            assertThat(sliceList.getContent().get(0).getId()).isEqualTo(missionFixture.getId());
+        }
+
+        @Test
+        @DisplayName("신규 미션 리스트를 조회할 수 있다.")
+        void mission_read_new_list(){
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime monthBefore = now.minusMonths(1);
+
+            Pageable pageable = PageRequest.of(0,3);
+
+            List<MissionNewListResponseDto> missionList = queryFactory
+                    .select(Projections.fields(MissionNewListResponseDto.class,
+                            mission.id,
+                            mission.title,
+                            mission.content,
+                            mission.imageUrl,
+                            mission.user.nickname,
+                            mission.startDate,
+                            mission.endDate))
+                    .from(mission)
+                    .where(mission.createdTime.between(monthBefore, now))
+                    .orderBy(mission.createdTime.desc())
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize() + 1)
+                    .fetch();
+
+            boolean hasNext = false;
+
+            if(missionList.size() > pageable.getPageSize()){
+                missionList.remove(pageable.getPageSize());
+                hasNext = true;
+            }
+
+            Slice<MissionNewListResponseDto> sliceList = new SliceImpl<>(missionList, pageable, hasNext);
+
+            assertThat(sliceList.getContent().size()).isEqualTo(1);
+            assertThat(sliceList.getContent().get(0).getId()).isEqualTo(missionFixture.getId());
+        }
+
+        @Test
+        @DisplayName("전체 미션 리스트를 조회할 수 있다.")
+        void mission_read_all_list(){
+            Pageable pageable = PageRequest.of(0,3);
+
+            List<MissionAllListResponseDto> missionList = queryFactory
+                    .select(Projections.fields(MissionAllListResponseDto.class,
+                            mission.id,
+                            mission.title,
+                            mission.content,
+                            mission.imageUrl,
+                            mission.user.nickname,
+                            mission.startDate,
+                            mission.endDate,
+                            mission.ended))
+                    .from(mission)
+                    .orderBy(mission.createdTime.desc())
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize() + 1)
+                    .fetch();
+
+            boolean hasNext = false;
+
+            if(missionList.size() > pageable.getPageSize()){
+                missionList.remove(pageable.getPageSize());
+                hasNext = true;
+            }
+
+            Slice<MissionAllListResponseDto> sliceList = new SliceImpl<>(missionList, pageable, hasNext);
 
             assertThat(sliceList.getContent().size()).isEqualTo(1);
             assertThat(sliceList.getContent().get(0).getId()).isEqualTo(missionFixture.getId());
