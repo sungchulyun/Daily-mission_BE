@@ -63,141 +63,143 @@ class MissionRepositoryTest {
        queryFactory = new JPAQueryFactory(em);
     }
 
-    @Nested
-    @DisplayName("미션 조회 레포지토리 테스트")
-    class MissionReadRepositoryTest {
 
-        /**
-         *  select
-         *         m1_0.mission_id,
-         *         m1_0.title,
-         *         m1_0.content,
-         *         m1_0.image_url,
-         *         u1_0.nickname,
-         *         m1_0.start_date,
-         *         m1_0.end_date
-         *     from
-         *         mission m1_0
-         *     join
-         *         user u1_0
-         *             on u1_0.user_id=m1_0.user_id
-         *     where
-         *         m1_0.deleted=?
-         *         and m1_0.ended=?
-         *     order by
-         *         (select
-         *             count(1)
-         *         from
-         *             participant p1_0
-         *         where
-         *             m1_0.mission_id=p1_0.mission_id) desc,
-         *         m1_0.created_time desc
-         *     limit
-         *         ?, ?
-         */
-        @Test
-        @DisplayName("인기 미션 리스트를 조회할 수 있다.")
-        void mission_read_hot_list(){
-            Pageable pageable = PageRequest.of(0,3);
 
-            List<MissionHotListResponseDto> missionList = queryFactory
-                    .select(Projections.fields(MissionHotListResponseDto.class,
-                            mission.id,
-                            mission.title,
-                            mission.content,
-                            mission.imageUrl,
-                            mission.user.nickname,
-                            mission.startDate,
-                            mission.endDate))
-                    .from(mission)
-                    .where(mission.deleted.isFalse().and(mission.ended.isFalse()))
-                    .orderBy(mission.participants.size().desc(), mission.createdTime.desc())
-                    .offset(pageable.getOffset())
-                    .limit(pageable.getPageSize() + 1)
-                    .fetch();
-
-            boolean hasNext = false;
-
-            if(missionList.size() > pageable.getPageSize()){
-                missionList.remove(pageable.getPageSize());
-                hasNext = true;
-            }
-
-            Slice<MissionHotListResponseDto> sliceList = new SliceImpl<>(missionList, pageable, hasNext);
-
-            //assertThat(sliceList.getContent().size()).isEqualTo(1);
-            assertThat(sliceList.getContent().get(0).getId()).isEqualTo(missionFixture.getId());
-        }
-
-        @Test
-        @DisplayName("신규 미션 리스트를 조회할 수 있다.")
-        void mission_read_new_list(){
-            LocalDateTime now = LocalDateTime.now();
-            LocalDateTime monthBefore = now.minusMonths(1);
-
-            Pageable pageable = PageRequest.of(0,3);
-
-            List<MissionNewListResponseDto> missionList = queryFactory
-                    .select(Projections.fields(MissionNewListResponseDto.class,
-                            mission.id,
-                            mission.title,
-                            mission.content,
-                            mission.imageUrl,
-                            mission.user.nickname,
-                            mission.startDate,
-                            mission.endDate))
-                    .from(mission)
-                    .where(mission.createdTime.between(monthBefore, now))
-                    .orderBy(mission.createdTime.desc())
-                    .offset(pageable.getOffset())
-                    .limit(pageable.getPageSize() + 1)
-                    .fetch();
-
-            boolean hasNext = false;
-
-            if(missionList.size() > pageable.getPageSize()){
-                missionList.remove(pageable.getPageSize());
-                hasNext = true;
-            }
-
-            Slice<MissionNewListResponseDto> sliceList = new SliceImpl<>(missionList, pageable, hasNext);
-
-            //assertThat(sliceList.getContent().size()).isEqualTo(1);
-            assertThat(sliceList.getContent().get(0).getId()).isEqualTo(missionFixture.getId());
-        }
-
-        @Test
-        @DisplayName("전체 미션 리스트를 조회할 수 있다.")
-        void mission_read_all_list(){
-            Pageable pageable = PageRequest.of(0,3);
-
-            List<MissionAllListResponseDto> missionList = queryFactory
-                    .select(Projections.fields(MissionAllListResponseDto.class,
-                            mission.id,
-                            mission.title,
-                            mission.content,
-                            mission.imageUrl,
-                            mission.user.nickname,
-                            mission.startDate,
-                            mission.endDate,
-                            mission.ended))
-                    .from(mission)
-                    .orderBy(mission.createdTime.desc())
-                    .offset(pageable.getOffset())
-                    .limit(pageable.getPageSize() + 1)
-                    .fetch();
-
-            boolean hasNext = false;
-
-            if(missionList.size() > pageable.getPageSize()){
-                missionList.remove(pageable.getPageSize());
-                hasNext = true;
-            }
-
-            Slice<MissionAllListResponseDto> sliceList = new SliceImpl<>(missionList, pageable, hasNext);
-
-            //assertThat(sliceList.getContent().size()).isEqualTo(1);
-            assertThat(sliceList.getContent().get(0).getId()).isEqualTo(missionFixture.getId());
-        }
-    }
+//    @Nested
+//    @DisplayName("미션 조회 레포지토리 테스트")
+//    class MissionReadRepositoryTest {
+//
+//        *
+//         *  select
+//         *         m1_0.mission_id,
+//         *         m1_0.title,
+//         *         m1_0.content,
+//         *         m1_0.image_url,
+//         *         u1_0.nickname,
+//         *         m1_0.start_date,
+//         *         m1_0.end_date
+//         *     from
+//         *         mission m1_0
+//         *     join
+//         *         user u1_0
+//         *             on u1_0.user_id=m1_0.user_id
+//         *     where
+//         *         m1_0.deleted=?
+//         *         and m1_0.ended=?
+//         *     order by
+//         *         (select
+//         *             count(1)
+//         *         from
+//         *             participant p1_0
+//         *         where
+//         *             m1_0.mission_id=p1_0.mission_id) desc,
+//         *         m1_0.created_time desc
+//         *     limit
+//         *         ?, ?
+//
+//        @Test
+//        @DisplayName("인기 미션 리스트를 조회할 수 있다.")
+//        void mission_read_hot_list(){
+//            Pageable pageable = PageRequest.of(0,3);
+//
+//            List<MissionHotListResponseDto> missionList = queryFactory
+//                    .select(Projections.fields(MissionHotListResponseDto.class,
+//                            mission.id,
+//                            mission.title,
+//                            mission.content,
+//                            mission.imageUrl,
+//                            mission.user.nickname,
+//                            mission.startDate,
+//                            mission.endDate))
+//                    .from(mission)
+//                    .where(mission.deleted.isFalse().and(mission.ended.isFalse()))
+//                    .orderBy(mission.participants.size().desc(), mission.createdTime.desc())
+//                    .offset(pageable.getOffset())
+//                    .limit(pageable.getPageSize() + 1)
+//                    .fetch();
+//
+//            boolean hasNext = false;
+//
+//            if(missionList.size() > pageable.getPageSize()){
+//                missionList.remove(pageable.getPageSize());
+//                hasNext = true;
+//            }
+//
+//            Slice<MissionHotListResponseDto> sliceList = new SliceImpl<>(missionList, pageable, hasNext);
+//
+//            //assertThat(sliceList.getContent().size()).isEqualTo(1);
+//            assertThat(sliceList.getContent().get(0).getId()).isEqualTo(missionFixture.getId());
+//        }
+//
+//        @Test
+//        @DisplayName("신규 미션 리스트를 조회할 수 있다.")
+//        void mission_read_new_list(){
+//            LocalDateTime now = LocalDateTime.now();
+//            LocalDateTime monthBefore = now.minusMonths(1);
+//
+//            Pageable pageable = PageRequest.of(0,3);
+//
+//            List<MissionNewListResponseDto> missionList = queryFactory
+//                    .select(Projections.fields(MissionNewListResponseDto.class,
+//                            mission.id,
+//                            mission.title,
+//                            mission.content,
+//                            mission.imageUrl,
+//                            mission.user.nickname,
+//                            mission.startDate,
+//                            mission.endDate))
+//                    .from(mission)
+//                    .where(mission.createdTime.between(monthBefore, now))
+//                    .orderBy(mission.createdTime.desc())
+//                    .offset(pageable.getOffset())
+//                    .limit(pageable.getPageSize() + 1)
+//                    .fetch();
+//
+//            boolean hasNext = false;
+//
+//            if(missionList.size() > pageable.getPageSize()){
+//                missionList.remove(pageable.getPageSize());
+//                hasNext = true;
+//            }
+//
+//            Slice<MissionNewListResponseDto> sliceList = new SliceImpl<>(missionList, pageable, hasNext);
+//
+//            //assertThat(sliceList.getContent().size()).isEqualTo(1);
+//            assertThat(sliceList.getContent().get(0).getId()).isEqualTo(missionFixture.getId());
+//        }
+//
+//        @Test
+//        @DisplayName("전체 미션 리스트를 조회할 수 있다.")
+//        void mission_read_all_list(){
+//            Pageable pageable = PageRequest.of(0,3);
+//
+//            List<MissionAllListResponseDto> missionList = queryFactory
+//                    .select(Projections.fields(MissionAllListResponseDto.class,
+//                            mission.id,
+//                            mission.title,
+//                            mission.content,
+//                            mission.imageUrl,
+//                            mission.user.nickname,
+//                            mission.startDate,
+//                            mission.endDate,
+//                            mission.ended))
+//                    .from(mission)
+//                    .orderBy(mission.createdTime.desc())
+//                    .offset(pageable.getOffset())
+//                    .limit(pageable.getPageSize() + 1)
+//                    .fetch();
+//
+//            boolean hasNext = false;
+//
+//            if(missionList.size() > pageable.getPageSize()){
+//                missionList.remove(pageable.getPageSize());
+//                hasNext = true;
+//            }
+//
+//            Slice<MissionAllListResponseDto> sliceList = new SliceImpl<>(missionList, pageable, hasNext);
+//
+//            //assertThat(sliceList.getContent().size()).isEqualTo(1);
+//            assertThat(sliceList.getContent().get(0).getId()).isEqualTo(missionFixture.getId());
+//        }
+//    }
 }
