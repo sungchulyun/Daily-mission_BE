@@ -1,8 +1,7 @@
-package dailymissionproject.demo.domain;
+package dailymissionproject.demo.global;
 
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.auth.dto.UserDto;
-import dailymissionproject.demo.domain.user.WithMockCustomUser;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
