@@ -15,7 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Optional;
 
+import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.NICKNAME_ALREADY_EXITS;
 import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
 
 @Service
@@ -56,6 +58,10 @@ public class UserService {
     public UserUpdateResponseDto updateProfile(CustomOAuth2User user, UserUpdateRequestDto request, MultipartFile file) throws IOException {
 
         User findUser = userRepository.findById(user.getId()).orElseThrow(() -> new UserException(USER_NOT_FOUND));
+
+        Optional<User> hasNicknameUser = userRepository.findByNickname(request.getNickname());
+        // 변경하려는 닉네임이 사용중이면, 에러를 반환한다.
+        if(hasNicknameUser.isPresent()) throw new UserException(NICKNAME_ALREADY_EXITS);
 
         //수정할 프로필 이미지 존재 유무 검증
         if(file != null){
