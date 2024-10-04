@@ -40,13 +40,18 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         String username = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
         Optional<User> findUser = userRepository.findByUsername(username);
+        Optional<User> findNickname = userRepository.findByNickname(oAuth2Response.getNickname());
         if(!findUser.isPresent()){
 
             UserDto userDto = new UserDto();
             userDto.setUsername(username);
             userDto.setName(oAuth2Response.getName());
             userDto.setEmail(oAuth2Response.getEmail());
-            userDto.setNickname(oAuth2Response.getNickname());
+            if(findNickname.isPresent()){
+                userDto.setNickname(username);
+            } else {
+                userDto.setNickname(oAuth2Response.getNickname());
+            }
             userDto.setImageUrl(oAuth2Response.getProfileImage());
             userDto.setRole("USER");
 
