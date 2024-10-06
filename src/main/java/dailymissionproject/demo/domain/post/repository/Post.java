@@ -2,13 +2,11 @@ package dailymissionproject.demo.domain.post.repository;
 
 import dailymissionproject.demo.common.repository.BaseTimeEntity;
 import dailymissionproject.demo.domain.mission.repository.Mission;
-import dailymissionproject.demo.domain.post.dto.request.PostUpdateRequestDto;
 import dailymissionproject.demo.domain.user.repository.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -64,4 +62,8 @@ public class Post extends BaseTimeEntity {
     public void setImageUrl(String imageUrl){
         this.imageUrl = imageUrl;
     }
+
+    public void setTitle(String title){this.title = title;}
+
+    public void setContent(String content){this.content = content;}
 }
