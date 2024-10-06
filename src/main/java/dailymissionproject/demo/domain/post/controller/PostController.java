@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -50,7 +51,7 @@ public class PostController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
     public ResponseEntity<GlobalResponse> save(@CurrentUser CustomOAuth2User user
-                    , @RequestPart PostSaveRequestDto postSaveReqDto
+                    , @Valid @RequestPart  PostSaveRequestDto postSaveReqDto
                     , @RequestPart MultipartFile file)throws IOException {
 
         return ResponseEntity.ok(success(postService.save(user, postSaveReqDto, file)));
