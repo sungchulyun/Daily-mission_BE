@@ -50,9 +50,16 @@ public class PostService {
     private final PostRepository postRepository;
     private final ImageService imageService;
 
+    /**
+     * 포스트를 작성할 때 사용하는 메서드
+     * @param user
+     * @param requestDto
+     * @param file
+     * @return
+     * @throws IOException
+     */
     @Transactional
     @Caching(evict = {
-            //전체 포스트
             @CacheEvict(value = "postLists", allEntries = true),
             @CacheEvict(value = "posts", allEntries = true)
     })
@@ -64,7 +71,7 @@ public class PostService {
         User findUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
-        //미션 참여자인지 검증
+        // 미션 참여자인지 검증
         validIsParticipating(findUser, mission);
 
         String imgUrl = imageService.uploadPostS3(file, requestDto.getTitle());
@@ -75,7 +82,11 @@ public class PostService {
         return postRepository.save(post).getId();
     }
 
-    //== 포스트 상세조회==//
+    /**
+     * 포스트를 상세조회할 때 사용하는 메서드
+     * @param id
+     * @return
+     */
     @Transactional(readOnly = true)
     @Cacheable(value = "posts", key = "#id")
     public PostResponseDto findById(Long id){
@@ -86,7 +97,12 @@ public class PostService {
         return responseDto;
     }
 
-    //== 사용자가 작성한 전체 포스트 조회==//
+    /**
+     * 유저별 작성 인증글 리스틀 조회할 때 사용하는 메서드
+     * @param user
+     * @param pageable
+     * @return
+     */
     @Transactional(readOnly = true)
     @Cacheable(value = "postLists", key = "'user-' + #user.getId()")
     public PageResponseDto findAllByUser(CustomOAuth2User user, Pageable pageable){
@@ -124,7 +140,12 @@ public class PostService {
     }
      */
 
-    //== 미션별 작성된 전체 포스트 조회
+    /**
+     * 미션별로 작성된 인증글 리스트를 조회할 때 사용하는 메서드
+     * @param id
+     * @param pageable
+     * @return
+     */
     @Transactional(readOnly = true)
     @Cacheable(value = "postLists", key = "'mission-' + #id")
     public PageResponseDto findAllByMission(Long id, Pageable pageable){
@@ -139,7 +160,12 @@ public class PostService {
         return pageResponseDto;
     }
 
-    //==포스트 제출 이력 조회==//
+    /**
+     * 인증글을 작성한 내역을 조회할 때 사용하는 메서드
+     * @param id
+     * @param week
+     * @return
+     */
     @Transactional(readOnly = true)
     public PostScheduleResponseDto findSchedule(Long id, Long week){
 
@@ -171,7 +197,14 @@ public class PostService {
                 .build();
     }
 
-    //== 포스트 수정==//
+    /**
+     * 작성한 포스트를 수정할 때 사용하는 메서드
+     * @param id
+     * @param file
+     * @param requestDto
+     * @return
+     * @throws IOException
+     */
     @Transactional
     @Caching(evict = {
             //전체 포스트
@@ -190,7 +223,11 @@ public class PostService {
         return postRepository.save(post).getId();
     }
 
-    //== 포스트 삭제==//
+    /**
+     * 작성한 포스트를 삭제할 때 사용하는 메서드
+     * @param id
+     * @return
+     */
     @Transactional
     @Caching(evict = {
             //전체 포스트
@@ -206,6 +243,12 @@ public class PostService {
         return true;
     }
 
+    /**
+     * 유저가 해당 미션에 참여중인지 검증하는 메서드
+     * @param user
+     * @param mission
+     * @return
+     */
     private boolean validIsParticipating(User user, Mission mission){
 
         for(Participant p : mission.getParticipants()){
@@ -215,29 +258,35 @@ public class PostService {
         throw new PostException(INVALID_POST_SAVE_REQUEST);
     }
 
+    /**
+     * 금일 인증글을 작성했는지 검증할 때 사용하는 메서드
+     * @param participant
+     * @param now
+     * @return
+     */
     @Transactional(readOnly = true)
     public boolean isSubmitToday(Participant participant, LocalDateTime now){
 
         boolean isSubmit = false;
 
-        /*
-        * 설명 : 현재시간 0시 ~ 3시 : 전날 03시01분 ~ 현재시간까지 제출 여부 확인
-        *        현재시간 3시 ~ 24시 : 금일 03시 ~ 현재시간까지 제출 여부 확인
-        *
-        * 설명 : 매일 03시에 강퇴 처리를 수행하기 때문에,
-        * -> 전날 새벽3시~ 다음날 새벽3시를 각각 분기 처리
+        /**
+         * 설명 : 현재시간 0시 ~ 3시 : 전날 03시01분 ~ 현재시간까지 제출 여부 확인
+         * 현재시간 3시 ~ 24 시 : 금일 03시 ~ 현재시간까지 제출 여부 확인
+         *
+         * 설명 : 매일 03시에 강퇴 배치를 수행하기 때문에
+         * 전날 03시 ~ 다음날 03시를 각각 분기 처리한다.
          */
 
         LocalDateTime criteria = LocalDate.now().atTime(03,00);
         if(now.isBefore(criteria)){
-            //전날 새벽 3시 ~ 현재
+            // 전날 새벽 3시 ~ 현재
             isSubmit = postRepository.countPostSubmit(participant.getMission()
             , participant.getUser()
             ,criteria.minusDays(1)
             , now) > 0;
 
         } else {
-            //금일 새벽 3시  ~ 현재
+            // 금일 새벽 3시  ~ 현재
             isSubmit = postRepository.countPostSubmit(participant.getMission()
             ,participant.getUser()
             ,criteria
