@@ -98,7 +98,7 @@ public class PostService {
     }
 
     /**
-     * 유저별 작성 인증글 리스틀 조회할 때 사용하는 메서드
+     * 유저별 작성 인증글 리스트를 조회할 때 사용하는 메서드
      * @param user
      * @param pageable
      * @return
