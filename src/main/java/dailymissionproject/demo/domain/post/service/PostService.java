@@ -14,6 +14,7 @@ import dailymissionproject.demo.domain.post.dto.PostSubmitDto;
 import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
 import dailymissionproject.demo.domain.post.dto.request.PostUpdateRequestDto;
 import dailymissionproject.demo.domain.post.dto.response.PostResponseDto;
+import dailymissionproject.demo.domain.post.dto.response.PostUpdateResponseDto;
 import dailymissionproject.demo.domain.post.exception.PostException;
 import dailymissionproject.demo.domain.post.repository.Post;
 import dailymissionproject.demo.domain.post.repository.PostRepository;
@@ -72,7 +73,7 @@ public class PostService {
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         // 미션 참여자인지 검증
-        validIsParticipating(findUser, mission);
+        isParticipating(findUser, mission);
 
         String imgUrl = imageService.uploadPostS3(file, requestDto.getTitle());
 
@@ -116,29 +117,8 @@ public class PostService {
         }
         PageResponseDto pageResponseDto = new PageResponseDto(userPostLists.getContent(), userPostLists.hasNext());
 
-        /*List<PostResponseDto> responseList = new ArrayList<>();
-        for(Post post : userPostLists){
-            responseList.add(new PostResponseDto(post));
-        }
-        return responseList;
-         */
         return pageResponseDto;
     }
-    /*
-    public List<PostResponseDto> findAllByUser(String username){
-
-        User findUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
-
-        List<Post> lists = postRepository.findAllByUser(findUser);
-
-        List<PostResponseDto> responseList = new ArrayList<>();
-        for(Post post : lists){
-            responseList.add(new PostResponseDto(post));
-        }
-        return responseList;
-    }
-     */
 
     /**
      * 미션별로 작성된 인증글 리스트를 조회할 때 사용하는 메서드
@@ -169,25 +149,26 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostScheduleResponseDto findSchedule(Long id, Long week){
 
-        /*
-        * 설명 : 현재 요일에서 가장 가까운 일요일을 찾는다(한 주의 시작)
-        * ex ) 월 -> 어제인 일요일
+        /**
+         * 설명: 현재 요일에서 가장 가까운 일요일을 찾는다 (한 주의 시작)
+         * ex) 월 -> 어제인 일요일
          */
         LocalDate startDate = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).minusWeeks(week);
 
         Mission mission = missionRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
 
-        /*
-        * Week주의 일주일간 날짜 & 제출의무 요일 확인
-        * ex) 메서드 호출 일자 : 2024-07-31 / week : 0
-        *       -> 2024-07-28  ~ 2024-08-02
-        *       -> false/true/true/true/true/true/false
+        /**
+         * Week주의 일주일간 날짜 & 제출의무 요일 확인
+         * ex) 메서드 호출 일자 : 2024-07-31 / week : 0
+         *  2024-07-28 ~ 2024-08-02
+         *  -> false/true/true/true/true/true/false
          */
         List<DateDto> weekDates = mission.getWeekDates(startDate);
-        /*
-        * 미션별 weekly 제출 이력을 postSubmitDto 객체로 전달받는다.
-        * 새벽 3시 이전 제출 -> 전날 제출한 것으로 변환
+
+        /**
+         * 미션별 weekly 제출 이력을 postSubmitDto 객체로 전달받는다.
+         * 새벽 3시 이전 제출 -> 전날 제출한 것으로 변환
          */
         List<PostSubmitDto> submits = postRepository.findWeeklyPostSubmitByMission(id, startDate);
 
@@ -211,16 +192,37 @@ public class PostService {
             @CacheEvict(value = "postLists", allEntries = true),
             @CacheEvict(value = "posts", allEntries = true)
     })
-    public Long updateById(Long id, MultipartFile file, PostUpdateRequestDto requestDto) throws IOException {
+    public PostUpdateResponseDto update(Long id, MultipartFile file, PostUpdateRequestDto requestDto, CustomOAuth2User user) throws IOException {
 
-        Post post = postRepository.findById(id)
+        Post findPost = postRepository.findById(id)
                 .orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
-        String imgUrl = imageService.uploadPostS3(file, requestDto.getTitle());
+        User findUser = userRepository.findById(user.getId())
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
-        post.update(requestDto.getTitle(), requestDto.getContent(), imgUrl);
+        // 해당 포스트의 작성자가 맞는지 검증
+        isPostWriter(findPost, findUser);
 
-        return postRepository.save(post).getId();
+        if(file != null){
+            String updateImageUrl = imageService.uploadPostS3(file, requestDto.getTitle());
+
+            findPost.setImageUrl(updateImageUrl);
+        }
+
+        // DTO 내부 매개변수가 NULL이면, 기존값을 유지한다.
+        if(requestDto.getTitle() != null){
+            findPost.setTitle(requestDto.getTitle());
+        }
+
+        if(requestDto.getContent() != null){
+            findPost.setContent(requestDto.getContent());
+        }
+
+        return PostUpdateResponseDto.builder()
+                .title(findPost.getTitle())
+                .content(findPost.getContent())
+                .imageUrl(findPost.getImageUrl())
+                .build();
     }
 
     /**
@@ -230,16 +232,20 @@ public class PostService {
      */
     @Transactional
     @Caching(evict = {
-            //전체 포스트
             @CacheEvict(value = "postLists", allEntries = true),
             @CacheEvict(value = "posts", allEntries = true)
     })
-    public boolean deleteById(Long id){
-
-        Post post = postRepository.findById(id)
+    public boolean deleteById(Long id, CustomOAuth2User user){
+        Post findPost = postRepository.findById(id)
                 .orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
-        postRepository.deleteById(id);
+        User findUser = userRepository.findById(user.getId())
+                        .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+
+        isPostWriter(findPost, findUser);
+
+        findPost.delete();
+
         return true;
     }
 
@@ -249,7 +255,7 @@ public class PostService {
      * @param mission
      * @return
      */
-    private boolean validIsParticipating(User user, Mission mission){
+    private boolean isParticipating(User user, Mission mission){
 
         for(Participant p : mission.getParticipants()){
             if(p.getUser().getId() == user.getId())
@@ -293,5 +299,17 @@ public class PostService {
             ,now) > 0;
         }
         return isSubmit;
+    }
+
+    /**
+     * 포스트의 작성자가 맞는지 검증할 때 사용하는 메서드
+     * @param post
+     * @param user
+     * @return
+     */
+    private boolean isPostWriter(Post post, User user){
+        if(post.getUser().getId() != user.getId())
+            throw new PostException(INVALID_USER_REQUEST);
+        return true;
     }
 }

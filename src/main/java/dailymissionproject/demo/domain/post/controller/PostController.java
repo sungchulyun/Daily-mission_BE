@@ -135,9 +135,10 @@ public class PostController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
     public ResponseEntity<GlobalResponse> updateById(@PathVariable("id") Long id
-                        , @RequestPart MultipartFile file
-                        , @RequestPart PostUpdateRequestDto postUpdateRequestDto) throws IOException {
-        return ResponseEntity.ok(success(updateById(id, file, postUpdateRequestDto)));
+                        , @RequestPart(required = false) MultipartFile file
+                        , @RequestPart PostUpdateRequestDto postUpdateRequestDto
+                        , @CurrentUser CustomOAuth2User user) throws IOException {
+        return ResponseEntity.ok(success(postService.update(id, file, postUpdateRequestDto, user)));
     }
 
     /**
@@ -154,7 +155,7 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "포스트 삭제에 실패하였습니다."),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
-    public ResponseEntity<GlobalResponse> deleteById(@PathVariable("id") Long id){
-        return ResponseEntity.ok(success(deleteById(id)));
+    public ResponseEntity<GlobalResponse> deleteById(@PathVariable("id") Long id, @CurrentUser CustomOAuth2User user){
+        return ResponseEntity.ok(success(postService.deleteById(id, user)));
         }
     }
