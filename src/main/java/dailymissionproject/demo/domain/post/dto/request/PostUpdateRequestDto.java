@@ -1,6 +1,5 @@
 package dailymissionproject.demo.domain.post.dto.request;
 
-import dailymissionproject.demo.domain.post.repository.Post;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +13,7 @@ public class PostUpdateRequestDto {
 
     @Schema(description = "포스트 내용")
     private final String content;
+
     @Builder
     public PostUpdateRequestDto(String title, String content) {
         this.title = title;

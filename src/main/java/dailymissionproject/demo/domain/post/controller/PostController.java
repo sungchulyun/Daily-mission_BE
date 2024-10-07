@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +33,14 @@ public class PostController {
 
     private final PostService postService;
 
-    //== 인증 글 생성==//
+    /**
+     * 인증글을 작성하는 API
+     * @param user
+     * @param postSaveReqDto
+     * @param file
+     * @return
+     * @throws IOException
+     */
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/save")
     @Operation(summary = "포스트 생성", description = "사용자가 포스트를 생성할 때 사용하는 API입니다.")
@@ -43,13 +51,17 @@ public class PostController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
     public ResponseEntity<GlobalResponse> save(@CurrentUser CustomOAuth2User user
-                    , @RequestPart PostSaveRequestDto postSaveReqDto
+                    , @Valid @RequestPart  PostSaveRequestDto postSaveReqDto
                     , @RequestPart MultipartFile file)throws IOException {
 
         return ResponseEntity.ok(success(postService.save(user, postSaveReqDto, file)));
     }
 
-    //== 인증 글 상세 조회==//
+    /**
+     * 인증글에 대한 상세 조회를 요청할 때 사용하는 API
+     * @param id
+     * @return
+     */
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/{id}")
     @Operation(summary = "포스트 상세 조회", description = "포스트 상세 조회할 때 사용하는 API입니다.")
@@ -63,7 +75,12 @@ public class PostController {
         return ResponseEntity.ok(success(postService.findById(id)));
     }
 
-    //== 유저별 전체 포스트 목록 불러오기==//
+    /**
+     * 유저별로 제출한 전체 인증글 조회를 요청할 때 사용하는 API
+     * @param user
+     * @param pageable
+     * @return
+     */
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/user")
     @Operation(summary = "유저별 전체 포스트 조회", description = "유저가 제출한 포스트 목록을 조회할 때 사용하는 API입니다.")
@@ -79,7 +96,12 @@ public class PostController {
         return ResponseEntity.ok(success(response.content(), MetaService.createMetaInfo().add("isNext", response.next())));
     }
 
-    //== 미션별 전체 포스트 목록 불러오기==//
+    /**
+     * 미션별로 작성한 인증글 조회 요청할 때 사용하는 API
+     * @param id
+     * @param pageable
+     * @return
+     */
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/mission/{id}")
     @Operation(summary = "미션별 전체 포스트 조회", description = "미션별 전체 포스트 목록을 조회할 때 사용하는 API입니다.")
@@ -95,7 +117,14 @@ public class PostController {
         return ResponseEntity.ok(success(response.content(), MetaService.createMetaInfo().add("isNext", response.next())));
     }
 
-    //== 포스트 업데이트==//
+    /**
+     * 포스트를 수정할 때 사용하는 API
+     * @param id
+     * @param file
+     * @param postUpdateRequestDto
+     * @return
+     * @throws IOException
+     */
     @PreAuthorize("hasRole('ROLE_USER')")
     @PutMapping("/{id}")
     @Operation(summary = "포스트 수정", description = "포스트를 수정할 때 사용하는 API입니다.")
@@ -106,13 +135,17 @@ public class PostController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
     public ResponseEntity<GlobalResponse> updateById(@PathVariable("id") Long id
-                        , @RequestPart MultipartFile file
-                        , @RequestPart PostUpdateRequestDto postUpdateRequestDto) throws IOException {
-        return ResponseEntity.ok(success(updateById(id, file, postUpdateRequestDto)));
+                        , @RequestPart(required = false) MultipartFile file
+                        , @RequestPart PostUpdateRequestDto postUpdateRequestDto
+                        , @CurrentUser CustomOAuth2User user) throws IOException {
+        return ResponseEntity.ok(success(postService.update(id, file, postUpdateRequestDto, user)));
     }
 
-
-    //== 포스트 삭제==//
+    /**
+     * 포스트를 삭제할 때 사용하는 API
+     * @param id
+     * @return
+     */
     @PreAuthorize("hasRole('ROLE_USER')")
     @DeleteMapping("/{id}")
     @Operation(summary = "포스트 삭제", description = "포스트를 삭제할 때 사용하는 API입니다.")
@@ -122,7 +155,7 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "포스트 삭제에 실패하였습니다."),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
-    public ResponseEntity<GlobalResponse> deleteById(@PathVariable("id") Long id){
-        return ResponseEntity.ok(success(deleteById(id)));
+    public ResponseEntity<GlobalResponse> deleteById(@PathVariable("id") Long id, @CurrentUser CustomOAuth2User user){
+        return ResponseEntity.ok(success(postService.deleteById(id, user)));
         }
     }
