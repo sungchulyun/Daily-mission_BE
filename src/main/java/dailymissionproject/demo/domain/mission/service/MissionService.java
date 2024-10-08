@@ -347,7 +347,7 @@ public class MissionService {
      * @param user
      * @return
      */
-    private boolean isUserHost(Mission mission, User user){
+    public boolean isUserHost(Mission mission, User user){
         if(!mission.getUser().equals(user)){
             throw new MissionException(INVALID_USER_REQUEST);
         }
