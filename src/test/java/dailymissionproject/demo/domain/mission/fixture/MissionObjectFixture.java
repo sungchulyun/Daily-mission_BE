@@ -56,15 +56,14 @@ public class MissionObjectFixture {
      */
     public static Mission getMissionFixture(){
         return Mission.builder()
-                .title("1일 1알고리즘")
-                .content("매일 한문제씩 문제 풀이")
-                .imageUrl("www.baekjoon.jpeg")
+                .title("TITLE")
+                .content("CONTENT")
+                .imageUrl("THUMBNAIL.jpg")
                 .hint("HINT")
-                .credential("CREDENTIAL")
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusDays(10))
-                .missionRule(getMissionRuleFixture())
                 .user(getUserFixture())
+                .missionRule(getMissionRuleFixture())
                 .build();
     }
 
