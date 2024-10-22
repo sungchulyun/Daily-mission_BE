@@ -47,11 +47,9 @@ jobs:
     # Gradle test 실행 (테스트 시에 application-test.properties 사용)
     - name: Test with Gradle
       run: |
-        cd ./src/main/resources
-        touch ./application-test.properties
-        echo "${{ secrets.TEST_APPLICATION }}" > ./application-test.properties  # 테스트용 비밀 설정
+        touch ./src/main/resources/application-test.properties
+        echo "${{ secrets.TEST_APPLICATION }}" > ./src/main/resources/application-test.properties  # 테스트용 비밀 설정
         ./gradlew --info test -Dspring.config.location=classpath:/application-test.properties
-
     # 테스트 후 Result 출력
     - name: Publish Unit Test Results
       uses: EnricoMi/publish-unit-test-result-action@v1
