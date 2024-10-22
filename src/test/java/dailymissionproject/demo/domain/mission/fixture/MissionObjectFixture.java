@@ -9,6 +9,7 @@ import dailymissionproject.demo.domain.missionRule.dto.MissionRuleResponseDto;
 import dailymissionproject.demo.domain.missionRule.repository.MissionRule;
 import dailymissionproject.demo.domain.missionRule.repository.Week;
 import dailymissionproject.demo.domain.participant.dto.response.ParticipantUserDto;
+import dailymissionproject.demo.domain.participant.repository.Participant;
 import dailymissionproject.demo.domain.user.repository.Role;
 import dailymissionproject.demo.domain.user.repository.User;
 import org.springframework.data.domain.PageRequest;
@@ -60,6 +61,7 @@ public class MissionObjectFixture {
                 .content("CONTENT")
                 .imageUrl("THUMBNAIL.jpg")
                 .hint("HINT")
+                .credential("CREDENTIAL")
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusDays(10))
                 .user(getUserFixture())
@@ -148,10 +150,100 @@ public class MissionObjectFixture {
                 .build();
     }
 
+    public static Slice<MissionHotListResponseDto> getHotMissionListPageable(){
+        MissionHotListResponseDto hotMission_1 = MissionHotListResponseDto.builder()
+                .id(1L)
+                .title("미션1")
+                .content("열심히 합니다.")
+                .imageUrl("THUMBNAIL1.jpg")
+                .nickname("yoonsu")
+                .startDate(LocalDate.now().minusDays(10))
+                .endDate(LocalDate.now().plusDays(10))
+                .build();
+
+        MissionHotListResponseDto hotMission_2 = MissionHotListResponseDto.builder()
+                .id(2L)
+                .title("미션2")
+                .content("화이팅합시다!")
+                .imageUrl("THUMBNAIL2.jpg")
+                .nickname("sungchul")
+                .startDate(LocalDate.now().minusDays(7))
+                .endDate(LocalDate.now().plusDays(7))
+                .build();
+
+        List<MissionHotListResponseDto> listResponse = List.of(hotMission_1, hotMission_2);
+
+        boolean hasNext = false;
+        Pageable pageable = PageRequest.of(0, 3);
+
+        Slice<MissionHotListResponseDto> hotMissionListResponse = new SliceImpl<>(listResponse, pageable ,hasNext);
+        return hotMissionListResponse;
+    }
+
+    public static Slice<MissionNewListResponseDto> getNewMissionListPageable(){
+        MissionNewListResponseDto newMission_1 = MissionNewListResponseDto.builder()
+                .id(1L)
+                .title("미션1")
+                .content("열심히 합니다.")
+                .imageUrl("THUMBNAIL1.jpg")
+                .nickname("yoonsu")
+                .startDate(LocalDate.now().minusDays(10))
+                .endDate(LocalDate.now().plusDays(10))
+                .build();
+
+        MissionNewListResponseDto newMission_2 = MissionNewListResponseDto.builder()
+                .id(2L)
+                .title("미션2")
+                .content("화이팅합시다!")
+                .imageUrl("THUMBNAIL2.jpg")
+                .nickname("sungchul")
+                .startDate(LocalDate.now().minusDays(7))
+                .endDate(LocalDate.now().plusDays(7))
+                .build();
+
+        List<MissionNewListResponseDto> listResponse = List.of(newMission_1, newMission_2);
+
+        boolean hasNext = false;
+        Pageable pageable = PageRequest.of(0, 3);
+
+        Slice<MissionNewListResponseDto> newMissionListResponse = new SliceImpl<>(listResponse, pageable ,hasNext);
+        return newMissionListResponse;
+    }
     /**
      * 인기 미션 리스트 응답 객체를 반환합니다.
      * @return PageResponseDto
      */
+    public static Slice<MissionAllListResponseDto> getAllMissionListPageable(){
+        MissionAllListResponseDto allMission_1 = MissionAllListResponseDto.builder()
+                .id(1L)
+                .title("미션1")
+                .content("열심히 합니다.")
+                .imageUrl("THUMBNAIL1.jpg")
+                .nickname("yoonsu")
+                .startDate(LocalDate.now().minusDays(10))
+                .endDate(LocalDate.now().plusDays(10))
+                .build();
+
+        MissionAllListResponseDto allMission_2 = MissionAllListResponseDto.builder()
+                .id(2L)
+                .title("미션2")
+                .content("화이팅합시다!")
+                .imageUrl("THUMBNAIL2.jpg")
+                .nickname("sungchul")
+                .startDate(LocalDate.now().minusDays(7))
+                .endDate(LocalDate.now().plusDays(7))
+                .build();
+
+        List<MissionAllListResponseDto> listResponse = List.of(allMission_1, allMission_2);
+
+        boolean hasNext = false;
+        Pageable pageable = PageRequest.of(0, 3);
+
+        Slice<MissionAllListResponseDto> allMissionListResponse = new SliceImpl<>(listResponse, pageable ,hasNext);
+        return allMissionListResponse;
+    }
+
+
     public static PageResponseDto getHotMissionListResponse(){
         MissionHotListResponseDto hotMission_1 = MissionHotListResponseDto.builder()
                 .id(1L)
@@ -265,5 +357,18 @@ public class MissionObjectFixture {
                 .ended(false)
                 .build();
         return List.of(userMissionResponse);
+    }
+
+    public static Participant getParticipant(){
+        return Participant.builder()
+                .mission(getMissionFixture())
+                .user(getUserFixture())
+                .build();
+    }
+
+    public static List<Mission> getMissionList() {
+        Mission mission_1 = getMissionFixture();
+
+        return List.of(mission_1);
     }
 }
