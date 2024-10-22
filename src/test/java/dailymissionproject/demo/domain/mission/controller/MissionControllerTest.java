@@ -324,12 +324,29 @@ class MissionControllerTest {
                     .update(anyLong(), any(), any(MissionUpdateRequestDto.class));
         }
 
-        /*
+        @Test
+        @DisplayName("미션이 존재하지 않으면 수정할 수 없다.")
+        void update_mission_fail_when_mission_not_exist() throws Exception {
+
+            when(missionService.update(any(),any(CustomOAuth2User.class), any(MissionUpdateRequestDto.class)))
+                    .thenThrow(new MissionException(MISSION_NOT_FOUND));
+
+            mockMvc.perform(put("/api/v1/mission/{missionId}", missionId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsBytes(missionUpdateRequest))
+                    .with(csrf()))
+                    .andExpect(status().isBadRequest())
+                    .andDo(print());
+
+            verify(missionService, description("update 메서드가 정상적으로 호출됨"))
+                    .update(anyLong(), any(), any(MissionUpdateRequestDto.class));
+        }
+
         @Test
         @DisplayName("방장이 아니라면 미션을 수정할 수 없다.")
-        void update_mission_fail_user_is_not_host() throws Exception {
+        void update_mission_fail_when_user_is_not_host() throws Exception {
 
-            when(missionService.update(eq(missionId), any(CustomOAuth2User.class), eq(missionUpdateRequest)))
+            when(missionService.update(any(), any(CustomOAuth2User.class), any(MissionUpdateRequestDto.class)))
                     .thenThrow(new MissionException(INVALID_USER_REQUEST));
 
             mockMvc.perform(put("/api/v1/mission/{missionId}", missionId)
@@ -339,9 +356,47 @@ class MissionControllerTest {
                     .andExpect(status().isBadRequest())
                     .andDo(print());
 
-           //verify(missionService.isUserHost(getMissionFixture, getUserFixture), description("isUser 메서드가 호출됨"));
+           verify(missionService, description("isUser 메서드가 호출됨"))
+                   .update(any(),any(CustomOAuth2User.class), any(MissionUpdateRequestDto.class));
         }
-         */
+    }
+
+    @Nested
+    @DisplayName("미션 삭제 컨트롤러 테스트")
+    class MissionDeleteControllerTest {
+
+        @Test
+        @DisplayName("미션을 삭제할 수 있다.")
+        void delete_mission_success() throws Exception {
+
+            when(missionService.delete(anyLong(), any(CustomOAuth2User.class))).thenReturn(true);
+
+            mockMvc.perform(delete("/api/v1/mission/{missionId}", missionId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .with(csrf()))
+                    .andExpect(status().isOk());
+
+            verify(missionService, description("delete 메서드가 정상적으로 호출됨"))
+                    .delete(anyLong(), any(CustomOAuth2User.class));
+        }
+
+        @Test
+        @DisplayName("미션이 존재하지 않으면 삭제할 수 없다.")
+        void delete_mission_fail_when_mission_not_exist() throws Exception {
+
+            when(missionService.update(any(),any(CustomOAuth2User.class), any(MissionUpdateRequestDto.class)))
+                    .thenThrow(new MissionException(MISSION_NOT_FOUND));
+
+            mockMvc.perform(put("/api/v1/mission/{missionId}", missionId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsBytes(missionUpdateRequest))
+                            .with(csrf()))
+                    .andExpect(status().isBadRequest())
+                    .andDo(print());
+
+            verify(missionService, description("update 메서드가 정상적으로 호출됨"))
+                    .update(anyLong(), any(), any(MissionUpdateRequestDto.class));
+        }
     }
 }
 
