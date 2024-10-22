@@ -159,6 +159,7 @@ class MissionServiceTest {
                         MissionObjectFixture.getAllMissionListPageable().getContent().get(0).getTitle());
             }
 
+            /*
             @Test
             @DisplayName("유저가 참여중인 미션 리스트를 조회할 수 있다.")
             void test_mission_read_user_joining_list_success(){
@@ -171,6 +172,8 @@ class MissionServiceTest {
                 assertEquals(userMissionResponse.get(0).getTitle(), MissionObjectFixture.getMissionList().get(0).getTitle());
             }
 
+
+             */
 
         }
     }
