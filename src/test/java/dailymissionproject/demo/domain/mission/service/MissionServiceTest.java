@@ -14,8 +14,8 @@ import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
 import dailymissionproject.demo.domain.missionRule.dto.MissionRuleResponseDto;
 import dailymissionproject.demo.domain.missionRule.repository.MissionRule;
+import dailymissionproject.demo.domain.missionRule.repository.Week;
 import dailymissionproject.demo.domain.participant.dto.response.ParticipantUserDto;
-import dailymissionproject.demo.domain.participant.repository.Participant;
 import dailymissionproject.demo.domain.participant.repository.ParticipantRepository;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
@@ -26,16 +26,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -43,6 +44,7 @@ import static org.mockito.Mockito.*;
 @Tag("unit")
 @DisplayName("[unit] [service] MissionService")
 @ExtendWith(MockitoExtension.class)
+@WithMockUser
 class MissionServiceTest {
     @InjectMocks
     private MissionService missionService;
@@ -81,12 +83,12 @@ class MissionServiceTest {
         @Nested
         @DisplayName("미션 생성 서비스 레이어 테스트")
         class MissionSaveServiceTest {
+            final String fileName = "userModifyImage";
+            final String contentType = "image/jpeg";
 
             @DisplayName("미션을 생성할 수 있다.")
             @Test
             void mission_save_success() throws IOException {
-                final String fileName = "userModifyImage";
-                final String contentType = "image/jpeg";
                 //given
                 MockMultipartFile file = new MockMultipartFile("file", fileName, contentType, "test data".getBytes(StandardCharsets.UTF_8));
 
@@ -97,6 +99,46 @@ class MissionServiceTest {
 
                 verify(imageService, times(1)).uploadMissionS3(any(), any());
                 assertEquals(missionSaveResponse.getCredential(), mission.getCredential());
+            }
+
+            @DisplayName("미션 시작일자가 오늘보다 이전 날짜라면 미션을 생성할 수 없다.")
+            @Test
+            void mission_save_fail_when_start_date_is_before_than_today() throws IOException {
+                MockMultipartFile file = new MockMultipartFile("file", "test data".getBytes(StandardCharsets.UTF_8));
+
+                when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+
+                MissionSaveRequestDto missionSaveRequestDto = MissionSaveRequestDto.builder()
+                        .title("TITLE")
+                        .content("CONTENT")
+                        .hint("HINT")
+                        .credential("CREDENTIAL")
+                        .startDate(LocalDate.now().minusDays(1))
+                        .endDate(LocalDate.now().plusMonths(1))
+                        .week(new Week(false, true, true, true, true, true, false))
+                        .build();
+
+                assertThrows(MissionException.class, () -> missionService.save(oAuth2User, missionSaveRequestDto, file));
+            }
+
+            @DisplayName("미션 시작일자가 미션 종료일자보다 이전 날짜라면 미션을 생성할 수 없다.")
+            @Test
+            void mission_save_fail_when_start_date_is_after_end_date() throws IOException {
+                MockMultipartFile file = new MockMultipartFile("file", "test data".getBytes(StandardCharsets.UTF_8));
+
+                when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+
+                MissionSaveRequestDto missionSaveRequestDto = MissionSaveRequestDto.builder()
+                        .title("TITLE")
+                        .content("CONTENT")
+                        .hint("HINT")
+                        .credential("CREDENTIAL")
+                        .startDate(LocalDate.now().plusDays(10))
+                        .endDate(LocalDate.now().plusDays(5))
+                        .week(new Week(false, true, true, true, true, true, false))
+                        .build();
+
+                assertThrows(MissionException.class, () -> missionService.save(oAuth2User, missionSaveRequestDto, file));
             }
         }
 
@@ -171,9 +213,38 @@ class MissionServiceTest {
                 assertFalse(userMissionResponse.isEmpty());
                 assertEquals(userMissionResponse.get(0).getTitle(), MissionObjectFixture.getMissionList().get(0).getTitle());
             }
+             */
+        }
 
+        @Nested
+        @DisplayName("미션 수정 서비스 레이어 테스트")
+        class MissionModifyServiceTest {
+
+            @Test
+            @DisplayName("미션을 수정할 수 있다.")
+            void mission_modify_success() throws IOException {
+                when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+                when(missionRepository.findByIdAndDeletedIsFalse(any())).thenReturn(Optional.of(mission));
+
+                MissionUpdateResponseDto updateResponse = missionService.update(1L, oAuth2User, missionUpdateRequest);
+
+                assertEquals(updateResponse.getCredential(), missionUpdateResponse.getCredential());
+                assertEquals(updateResponse.getHint(), missionUpdateResponse.getHint());
+            }
+
+            /*
+            @Test
+            @DisplayName("방장이 아니라면 미션을 수정할 수 없다.")
+            void mission_modify_fail_when_request_user_is_not_host() {
+                //given
+                CustomOAuth2User findUser = CustomOAuth2User.create(new UserDto(2L, "ROLE_USER", "윤성철", "google 1923819273", "sungchul", "aws-s3", "google@gmailcom"));
+
+                when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+                when(missionRepository.findByIdAndDeletedIsFalse(any())).thenReturn(Optional.of(mission));
+
+                assertThrows(MissionException.class, () -> missionService.update(1L, oAuth2User, missionUpdateRequest));
+            }
 
              */
-
         }
     }
