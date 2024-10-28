@@ -23,6 +23,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -232,9 +234,13 @@ public class MissionService {
      */
     @Transactional(readOnly = true)
     @Cacheable(value = "missionLists", key = "'all-' + 'page-' + #pageable.getPageNumber() + 'size-' + #pageable.getPageSize()")
-    public PageResponseDto findAllList(Pageable pageable){
+    public PageResponseDto findAllList(Pageable pageable, CustomOAuth2User user){
 
-        Slice<MissionAllListResponseDto> responseList = missionRepository.findAllByCreatedDate(pageable);
+        Slice<MissionAllListResponseDto> responseList = missionRepository.findAllByCreatedDate(pageable, user.getId());
+
+        if (Objects.isNull(responseList)) {
+            responseList = new SliceImpl<>(Collections.emptyList(), pageable, false);
+        }
 
         PageResponseDto pageResponseDto = new PageResponseDto(responseList.getContent(), responseList.hasNext());
 

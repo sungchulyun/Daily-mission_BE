@@ -176,8 +176,8 @@ public class MissionController {
             @ApiResponse(responseCode = "404", description = "권한을 확인해주세요."),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
-    public ResponseEntity<GlobalResponse> findAllList(Pageable pageable){
-        PageResponseDto response = missionService.findAllList(pageable);
+    public ResponseEntity<GlobalResponse> findAllList(Pageable pageable, @CurrentUser CustomOAuth2User user){
+        PageResponseDto response = missionService.findAllList(pageable, user);
 
         return ResponseEntity.ok(success(response.content(), MetaService.createMetaInfo().add("isNext", response.next())));
     }

@@ -18,7 +18,7 @@ public interface MissionRepositoryCustom {
     Slice<MissionNewListResponseDto> findAllByCreatedInMonth(Pageable pageable);
 
     //All 미션 목록
-    Slice<MissionAllListResponseDto> findAllByCreatedDate(Pageable pageable);
+    Slice<MissionAllListResponseDto> findAllByCreatedDate(Pageable pageable, Long userId);
     List<Mission> findAllByCreatedDate();
     /*
         @Override
