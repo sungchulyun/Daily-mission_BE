@@ -84,6 +84,10 @@ dependencies {
 	//AWS S3
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
+	//AWS SDK
+	implementation platform('software.amazon.awssdk:bom:2.20.56')
+	implementation 'software.amazon.awssdk:s3'
+
 	implementation'org.mariadb.jdbc:mariadb-java-client'
 	implementation 'org.springframework.session:spring-session-jdbc'
 	compileOnly 'org.projectlombok:lombok'
