@@ -1,14 +1,14 @@
-package dailymissionproject.demo.domain.image;
+package dailymissionproject.demo.domain.image.service;
 
 import dailymissionproject.demo.common.util.S3Util;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
-import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 import java.io.IOException;
@@ -24,6 +24,8 @@ public class ImageService {
     private final S3Util s3Util;
     private final S3Presigner presigner;
 
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
     /**
      * POST Thumbnail 디렉토리 생성
      * @return
@@ -59,11 +61,11 @@ public class ImageService {
         return s3Util.upload(multipartFile, dirName);
     }
 
-    public URL generateGetPresignedUrl(String bucketName, String objectKey){
+    public URL generateGetPresignedUrl(String fileName){
 
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucketName)
-                .key(objectKey)
+                .key(fileName)
                 .build();
 
         GetObjectPresignRequest getObjectPresignRequest = GetObjectPresignRequest.builder()
@@ -74,10 +76,10 @@ public class ImageService {
         return presigner.presignGetObject(getObjectPresignRequest).url();
     }
 
-    public URL generatePostPresignedUrl(String bucketName, String objectKey){
+    public URL generatePostPresignedUrl(String fileName){
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
-                .key(objectKey)
+                .key(fileName)
                 .build();
 
         PutObjectPresignRequest putObjectPresignRequest = PutObjectPresignRequest.builder()

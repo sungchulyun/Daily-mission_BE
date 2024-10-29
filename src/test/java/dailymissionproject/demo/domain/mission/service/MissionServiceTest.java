@@ -2,7 +2,7 @@ package dailymissionproject.demo.domain.mission.service;
 
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.auth.dto.UserDto;
-import dailymissionproject.demo.domain.image.ImageService;
+import dailymissionproject.demo.domain.image.service.ImageService;
 import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
 import dailymissionproject.demo.domain.mission.dto.request.MissionSaveRequestDto;
 import dailymissionproject.demo.domain.mission.dto.request.MissionUpdateRequestDto;
@@ -15,7 +15,6 @@ import dailymissionproject.demo.domain.mission.repository.MissionRepository;
 import dailymissionproject.demo.domain.missionRule.dto.MissionRuleResponseDto;
 import dailymissionproject.demo.domain.missionRule.repository.MissionRule;
 import dailymissionproject.demo.domain.participant.dto.response.ParticipantUserDto;
-import dailymissionproject.demo.domain.participant.repository.Participant;
 import dailymissionproject.demo.domain.participant.repository.ParticipantRepository;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
@@ -26,7 +25,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.IOException;

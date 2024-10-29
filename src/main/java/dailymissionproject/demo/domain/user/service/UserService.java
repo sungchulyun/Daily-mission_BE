@@ -1,7 +1,7 @@
 package dailymissionproject.demo.domain.user.service;
 
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
-import dailymissionproject.demo.domain.image.ImageService;
+import dailymissionproject.demo.domain.image.service.ImageService;
 import dailymissionproject.demo.domain.user.dto.request.UserUpdateRequestDto;
 import dailymissionproject.demo.domain.user.dto.response.UserDetailResponseDto;
 import dailymissionproject.demo.domain.user.dto.response.UserUpdateResponseDto;
