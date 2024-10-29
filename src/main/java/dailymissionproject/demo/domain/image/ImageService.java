@@ -4,9 +4,17 @@ import dailymissionproject.demo.common.util.S3Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 import java.io.IOException;
+import java.net.URL;
 import java.text.DecimalFormat;
+import java.time.Duration;
 import java.util.Calendar;
 
 @Service
@@ -14,7 +22,7 @@ import java.util.Calendar;
 public class ImageService {
 
     private final S3Util s3Util;
-
+    private final S3Presigner presigner;
 
     /**
      * POST Thumbnail 디렉토리 생성
@@ -50,6 +58,36 @@ public class ImageService {
     public String uploadMissionS3(MultipartFile multipartFile, String dirName) throws IOException {
         return s3Util.upload(multipartFile, dirName);
     }
+
+    public URL generateGetPresignedUrl(String bucketName, String objectKey){
+
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket(bucketName)
+                .key(objectKey)
+                .build();
+
+        GetObjectPresignRequest getObjectPresignRequest = GetObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofMinutes(5))
+                .getObjectRequest(getObjectRequest)
+                .build();
+
+        return presigner.presignGetObject(getObjectPresignRequest).url();
+    }
+
+    public URL generatePostPresignedUrl(String bucketName, String objectKey){
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(objectKey)
+                .build();
+
+        PutObjectPresignRequest putObjectPresignRequest = PutObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofMinutes(5))
+                .putObjectRequest(putObjectRequest)
+                .build();
+
+        return presigner.presignPutObject(putObjectPresignRequest).url();
+    }
+
 
     /*
     public String uploadImg(MultipartFile file)throws IOException {
