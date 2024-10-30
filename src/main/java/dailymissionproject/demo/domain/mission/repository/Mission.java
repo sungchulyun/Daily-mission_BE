@@ -94,6 +94,10 @@ public class Mission extends BaseTimeEntity {
 
     public void setUser(User user){this.user = user;}
 
+    public void setParticipants(List<Participant> participantList){
+        this.participants = participantList;
+    }
+
     /**
      * 설명 : 참여 가능한 미션인지 검증
      *        1. 종료되지 않은 미션
