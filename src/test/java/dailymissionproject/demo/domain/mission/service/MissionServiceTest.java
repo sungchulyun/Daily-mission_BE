@@ -16,6 +16,7 @@ import dailymissionproject.demo.domain.missionRule.dto.MissionRuleResponseDto;
 import dailymissionproject.demo.domain.missionRule.repository.MissionRule;
 import dailymissionproject.demo.domain.missionRule.repository.Week;
 import dailymissionproject.demo.domain.participant.dto.response.ParticipantUserDto;
+import dailymissionproject.demo.domain.participant.repository.Participant;
 import dailymissionproject.demo.domain.participant.repository.ParticipantRepository;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
@@ -32,11 +33,14 @@ import org.springframework.security.test.context.support.WithMockUser;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.*;
+import static dailymissionproject.demo.domain.mission.fixture.MissionObjectFixture.getMissionList;
+import static dailymissionproject.demo.domain.mission.fixture.MissionObjectFixture.getUserMissionList;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -201,19 +205,19 @@ class MissionServiceTest {
                         MissionObjectFixture.getAllMissionListPageable().getContent().get(0).getTitle());
             }
 
-            /*
+
             @Test
             @DisplayName("유저가 참여중인 미션 리스트를 조회할 수 있다.")
             void test_mission_read_user_joining_list_success(){
                 when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-                when(missionRepository.findAll()).thenReturn(MissionObjectFixture.getMissionList());
+                when(missionRepository.findAll()).thenReturn(getMissionList());
 
+                boolean result = missionService.isParticipating(getUserMissionList());
                 List<MissionUserListResponseDto> userMissionResponse = missionService.findByUserList(oAuth2User);
-
-                assertFalse(userMissionResponse.isEmpty());
-                assertEquals(userMissionResponse.get(0).getTitle(), MissionObjectFixture.getMissionList().get(0).getTitle());
+                assertTrue(result);
+                assertEquals(userMissionResponse.get(0).getTitle(), getMissionList().get(0).getTitle());
             }
-             */
+
         }
 
         @Nested
@@ -232,19 +236,98 @@ class MissionServiceTest {
                 assertEquals(updateResponse.getHint(), missionUpdateResponse.getHint());
             }
 
-            /*
+
             @Test
             @DisplayName("방장이 아니라면 미션을 수정할 수 없다.")
             void mission_modify_fail_when_request_user_is_not_host() {
                 //given
-                CustomOAuth2User findUser = CustomOAuth2User.create(new UserDto(2L, "ROLE_USER", "윤성철", "google 1923819273", "sungchul", "aws-s3", "google@gmailcom"));
+                User guestUser = new User(200L, "name", "email", "nickname");
 
+                when(userRepository.findById(anyLong())).thenReturn(Optional.of(guestUser));
+                when(missionRepository.findByIdAndDeletedIsFalse(any())).thenReturn(Optional.of(mission));
+
+                //when
+                MissionException missionException = assertThrows(MissionException.class, () ->
+                        missionService.update(1L, oAuth2User, missionUpdateRequest));
+
+                //then
+                assertEquals(INVALID_USER_REQUEST, missionException.getExceptionCode());
+            }
+        }
+
+        @Nested
+        @DisplayName("미션 삭제 서비스 레이어 테스트")
+        class MissionDeleteServiceTest {
+
+            @Test
+            @DisplayName("미션을 삭제할 수 있다.")
+            void mission_delete_success() throws IOException {
                 when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
                 when(missionRepository.findByIdAndDeletedIsFalse(any())).thenReturn(Optional.of(mission));
 
-                assertThrows(MissionException.class, () -> missionService.update(1L, oAuth2User, missionUpdateRequest));
+                boolean result = missionService.delete(1L, oAuth2User);
+                assertTrue(result);
             }
 
-             */
+            @Test
+            @DisplayName("방장이 아니면 미션을 삭제할 수 없다.")
+            void mission_delete_fail_when_request_user_is_not_host() {
+                User guestUser = new User(200L, "name", "email", "nickname");
+
+                when(userRepository.findById(anyLong())).thenReturn(Optional.of(guestUser));
+                when(missionRepository.findByIdAndDeletedIsFalse(any())).thenReturn(Optional.of(mission));
+
+                MissionException missionException = assertThrows(MissionException.class, () ->
+                        missionService.delete(1L, oAuth2User));
+
+                //then
+                assertEquals(INVALID_USER_REQUEST, missionException.getExceptionCode());
+            }
+
+            @Test
+            @DisplayName("이미 삭제된 미션은 삭제할 수 없다.")
+            void mission_delete_fail_when_mission_is_already_delete() {
+                //given
+               Mission mission_1 = new Mission(100L, user, "title", "content", "image"
+                       , LocalDate.now(), LocalDate.now());
+               mission_1.delete();
+
+                when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+                when(missionRepository.findByIdAndDeletedIsFalse(any())).thenReturn(Optional.of(mission_1));
+
+                MissionException missionException = assertThrows(MissionException.class, () ->
+                        missionService.delete(mission_1.getId(), oAuth2User));
+
+                assertEquals(MISSION_ALREADY_DELETED, missionException.getExceptionCode());
+            }
+
+            @Test
+            @DisplayName("방장을 제외하고 참여중인 유저가 있다면 삭제할 수 없다.")
+            void mission_delete_fail_when_mission_participating_user_exists(){
+                //given
+                Mission mission_1 = new Mission(100L, user, "title", "content", "image"
+                        , LocalDate.now(), LocalDate.now());
+
+                Participant participant_1 = Participant.builder()
+                        .mission(mission_1)
+                        .user(user)
+                        .build();
+
+                Participant participant_2 = Participant.builder()
+                        .mission(mission_1)
+                        .user(new User(100L, "name", "email", "nickname"))
+                        .build();
+
+                mission_1.setParticipants(List.of(participant_1, participant_2));
+
+                when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+                when(missionRepository.findByIdAndDeletedIsFalse(any())).thenReturn(Optional.of(mission_1));
+
+                //when
+                MissionException missionException = assertThrows(MissionException.class, () ->
+                        missionService.delete(mission_1.getId(), oAuth2User));
+
+                assertEquals(INVALID_DELETE_REQUEST, missionException.getExceptionCode());
+            }
         }
     }
