@@ -1,6 +1,8 @@
 package dailymissionproject.demo.domain.mission.repository;
 
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import dailymissionproject.demo.domain.mission.dto.response.MissionAllListResponseDto;
 import dailymissionproject.demo.domain.mission.dto.response.MissionHotListResponseDto;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.SliceImpl;
 import java.util.List;
 
 import static dailymissionproject.demo.domain.mission.repository.QMission.mission;
+import static dailymissionproject.demo.domain.participant.repository.QParticipant.participant;
 
 @RequiredArgsConstructor
 public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
@@ -84,14 +87,14 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
      * @param pageable
      * @return
      */
-    public Slice<MissionAllListResponseDto> findAllByCreatedDate(Pageable pageable){
-        List<MissionAllListResponseDto> missionList = fetchMissionByCreatedDate(pageable);
+    public Slice<MissionAllListResponseDto> findAllByCreatedDate(Pageable pageable, Long userId){
+        List<MissionAllListResponseDto> missionList = fetchMissionByCreatedDate(pageable, userId);
         boolean hasNext = hasNextPage(missionList, pageable);
 
         return new SliceImpl<>(missionList, pageable, hasNext);
     }
 
-    private List<MissionAllListResponseDto> fetchMissionByCreatedDate(Pageable pageable){
+    private List<MissionAllListResponseDto> fetchMissionByCreatedDate(Pageable pageable, Long userId){
        return queryFactory
                 .select(Projections.fields(MissionAllListResponseDto.class,
                         mission.id,
@@ -101,7 +104,16 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
                         mission.user.nickname,
                         mission.startDate,
                         mission.endDate,
-                        mission.ended))
+                        mission.ended,
+                        ExpressionUtils.as(
+                                JPAExpressions
+                                        .selectOne()
+                                        .from(participant)
+                                        .where(participant.mission.eq(mission)
+                                                .and(participant.user.id.eq(userId)))
+                                        .isNotNull(),
+                                "participating")
+                        ))
                 .from(mission)
                 .orderBy(mission.createdTime.desc())
                 .offset(pageable.getOffset())

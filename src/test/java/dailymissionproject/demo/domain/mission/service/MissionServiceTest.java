@@ -15,7 +15,6 @@ import dailymissionproject.demo.domain.mission.repository.MissionRepository;
 import dailymissionproject.demo.domain.missionRule.dto.MissionRuleResponseDto;
 import dailymissionproject.demo.domain.missionRule.repository.MissionRule;
 import dailymissionproject.demo.domain.participant.dto.response.ParticipantUserDto;
-import dailymissionproject.demo.domain.participant.repository.Participant;
 import dailymissionproject.demo.domain.participant.repository.ParticipantRepository;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
@@ -26,7 +25,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.IOException;
@@ -34,8 +32,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -150,9 +148,9 @@ class MissionServiceTest {
             @Test
             @DisplayName("전체 미션 리스트를 조회할 수 있다.")
             void test_mission_read_all_list_success() {
-                when(missionRepository.findAllByCreatedDate(pageable)).thenReturn(MissionObjectFixture.getAllMissionListPageable());
+                when(missionRepository.findAllByCreatedDate(pageable, anyLong())).thenReturn(MissionObjectFixture.getAllMissionListPageable());
 
-                PageResponseDto pageResponseDto = missionService.findAllList(pageable);
+                PageResponseDto pageResponseDto = missionService.findAllList(pageable, oAuth2User);
                 List<MissionAllListResponseDto> list = (List<MissionAllListResponseDto>) pageResponseDto.content();
 
                 assertEquals(list.get(0).getTitle(),

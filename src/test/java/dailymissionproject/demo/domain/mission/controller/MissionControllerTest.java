@@ -2,26 +2,21 @@ package dailymissionproject.demo.domain.mission.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
+import dailymissionproject.demo.domain.auth.dto.UserDto;
 import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
 import dailymissionproject.demo.domain.mission.dto.request.MissionSaveRequestDto;
 import dailymissionproject.demo.domain.mission.dto.request.MissionUpdateRequestDto;
 import dailymissionproject.demo.domain.mission.dto.response.*;
 import dailymissionproject.demo.domain.mission.exception.MissionException;
-import dailymissionproject.demo.domain.mission.exception.MissionExceptionCode;
 import dailymissionproject.demo.domain.mission.fixture.MissionObjectFixture;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.service.MissionService;
 import dailymissionproject.demo.domain.missionRule.dto.MissionRuleResponseDto;
-import dailymissionproject.demo.domain.missionRule.repository.MissionRule;
 import dailymissionproject.demo.domain.participant.dto.response.ParticipantUserDto;
 import dailymissionproject.demo.domain.user.exception.UserException;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.global.WithMockCustomUser;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -85,6 +80,12 @@ class MissionControllerTest {
 
     private final Pageable pageable = PageRequest.of(0,3 );
     private final Long missionId = 1L;
+    public static CustomOAuth2User oAuth2User;
+
+    @BeforeEach
+    void setUp(){
+        oAuth2User = CustomOAuth2User.create(new UserDto(1L, "ROLE_USER", "윤성철", "google 1923819273", "sungchul", "aws-s3", "google@gmailcom"));
+    }
 
     @Nested
     @DisplayName("미션 조회 컨트롤러 테스트")
@@ -211,9 +212,9 @@ class MissionControllerTest {
                     .startDate(LocalDate.now().minusDays(10))
                     .endDate(LocalDate.now().plusDays(10))
                     .build();
-            //when
-            when(missionService.findAllList(any())).thenReturn(allMissionListResponse);
 
+            //when
+            when(missionService.findAllList(eq(pageable), any())).thenReturn(allMissionListResponse);
             ResultActions resultActions = mockMvc.perform(get("/api/v1/mission/all")
                             .param("page", String.valueOf(pageable.getPageNumber()))
                             .param("size", String.valueOf(pageable.getPageSize()))
