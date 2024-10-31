@@ -64,6 +64,21 @@ public class Mission extends BaseTimeEntity {
     private boolean deleted;
 
 
+    public Mission(Long id, User user, String title, String content, String imageUrl
+                   , LocalDate startDate, LocalDate endDate){
+        this.id = id;
+        this.user = user;
+        this.title = title;
+        this.content = content;
+        //s3
+        this.imageUrl = imageUrl;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        //default
+        this.ended = false;
+        this.deleted = false;
+    }
+
     @Builder
     public Mission(User user, MissionRule missionRule, String title, String content, String imageUrl, String hint, String credential,
                    LocalDate startDate, LocalDate endDate){
@@ -93,6 +108,10 @@ public class Mission extends BaseTimeEntity {
     public void setHint(String hint){ this.hint = hint; }
 
     public void setUser(User user){this.user = user;}
+
+    public void setParticipants(List<Participant> participantList){
+        this.participants = participantList;
+    }
 
     /**
      * 설명 : 참여 가능한 미션인지 검증

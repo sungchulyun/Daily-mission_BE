@@ -324,7 +324,7 @@ public class MissionService {
      * @param particiPatinglist
      * @return
      */
-    private boolean isParticipating(List<MissionUserListResponseDto> particiPatinglist){
+    public boolean isParticipating(List<MissionUserListResponseDto> particiPatinglist){
         if(particiPatinglist.size() < 1) return false;
         return true;
     }
