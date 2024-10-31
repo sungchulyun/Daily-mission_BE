@@ -1,12 +1,15 @@
 package dailymissionproject.demo.domain.mission.repository;
 
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import dailymissionproject.demo.domain.mission.dto.response.MissionAllListResponseDto;
 import dailymissionproject.demo.domain.mission.dto.response.MissionHotListResponseDto;
 import dailymissionproject.demo.domain.mission.dto.response.MissionNewListResponseDto;
+import dailymissionproject.demo.domain.participant.repository.QParticipant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -27,14 +30,14 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
      * @param pageable
      * @return
      */
-    public Slice<MissionHotListResponseDto> findAllByParticipantSize(Pageable pageable){
-        List<MissionHotListResponseDto> missionList = fetchByParticipantSize(pageable);
+    public Slice<MissionHotListResponseDto> findAllByParticipantSize(Pageable pageable, Long userId){
+        List<MissionHotListResponseDto> missionList = fetchByParticipantSize(pageable, userId);
         boolean hasNext = hasNextPage(missionList, pageable);
 
         return new SliceImpl<>(missionList, pageable, hasNext);
     }
 
-    private List<MissionHotListResponseDto> fetchByParticipantSize(Pageable pageable){
+    private List<MissionHotListResponseDto> fetchByParticipantSize(Pageable pageable, Long userId){
         return queryFactory
                 .select(Projections.fields(MissionHotListResponseDto.class,
                         mission.id,
@@ -43,7 +46,9 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
                         mission.imageUrl,
                         mission.user.nickname,
                         mission.startDate,
-                        mission.endDate))
+                        mission.endDate,
+                        participatingExpression(mission, userId)
+                ))
                 .from(mission)
                 .where(mission.deleted.isFalse().and(mission.ended.isFalse()))
                 .orderBy(mission.participants.size().desc(), mission.createdTime.desc())
@@ -57,14 +62,14 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
      * @param pageable
      * @return
      */
-    public Slice<MissionNewListResponseDto> findAllByCreatedInMonth(Pageable pageable){
-        List<MissionNewListResponseDto> missionList = fetchMissionByCreatedInMonth(pageable);
+    public Slice<MissionNewListResponseDto> findAllByCreatedInMonth(Pageable pageable, Long userId){
+        List<MissionNewListResponseDto> missionList = fetchMissionByCreatedInMonth(pageable, userId);
         boolean hasNext = hasNextPage(missionList, pageable);
 
         return new SliceImpl<>(missionList, pageable, hasNext);
     }
 
-    private List<MissionNewListResponseDto> fetchMissionByCreatedInMonth(Pageable pageable){
+    private List<MissionNewListResponseDto> fetchMissionByCreatedInMonth(Pageable pageable, Long userId){
        return queryFactory
                 .select(Projections.fields(MissionNewListResponseDto.class,
                         mission.id,
@@ -73,7 +78,9 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
                         mission.imageUrl,
                         mission.user.nickname,
                         mission.startDate,
-                        mission.endDate))
+                        mission.endDate,
+                        participatingExpression(mission, userId)
+                ))
                 .from(mission)
                 .where(mission.deleted.isFalse().and(mission.ended.isFalse()))
                 .orderBy(mission.createdTime.desc())
@@ -105,20 +112,32 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
                         mission.startDate,
                         mission.endDate,
                         mission.ended,
-                        ExpressionUtils.as(
-                                JPAExpressions
-                                        .selectOne()
-                                        .from(participant)
-                                        .where(participant.mission.eq(mission)
-                                                .and(participant.user.id.eq(userId)))
-                                        .isNotNull(),
-                                "participating")
+                        participatingExpression(mission, userId)
                         ))
                 .from(mission)
                 .orderBy(mission.createdTime.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
+    }
+
+    /**
+     * 참여 여부를 확인하는 Expression 메서드
+     * @param mission
+     * @param userId
+     */
+    private Expression<Boolean> participatingExpression(QMission mission, Long userId){
+        QParticipant participant = QParticipant.participant;
+
+        return Expressions.as(
+                JPAExpressions
+                        .selectOne()
+                        .from(participant)
+                        .where(participant.mission.eq(mission)
+                                .and(participant.user.id.eq(userId)))
+                        .isNotNull(),
+                "participating"
+        );
     }
 
     /**
