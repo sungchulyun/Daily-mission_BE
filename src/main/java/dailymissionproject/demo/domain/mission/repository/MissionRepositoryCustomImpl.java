@@ -37,7 +37,7 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
         return new SliceImpl<>(missionList, pageable, hasNext);
     }
 
-    private List<MissionHotListResponseDto> fetchByParticipantSize(Pageable pageable, Long userId){
+    public List<MissionHotListResponseDto> fetchByParticipantSize(Pageable pageable, Long userId){
         return queryFactory
                 .select(Projections.fields(MissionHotListResponseDto.class,
                         mission.id,
@@ -69,7 +69,7 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
         return new SliceImpl<>(missionList, pageable, hasNext);
     }
 
-    private List<MissionNewListResponseDto> fetchMissionByCreatedInMonth(Pageable pageable, Long userId){
+    public List<MissionNewListResponseDto> fetchMissionByCreatedInMonth(Pageable pageable, Long userId){
        return queryFactory
                 .select(Projections.fields(MissionNewListResponseDto.class,
                         mission.id,
@@ -101,7 +101,7 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
         return new SliceImpl<>(missionList, pageable, hasNext);
     }
 
-    private List<MissionAllListResponseDto> fetchMissionByCreatedDate(Pageable pageable, Long userId){
+    public List<MissionAllListResponseDto> fetchMissionByCreatedDate(Pageable pageable, Long userId){
        return queryFactory
                 .select(Projections.fields(MissionAllListResponseDto.class,
                         mission.id,
@@ -126,7 +126,7 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
      * @param mission
      * @param userId
      */
-    private Expression<Boolean> participatingExpression(QMission mission, Long userId){
+    public Expression<Boolean> participatingExpression(QMission mission, Long userId){
         QParticipant participant = QParticipant.participant;
 
         return Expressions.as(
