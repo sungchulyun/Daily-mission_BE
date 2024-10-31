@@ -102,6 +102,7 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
     }
 
     public List<MissionAllListResponseDto> fetchMissionByCreatedDate(Pageable pageable, Long userId){
+
        return queryFactory
                 .select(Projections.fields(MissionAllListResponseDto.class,
                         mission.id,

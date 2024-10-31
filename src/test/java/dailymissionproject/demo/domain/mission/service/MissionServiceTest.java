@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.*;
 import static dailymissionproject.demo.domain.mission.fixture.MissionObjectFixture.getMissionList;
 import static dailymissionproject.demo.domain.mission.fixture.MissionObjectFixture.getUserMissionList;
