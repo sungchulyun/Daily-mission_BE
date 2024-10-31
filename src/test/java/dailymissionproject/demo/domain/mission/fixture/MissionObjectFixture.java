@@ -323,6 +323,7 @@ public class MissionObjectFixture {
                 .nickname("yoonsu")
                 .startDate(LocalDate.now().minusDays(10))
                 .endDate(LocalDate.now().plusDays(10))
+                .participating(true)
                 .build();
 
         MissionAllListResponseDto allMission_2 = MissionAllListResponseDto.builder()
@@ -333,6 +334,7 @@ public class MissionObjectFixture {
                 .nickname("sungchul")
                 .startDate(LocalDate.now().minusDays(7))
                 .endDate(LocalDate.now().plusDays(7))
+                .participating(true)
                 .build();
 
         List<MissionAllListResponseDto> listResponse = List.of(allMission_1, allMission_2);
