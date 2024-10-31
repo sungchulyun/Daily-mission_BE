@@ -60,6 +60,7 @@ class MissionRepositoryTest {
     private final Mission missionFixture = MissionObjectFixture.getMissionFixture();
     private final MissionRule missionRuleFixture = MissionObjectFixture.getMissionRuleFixture();
     private final User userFixture = MissionObjectFixture.getUserFixture();
+    private final Long userId = 1L;
 
     @BeforeEach
     void setUp(){
@@ -157,7 +158,9 @@ class MissionRepositoryTest {
                             mission.imageUrl,
                             mission.user.nickname,
                             mission.startDate,
-                            mission.endDate))
+                            mission.endDate,
+                            MissionObjectFixture.getParticipantExpression(mission, userId)
+                    ))
                     .from(mission)
                     .where(mission.deleted.isFalse().and(mission.ended.isFalse()))
                     .orderBy(mission.participants.size().desc(), mission.createdTime.desc())
@@ -193,7 +196,9 @@ class MissionRepositoryTest {
                             mission.imageUrl,
                             mission.user.nickname,
                             mission.startDate,
-                            mission.endDate))
+                            mission.endDate,
+                            MissionObjectFixture.getParticipantExpression(mission, userId)
+                    ))
                     .from(mission)
                     .where(mission.createdTime.between(monthBefore, now))
                     .orderBy(mission.createdTime.desc())
@@ -228,7 +233,9 @@ class MissionRepositoryTest {
                             mission.user.nickname,
                             mission.startDate,
                             mission.endDate,
-                            mission.ended))
+                            mission.ended,
+                            MissionObjectFixture.getParticipantExpression(mission, userId)
+                    ))
                     .from(mission)
                     .orderBy(mission.createdTime.desc())
                     .offset(pageable.getOffset())

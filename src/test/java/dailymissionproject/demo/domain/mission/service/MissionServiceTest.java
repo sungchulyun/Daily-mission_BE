@@ -174,7 +174,7 @@ class MissionServiceTest {
             @Test
             @DisplayName("인기 미션 리스트를 조회할 수 있다.")
             void test_mission_read_hot_list_success() {
-                when(missionRepository.findAllByParticipantSize(pageable, anyLong())).thenReturn(MissionObjectFixture.getHotMissionListPageable());
+                when(missionRepository.findAllByParticipantSize(any(), anyLong())).thenReturn(MissionObjectFixture.getHotMissionListPageable());
 
                 PageResponseDto pageResponseDto = missionService.findHotList(pageable, oAuth2User);
                 List<MissionHotListResponseDto> list = (List<MissionHotListResponseDto>) pageResponseDto.content();
@@ -186,7 +186,7 @@ class MissionServiceTest {
             @Test
             @DisplayName("신규 미션 리스트를 조회할 수 있다.")
             void test_mission_read_new_list_success() {
-                when(missionRepository.findAllByCreatedInMonth(pageable, anyLong())).thenReturn(MissionObjectFixture.getNewMissionListPageable());
+                when(missionRepository.findAllByCreatedInMonth(any(), anyLong())).thenReturn(MissionObjectFixture.getNewMissionListPageable());
 
                 PageResponseDto pageResponseDto = missionService.findNewList(pageable, oAuth2User);
                 List<MissionNewListResponseDto> list = (List<MissionNewListResponseDto>) pageResponseDto.content();
@@ -198,7 +198,7 @@ class MissionServiceTest {
             @Test
             @DisplayName("전체 미션 리스트를 조회할 수 있다.")
             void test_mission_read_all_list_success() {
-                when(missionRepository.findAllByCreatedDate(pageable, anyLong())).thenReturn(MissionObjectFixture.getAllMissionListPageable());
+                when(missionRepository.findAllByCreatedDate(any(), anyLong())).thenReturn(MissionObjectFixture.getAllMissionListPageable());
 
                 PageResponseDto pageResponseDto = missionService.findAllList(pageable, oAuth2User);
                 List<MissionAllListResponseDto> list = (List<MissionAllListResponseDto>) pageResponseDto.content();
