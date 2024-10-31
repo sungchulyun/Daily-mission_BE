@@ -124,9 +124,9 @@ class MissionServiceTest {
             @Test
             @DisplayName("인기 미션 리스트를 조회할 수 있다.")
             void test_mission_read_hot_list_success() {
-                when(missionRepository.findAllByParticipantSize(pageable)).thenReturn(MissionObjectFixture.getHotMissionListPageable());
+                when(missionRepository.findAllByParticipantSize(pageable, anyLong())).thenReturn(MissionObjectFixture.getHotMissionListPageable());
 
-                PageResponseDto pageResponseDto = missionService.findHotList(pageable);
+                PageResponseDto pageResponseDto = missionService.findHotList(pageable, oAuth2User);
                 List<MissionHotListResponseDto> list = (List<MissionHotListResponseDto>) pageResponseDto.content();
 
                 assertEquals(list.get(0).getTitle(),
@@ -136,9 +136,9 @@ class MissionServiceTest {
             @Test
             @DisplayName("신규 미션 리스트를 조회할 수 있다.")
             void test_mission_read_new_list_success() {
-                when(missionRepository.findAllByCreatedInMonth(pageable)).thenReturn(MissionObjectFixture.getNewMissionListPageable());
+                when(missionRepository.findAllByCreatedInMonth(pageable, anyLong())).thenReturn(MissionObjectFixture.getNewMissionListPageable());
 
-                PageResponseDto pageResponseDto = missionService.findNewList(pageable);
+                PageResponseDto pageResponseDto = missionService.findNewList(pageable, oAuth2User);
                 List<MissionNewListResponseDto> list = (List<MissionNewListResponseDto>) pageResponseDto.content();
 
                 assertEquals(list.get(0).getTitle(),

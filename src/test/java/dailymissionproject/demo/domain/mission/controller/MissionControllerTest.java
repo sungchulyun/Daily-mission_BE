@@ -144,7 +144,7 @@ class MissionControllerTest {
                     .endDate(LocalDate.now().plusDays(10))
                     .build();
 
-            when(missionService.findHotList(any())).thenReturn(hotMissionListResponse);
+            when(missionService.findHotList(eq(pageable), any())).thenReturn(hotMissionListResponse);
 
             ResultActions resultActions = mockMvc.perform(get("/api/v1/mission/hot")
                     .param("page", String.valueOf(pageable.getPageNumber()))
@@ -179,7 +179,7 @@ class MissionControllerTest {
                     .build();
 
             //when
-            when(missionService.findNewList(any())).thenReturn(newMissionListResponse);
+            when(missionService.findNewList(eq(pageable), any())).thenReturn(newMissionListResponse);
 
             ResultActions resultActions = mockMvc.perform(get("/api/v1/mission/new")
                     .param("page", String.valueOf(pageable.getPageNumber()))

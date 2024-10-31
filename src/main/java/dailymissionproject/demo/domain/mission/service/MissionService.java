@@ -200,9 +200,9 @@ public class MissionService {
      */
     @Transactional(readOnly = true)
     @Cacheable(value = "missionLists", key = "'hot-' + 'page-' + #pageable.getPageNumber() + 'size-' + #pageable.getPageSize()")
-    public PageResponseDto findHotList(Pageable pageable){
+    public PageResponseDto findHotList(Pageable pageable, CustomOAuth2User user){
 
-        Slice<MissionHotListResponseDto> responseList = missionRepository.findAllByParticipantSize(pageable);
+        Slice<MissionHotListResponseDto> responseList = missionRepository.findAllByParticipantSize(pageable, user.getId());
 
         PageResponseDto pageResponseDto = new PageResponseDto(responseList.getContent(), responseList.hasNext());
 
@@ -217,9 +217,9 @@ public class MissionService {
      */
     @Transactional(readOnly = true)
     @Cacheable(value = "missionLists", key = "'new-' + 'page-' + #pageable.getPageNumber() + 'size-' + #pageable.getPageSize()")
-    public PageResponseDto findNewList(Pageable pageable){
+    public PageResponseDto findNewList(Pageable pageable, CustomOAuth2User user){
 
-        Slice<MissionNewListResponseDto> responseList = missionRepository.findAllByCreatedInMonth(pageable);
+        Slice<MissionNewListResponseDto> responseList = missionRepository.findAllByCreatedInMonth(pageable, user.getId());
 
         PageResponseDto pageResponseDto = new PageResponseDto(responseList.getContent(), responseList.hasNext());
 

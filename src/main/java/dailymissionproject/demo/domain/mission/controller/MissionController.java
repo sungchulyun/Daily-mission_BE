@@ -134,9 +134,9 @@ public class MissionController {
             @ApiResponse(responseCode = "404", description = "권한을 확인해주세요."),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
-    public ResponseEntity<GlobalResponse> findHotList(Pageable pageable){
+    public ResponseEntity<GlobalResponse> findHotList(Pageable pageable, @CurrentUser CustomOAuth2User user){
 
-        PageResponseDto response = missionService.findHotList(pageable);
+        PageResponseDto response = missionService.findHotList(pageable, user);
 
         return ResponseEntity.ok(success(response.content(), MetaService.createMetaInfo().add("isNext", response.next())));
 
@@ -156,9 +156,9 @@ public class MissionController {
             @ApiResponse(responseCode = "404", description = "권한을 확인해주세요."),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
-    public ResponseEntity<GlobalResponse> findNewList(Pageable pageable){
+    public ResponseEntity<GlobalResponse> findNewList(Pageable pageable, @CurrentUser CustomOAuth2User user){
 
-        PageResponseDto response = missionService.findNewList(pageable);
+        PageResponseDto response = missionService.findNewList(pageable, user);
 
         return ResponseEntity.ok(success(response.content(), MetaService.createMetaInfo().add("isNext", response.next())));
     }
