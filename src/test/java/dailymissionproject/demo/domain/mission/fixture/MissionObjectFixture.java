@@ -371,6 +371,9 @@ public class MissionObjectFixture {
     public static List<Mission> getMissionList() {
         Mission mission_1 = getMissionFixture();
 
+        List<Participant> participantList = List.of(getParticipant());
+        mission_1.setParticipants(participantList);
+
         return List.of(mission_1);
     }
 }
