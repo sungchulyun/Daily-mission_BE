@@ -7,7 +7,9 @@ import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
 import dailymissionproject.demo.domain.mission.exception.MissionException;
 import dailymissionproject.demo.domain.mission.exception.MissionExceptionCode;
 import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
+import dailymissionproject.demo.domain.post.dto.request.PostUpdateRequestDto;
 import dailymissionproject.demo.domain.post.dto.response.PostResponseDto;
+import dailymissionproject.demo.domain.post.dto.response.PostUpdateResponseDto;
 import dailymissionproject.demo.domain.post.exception.PostException;
 import dailymissionproject.demo.domain.post.exception.PostExceptionCode;
 import dailymissionproject.demo.domain.post.fixture.PostObjectFixture;
@@ -24,7 +26,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.core.parameters.P;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -58,6 +62,8 @@ class PostControllerTest {
     private final PostResponseDto detailResponse = PostObjectFixture.getDetailResponse();
     private final List<PostResponseDto> userPostList = PostObjectFixture.getUserPostList();
     private final List<PostResponseDto> missionPostList = PostObjectFixture.getMissionPostList();
+    private final PostUpdateRequestDto updateRequest = PostObjectFixture.getPostUpdateRequest();
+    private final PostUpdateResponseDto updateResponse = PostObjectFixture.getPostUpdateResponse();
 
     public static CustomOAuth2User oAuth2User;
     private final Long missionId = 1L;
@@ -214,6 +220,74 @@ class PostControllerTest {
 
             verify(postService, description("findAllByMission 메서드가 정상 호출됨"))
                     .findAllByMission(any(), any());
+        }
+    }
+
+    @Nested
+    @DisplayName("포스트 수정 컨트롤러 테스트")
+    class PostUpdateControllerTest {
+        final String fileName = "https://AWS-S3/postThumbnail.jpg";
+        final String contentType = "image/jpeg";
+
+        @Test
+        @DisplayName("포스트를 수정할 수 있다.")
+        void post_update_success() throws Exception {
+            MockMultipartFile file = new MockMultipartFile("file", fileName, contentType
+                    , "test data".getBytes(StandardCharsets.UTF_8));
+            MockMultipartFile request = new MockMultipartFile("postUpdateRequestDto", "request.json", "application/json"
+                    , objectMapper.writeValueAsBytes(updateRequest));
+
+            when(postService.update(anyLong(), any(), any(), any())).thenReturn(updateResponse);
+
+            mockMvc.perform(multipart(HttpMethod.PUT, ("/api/v1/post/{id}"), postId)
+                    .file(file)
+                    .file(request)
+                    .with(csrf()))
+                    .andExpect(status().isOk())
+                    .andDo(print());
+
+            verify(postService, description("update 메서드가 정상 호출됨"))
+                    .update(anyLong(), any(), any(), any());
+        }
+
+        @Test
+        @DisplayName("포스트가 없을경우 예외를 반환한다.")
+        void post_update_fail() throws Exception {
+            //given
+            MockMultipartFile file = new MockMultipartFile("file", fileName, contentType
+                    , "test data".getBytes(StandardCharsets.UTF_8));
+            MockMultipartFile request = new MockMultipartFile("postUpdateRequestDto", "request.json", "application/json"
+                    , objectMapper.writeValueAsBytes(updateRequest));
+
+            when(postService.update(anyLong(), any(), any(), any())).thenThrow(new PostException(PostExceptionCode.POST_NOT_FOUND));
+
+            mockMvc.perform(multipart(HttpMethod.PUT, ("/api/v1/post/{id}"), postId)
+                    .file(file)
+                    .file(request)
+                    .with(csrf()))
+                    .andExpect(status().isBadRequest());
+
+            verify(postService, description("update 메서드가 정상 호출됨"))
+                    .update(anyLong(), any(), any(), any());
+        }
+
+        @Test
+        @DisplayName("포스트 작성자가 아닐경우 예외를 반환한다.")
+        void post_update_fail_when_user_is_not_writer() throws Exception {
+            //given
+            MockMultipartFile file = new MockMultipartFile("file", fileName, contentType
+                    , "test data".getBytes(StandardCharsets.UTF_8));
+            MockMultipartFile request = new MockMultipartFile("postUpdateRequestDto", "request.json", "application/json"
+                    , objectMapper.writeValueAsBytes(updateRequest));
+
+            when(postService.update(anyLong(), any(), any(), any())).thenThrow(new PostException(PostExceptionCode.INVALID_USER_REQUEST));
+
+            mockMvc.perform(multipart(HttpMethod.PUT, ("/api/v1/post/{id}"), postId)
+                            .file(file)
+                            .file(request)
+                            .with(csrf()))
+                    .andExpect(status().isBadRequest());
+
         }
     }
 }

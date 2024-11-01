@@ -5,7 +5,9 @@ import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.missionRule.repository.MissionRule;
 import dailymissionproject.demo.domain.missionRule.repository.Week;
 import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
+import dailymissionproject.demo.domain.post.dto.request.PostUpdateRequestDto;
 import dailymissionproject.demo.domain.post.dto.response.PostResponseDto;
+import dailymissionproject.demo.domain.post.dto.response.PostUpdateResponseDto;
 import dailymissionproject.demo.domain.post.repository.Post;
 import dailymissionproject.demo.domain.user.repository.Role;
 import dailymissionproject.demo.domain.user.repository.User;
@@ -98,6 +100,10 @@ public class PostObjectFixture {
                 .build();
     }
 
+    /**
+     * 유저가 작성한 포스트 리스트 fixture를 반환한다.
+     * @return
+     */
     public static List<PostResponseDto> getUserPostList(){
         User user =  new User(1L, "윤성철", "google@gamil.com", "sungchul");
 
@@ -128,6 +134,10 @@ public class PostObjectFixture {
         return List.of(postResponse_1, postResponse_2);
     }
 
+    /**
+     * 미션별로 작성된 포스트 리스트를 반환한다.
+     * @return
+     */
     public static List<PostResponseDto> getMissionPostList(){
         Mission mission = new Mission(1L, getUserFixture(), "MISSION_TITLE", "MISSION_CONTENT"
                 , "IMAGEURL", LocalDate.now(), LocalDate.now());
@@ -157,5 +167,20 @@ public class PostObjectFixture {
                 .build();
 
         return List.of(postResponse_1, postResponse_2);
+    }
+
+    public static PostUpdateRequestDto getPostUpdateRequest(){
+        return PostUpdateRequestDto.builder()
+                .title("TITLE")
+                .content("CONTENT")
+                .build();
+    }
+
+    public static PostUpdateResponseDto getPostUpdateResponse(){
+        return PostUpdateResponseDto.builder()
+                .title("TITLE")
+                .content("CONTENT")
+                .imageUrl("IMAGE")
+                .build();
     }
 }
