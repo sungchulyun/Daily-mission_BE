@@ -9,6 +9,8 @@ import dailymissionproject.demo.domain.post.dto.response.PostResponseDto;
 import dailymissionproject.demo.domain.post.repository.Post;
 import dailymissionproject.demo.domain.user.repository.Role;
 import dailymissionproject.demo.domain.user.repository.User;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
@@ -94,5 +96,66 @@ public class PostObjectFixture {
         return PostResponseDto.builder()
                 .post(getPostFixture())
                 .build();
+    }
+
+    public static List<PostResponseDto> getUserPostList(){
+        User user =  new User(1L, "윤성철", "google@gamil.com", "sungchul");
+
+        Post post_1 = Post.builder()
+                .user(user)
+                .mission(getMissionFixture())
+                .title("TITLE1")
+                .content("CONTENT1")
+                .imgUrl("IMAGE1")
+                .build();
+
+        Post post_2 = Post.builder()
+                .user(user)
+                .mission(getMissionFixture())
+                .title("TITLE2")
+                .content("CONTENT2")
+                .imgUrl("IMAGE2")
+                .build();
+
+        PostResponseDto postResponse_1 = PostResponseDto.builder()
+                .post(post_1)
+                .build();
+
+        PostResponseDto postResponse_2 = PostResponseDto.builder()
+                .post(post_2)
+                .build();
+
+        return List.of(postResponse_1, postResponse_2);
+    }
+
+    public static List<PostResponseDto> getMissionPostList(){
+        Mission mission = new Mission(1L, getUserFixture(), "MISSION_TITLE", "MISSION_CONTENT"
+                , "IMAGEURL", LocalDate.now(), LocalDate.now());
+
+        Post post_1 = Post.builder()
+                .user(getUserFixture())
+                .mission(mission)
+                .title("TITLE1")
+                .content("CONTENT1")
+                .imgUrl("IMAGE1")
+                .build();
+
+        Post post_2 = Post.builder()
+                .user(getUserFixture())
+                .mission(mission)
+                .title("TITLE2")
+                .content("CONTENT2")
+                .imgUrl("IMAGE2")
+                .build();
+
+        PostResponseDto postResponse_1 = PostResponseDto.builder()
+                .post(post_1)
+                .build();
+
+        PostResponseDto postResponse_2 = PostResponseDto.builder()
+                .post(post_2)
+                .build();
+
+        return List.of(postResponse_1, postResponse_2);
     }
 }
