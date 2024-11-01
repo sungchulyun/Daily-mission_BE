@@ -1,5 +1,6 @@
 package dailymissionproject.demo.domain.post.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.auth.dto.UserDto;
@@ -32,6 +33,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -102,7 +104,7 @@ class PostControllerTest {
         }
 
         @Test
-        @DisplayName("포스트 생성에 실패한다.")
+        @DisplayName("미션이 존재하지 않을경우 포스트 생성에 실패한다.")
         void post_save_fail() throws Exception {
             MockMultipartFile file = new MockMultipartFile("file", fileName, contentType
                     , "test data".getBytes(StandardCharsets.UTF_8));
@@ -110,6 +112,26 @@ class PostControllerTest {
             , objectMapper.writeValueAsBytes(saveRequest));
 
             when(postService.save(any(), any(), any())).thenThrow(new MissionException(MissionExceptionCode.MISSION_NOT_FOUND));
+
+            mockMvc.perform(multipart(HttpMethod.POST, "/api/v1/post/save")
+                    .file(file)
+                    .file(request)
+                    .with(csrf()))
+                    .andExpect(status().isBadRequest());
+
+            verify(postService, description("save 메서드가 정상적으로 호출됨"))
+                    .save(any(CustomOAuth2User.class), any(), any());
+        }
+
+        @Test
+        @DisplayName("미션 참여자가 아닐경우 포스트 생성에 실패한다.")
+        void post_save_fail_when_user_is_not_participating() throws Exception {
+            MockMultipartFile file = new MockMultipartFile("file", fileName, contentType
+                    , "test data".getBytes(StandardCharsets.UTF_8));
+            MockMultipartFile request = new MockMultipartFile("postSaveReqDto", "request.json", "application/json"
+                    , objectMapper.writeValueAsBytes(saveRequest));
+
+            when(postService.save(any(), any(), any())).thenThrow(new PostException(PostExceptionCode.INVALID_POST_SAVE_REQUEST));
 
             mockMvc.perform(multipart(HttpMethod.POST, "/api/v1/post/save")
                     .file(file)
