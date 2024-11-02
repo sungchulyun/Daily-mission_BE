@@ -4,7 +4,8 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.post.dto.PostSubmitDto;
-import dailymissionproject.demo.domain.post.dto.response.PostResponseDto;
+import dailymissionproject.demo.domain.post.dto.response.PostDetailResponseDto;
+import dailymissionproject.demo.domain.post.dto.response.PostUserListResponseDto;
 import dailymissionproject.demo.domain.user.repository.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -22,8 +23,10 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
 
     private final JPAQueryFactory queryFactory;
 
-    //==전체 포스트 목록 조회==//
-
+    /**
+     * 삭제되지 않은 포스트 전체를 리턴하는 메서드
+     * @return List<Post>
+     */
     @Override
     public List<Post> findAll() {
         return queryFactory
@@ -34,56 +37,61 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
                 .fetch();
     }
 
-    //==유저별 포스트 목록 조회==//
+    /**
+     * 유저별 포스트 리스트를 Slice객체로 변환하는 메서드
+     * @param pageable
+     * @param user
+     * @return Slice<PostUserListResponseDto>
+     */
     @Override
-    public Slice<PostResponseDto> findAllByUser(Pageable pageable, User user) {
+    public Slice<PostUserListResponseDto> findAllByUser(Pageable pageable, User user) {
+        List<PostUserListResponseDto> postList = fetchAllByUser(pageable, user);
+        boolean hasNext = hasNextPage(postList, pageable);
 
-        List<PostResponseDto> postList = queryFactory
-                .select(Projections.constructor(PostResponseDto.class,
-                        post.id,
-                        post.mission.id,
-                        post.mission.title,
-                        post.mission.user.nickname,
-                        post.user.imageUrl,
-                        post.title,
-                        post.content,
-                        post.imageUrl,
-                        post.createdDate,
-                        post.modifiedDate))
+        return new SliceImpl<>(postList, pageable, hasNext);
+    }
+
+    /**
+     * 유저가 작성한 포스트 전체를 반환할 때 사용하는 메서드
+     * @param pageable
+     * @param user
+     * @return
+     */
+    public List<PostUserListResponseDto> fetchAllByUser(Pageable pageable, User user) {
+        return queryFactory.select(Projections.constructor(PostUserListResponseDto.class,
+                post.id,
+                post.mission.id,
+                post.mission.title,
+                post.title,
+                post.content,
+                post.imageUrl))
                 .from(post)
                 .where(post.user.eq(user).and(post.deleted.isFalse()))
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize() + 1)
+                .limit(pageable.getOffset() + 1)
                 .orderBy(post.createdDate.desc())
                 .fetch();
+    }
 
-        boolean hasNext = false;
+    /**
+     * Slice객체로 변환하기 전에 다음페이지 존재여부를 검증하는 메서드
+     * @param postList
+     * @param pageable
+     * @return boolean
+     */
+    private boolean hasNextPage(List<?> postList, Pageable pageable) {
         if(postList.size() > pageable.getPageSize()){
             postList.remove(pageable.getPageSize());
-            hasNext = true;
+            return true;
         }
-        return new SliceImpl<>(postList, pageable, hasNext);
+        return false;
     }
-    /*
-    @Override
-    public List<Post> findAllByUser(User user) {
-
-        return queryFactory
-                .select(post)
-                .from(post)
-                .where(post.user.eq(user).and(post.deleted.isFalse()))
-                .orderBy(post.createdDate.desc())
-                .fetch();
-    }
-
-
-     */
     //==미션별 포스트 목록 조회==//
     @Override
-    public Slice<PostResponseDto> findAllByMission(Pageable pageable, Mission mission) {
+    public Slice<PostDetailResponseDto> findAllByMission(Pageable pageable, Mission mission) {
 
-        List<PostResponseDto> postList = queryFactory
-                .select(Projections.constructor(PostResponseDto.class,
+        List<PostDetailResponseDto> postList = queryFactory
+                .select(Projections.constructor(PostDetailResponseDto.class,
                         post.id,
                         post.mission.id,
                         post.mission.title,
