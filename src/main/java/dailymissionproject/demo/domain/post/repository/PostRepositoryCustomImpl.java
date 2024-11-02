@@ -64,7 +64,9 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
                 post.mission.title,
                 post.title,
                 post.content,
-                post.imageUrl))
+                post.imageUrl,
+                post.createdTime,
+                post.modifiedDate))
                 .from(post)
                 .where(post.user.eq(user).and(post.deleted.isFalse()))
                 .offset(pageable.getOffset())
