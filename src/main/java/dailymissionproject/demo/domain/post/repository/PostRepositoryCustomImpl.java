@@ -4,7 +4,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.post.dto.PostSubmitDto;
-import dailymissionproject.demo.domain.post.dto.response.PostDetailResponseDto;
+import dailymissionproject.demo.domain.post.dto.response.PostMissionListResponseDto;
 import dailymissionproject.demo.domain.post.dto.response.PostUserListResponseDto;
 import dailymissionproject.demo.domain.user.repository.User;
 import lombok.RequiredArgsConstructor;
@@ -71,7 +71,7 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
                 .where(post.user.eq(user).and(post.deleted.isFalse()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getOffset() + 1)
-                .orderBy(post.createdDate.desc())
+                .orderBy(post.modifiedDate.desc())
                 .fetch();
     }
 
@@ -88,12 +88,30 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
         }
         return false;
     }
-    //==미션별 포스트 목록 조회==//
-    @Override
-    public Slice<PostDetailResponseDto> findAllByMission(Pageable pageable, Mission mission) {
 
-        List<PostDetailResponseDto> postList = queryFactory
-                .select(Projections.constructor(PostDetailResponseDto.class,
+    /**
+     * 미션별 포스트 리스트를 Slice 객체로 변환하는 메서드
+     * @param pageable
+     * @param mission
+     * @return
+     */
+    @Override
+    public Slice<PostMissionListResponseDto> findAllByMission(Pageable pageable, Mission mission) {
+        List<PostMissionListResponseDto> postList = fetchAllByMission(pageable, mission);
+        boolean hasNext = hasNextPage(postList, pageable);
+
+        return new SliceImpl<>(postList, pageable, hasNext);
+    }
+
+    /**
+     * 미션별 포스트 리스트를 반환할 때 사용하는 메서드
+     * @param pageable
+     * @param mission
+     * @return
+     */
+    List<PostMissionListResponseDto> fetchAllByMission(Pageable pageable, Mission mission) {
+        return queryFactory
+                .select(Projections.constructor(PostMissionListResponseDto.class,
                         post.id,
                         post.mission.id,
                         post.mission.title,
@@ -106,30 +124,11 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
                         post.modifiedDate))
                 .from(post)
                 .where(post.mission.eq(mission).and(post.deleted.isFalse()))
-                .orderBy(post.createdDate.desc())
+                .orderBy(post.modifiedDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
-
-        boolean hasNext = false;
-        if(postList.size() > pageable.getPageSize()){
-            postList.remove(pageable.getPageSize());
-            hasNext = true;
-        }
-        return new SliceImpl<>(postList, pageable, hasNext);
     }
-    /*
-    @Override
-    public List<Post> findAllByMission(Mission mission) {
-        return queryFactory
-                .select(post)
-                .from(post)
-                .where(post.mission.eq(mission).and(post.deleted.isFalse()))
-                .orderBy(post.createdDate.desc())
-                .fetch();
-    }
-
-     */
 
     //==미션별 Weekly 포스트 제출 이력을 postSubmitDto 객체로 전달받는다==//
     //새벽 3시 이전 제출은 전날 제출로 변환

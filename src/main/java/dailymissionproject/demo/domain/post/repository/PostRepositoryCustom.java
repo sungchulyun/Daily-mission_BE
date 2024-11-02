@@ -2,7 +2,7 @@ package dailymissionproject.demo.domain.post.repository;
 
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.post.dto.PostSubmitDto;
-import dailymissionproject.demo.domain.post.dto.response.PostDetailResponseDto;
+import dailymissionproject.demo.domain.post.dto.response.PostMissionListResponseDto;
 import dailymissionproject.demo.domain.post.dto.response.PostUserListResponseDto;
 import dailymissionproject.demo.domain.user.repository.User;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +20,7 @@ public interface PostRepositoryCustom {
 
     Slice<PostUserListResponseDto> findAllByUser(Pageable pageable, User user);
 
-    Slice<PostDetailResponseDto> findAllByMission(Pageable pageable, Mission mission);
+    Slice<PostMissionListResponseDto> findAllByMission(Pageable pageable, Mission mission);
 
     //List<Post> findAllByUser(User user);
 
