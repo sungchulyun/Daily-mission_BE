@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @Schema(description = "포스트 상세 응답 DTO")
-public class PostResponseDto {
+public class PostDetailResponseDto {
 
     @Schema(description = "포스트 PK ID")
     private Long id;
@@ -51,7 +51,7 @@ public class PostResponseDto {
     private LocalDateTime modifiedDate;
 
     @Builder
-    public PostResponseDto (Post post){
+    public PostDetailResponseDto(Post post){
         this.id = post.getId();
         this.missionId = post.getMission().getId();
         this.missionTitle = post.getMission().getTitle();
@@ -65,8 +65,8 @@ public class PostResponseDto {
     }
 
     @Builder
-    public PostResponseDto(Long id, Long missionId, String missionTitle, String nickname, String userImageUrl, String title
-                        ,String content, String imageUrl, LocalDateTime createdDate, LocalDateTime modifiedDate){
+    public PostDetailResponseDto(Long id, Long missionId, String missionTitle, String nickname, String userImageUrl, String title
+                        , String content, String imageUrl, LocalDateTime createdDate, LocalDateTime modifiedDate){
         this.id = id;
         this.missionId = missionId;
         this.missionTitle = missionTitle;
@@ -77,5 +77,9 @@ public class PostResponseDto {
         this.imageUrl = imageUrl;
         this.createdDate = createdDate;
         this.modifiedDate = modifiedDate;
+    }
+
+    public static PostDetailResponseDto from(Post post){
+        return new PostDetailResponseDto(post);
     }
 }
