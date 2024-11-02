@@ -157,9 +157,15 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
                 .fetch();
     }
 
-
-    //==금일 해당 미션에 제출 이력이 있는지 확인//
-    //삭제된 포스트는 제출하지 않은 것으로 간주
+    /**
+     * 금일 포스트를 제출이력을 검증하는 메서드
+     * 삭제된 포스트는 제출하지 않은 것으로 간주한다.
+     * @param mission
+     * @param user
+     * @param startDate
+     * @param endDate
+     * @return
+     */
     @Override
     public Long countPostSubmit(Mission mission, User user, LocalDateTime startDate, LocalDateTime endDate) {
         return queryFactory
