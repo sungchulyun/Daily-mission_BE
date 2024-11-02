@@ -1,6 +1,5 @@
 package dailymissionproject.demo.domain.post.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.auth.dto.UserDto;
@@ -27,19 +26,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.core.parameters.P;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -310,6 +305,45 @@ class PostControllerTest {
                             .with(csrf()))
                     .andExpect(status().isBadRequest());
 
+        }
+    }
+
+    @Nested
+    @DisplayName("포스트 삭제 컨트롤러 테스트")
+    class PostDeleteControllerTest {
+
+        @Test
+        @DisplayName("포스트를 삭제할 수 있다.")
+        void post_delete_success() throws Exception {
+            when(postService.deleteById(any(), any())).thenReturn(true);
+
+            mockMvc.perform(delete("/api/v1/post/{id}", postId)
+                    .with(csrf()))
+                    .andExpect(status().isOk())
+                    .andDo(print());
+
+            verify(postService,  description("deleteById 메서드가 정상 호출됨"))
+                    .deleteById(any(), any());
+        }
+
+        @Test
+        @DisplayName("미션이 없을경우 예외를 반환한다.")
+        void post_delete_fail_when_mission_not_exits() throws Exception {
+            when(postService.deleteById(any(), any())).thenThrow(new MissionException(MissionExceptionCode.MISSION_NOT_FOUND));
+
+            mockMvc.perform(delete("/api/v1/post/{id}", postId)
+                    .with(csrf()))
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("유저 정보가 없을경우 예외를 반환한다.")
+        void post_delete_fail_when_user_not_exits() throws Exception {
+            when(postService.deleteById(any(), any())).thenThrow(new UserException(UserExceptionCode.USER_NOT_FOUND));
+
+            mockMvc.perform(delete("/api/v1/post/{id}", postId)
+                    .with(csrf()))
+                    .andExpect(status().isBadRequest());
         }
     }
 }
