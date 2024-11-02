@@ -130,8 +130,12 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
                 .fetch();
     }
 
-    //==미션별 Weekly 포스트 제출 이력을 postSubmitDto 객체로 전달받는다==//
-    //새벽 3시 이전 제출은 전날 제출로 변환
+    /**
+     * 미션별 Weekly 포스트 제출 이력을 PostSubmitDto로 응답한다.
+     * @param id
+     * @param startDate
+     * @return
+     */
     @Override
     public List<PostSubmitDto> findWeeklyPostSubmitByMission(Long id, LocalDate startDate) {
 
