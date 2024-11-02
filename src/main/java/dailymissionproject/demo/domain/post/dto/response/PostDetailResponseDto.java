@@ -14,41 +14,41 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @Schema(description = "포스트 상세 응답 DTO")
 public class PostDetailResponseDto {
 
     @Schema(description = "포스트 PK ID")
-    private Long id;
+    private final Long id;
 
     @Schema(description = "포스트 미션 ID")
-    private Long missionId;
+    private final Long missionId;
 
     @Schema(description = "포스트 미션 제목")
-    private String missionTitle;
+    private final String missionTitle;
 
     @Schema(description = "포스트 작성자 닉네임")
-    private String nickname;
+    private final String nickname;
 
     @Schema(description = "포스트 작성자 이미지")
-    private String userImageUrl;
+    private final String userImageUrl;
 
     @Schema(description = "포스트 제목")
-    private String title;
+    private final String title;
     @Schema(description = "포스트 내용")
-    private String content;
+    private final String content;
     @Schema(description = "포스트 썸네일")
-    private String imageUrl;
+    private final String imageUrl;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime createdDate;
+    private final LocalDateTime createdDate;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime modifiedDate;
+    private final LocalDateTime modifiedDate;
 
     @Builder
     public PostDetailResponseDto(Post post){
@@ -65,8 +65,7 @@ public class PostDetailResponseDto {
     }
 
     @Builder
-    public PostDetailResponseDto(Long id, Long missionId, String missionTitle, String nickname, String userImageUrl, String title
-                        , String content, String imageUrl, LocalDateTime createdDate, LocalDateTime modifiedDate){
+    public PostDetailResponseDto(Long id, Long missionId, String missionTitle, String nickname, String userImageUrl, String title, String content, String imageUrl, LocalDateTime createdDate, LocalDateTime modifiedDate) {
         this.id = id;
         this.missionId = missionId;
         this.missionTitle = missionTitle;
@@ -78,6 +77,7 @@ public class PostDetailResponseDto {
         this.createdDate = createdDate;
         this.modifiedDate = modifiedDate;
     }
+
 
     public static PostDetailResponseDto from(Post post){
         return new PostDetailResponseDto(post);
