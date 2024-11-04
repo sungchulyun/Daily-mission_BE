@@ -9,10 +9,7 @@ import dailymissionproject.demo.domain.mission.exception.MissionException;
 import dailymissionproject.demo.domain.mission.exception.MissionExceptionCode;
 import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
 import dailymissionproject.demo.domain.post.dto.request.PostUpdateRequestDto;
-import dailymissionproject.demo.domain.post.dto.response.PostDetailResponseDto;
-import dailymissionproject.demo.domain.post.dto.response.PostMissionListResponseDto;
-import dailymissionproject.demo.domain.post.dto.response.PostUpdateResponseDto;
-import dailymissionproject.demo.domain.post.dto.response.PostUserListResponseDto;
+import dailymissionproject.demo.domain.post.dto.response.*;
 import dailymissionproject.demo.domain.post.exception.PostException;
 import dailymissionproject.demo.domain.post.exception.PostExceptionCode;
 import dailymissionproject.demo.domain.post.fixture.PostObjectFixture;
@@ -63,11 +60,13 @@ class PostControllerTest {
     private PostService postService;
 
     private final PostSaveRequestDto saveRequest = PostObjectFixture.getSaveRequest();
+    private final PostSaveResponseDto saveResponse = PostObjectFixture.getSaveResponse();
     private final PostDetailResponseDto detailResponse = PostObjectFixture.getDetailResponse();
     private final List<PostUserListResponseDto> userPostList = PostObjectFixture.getUserPostList();
     private final List<PostMissionListResponseDto> missionPostList = PostObjectFixture.getMissionPostList();
     private final PostUpdateRequestDto updateRequest = PostObjectFixture.getPostUpdateRequest();
     private final PostUpdateResponseDto updateResponse = PostObjectFixture.getPostUpdateResponse();
+
 
     public static CustomOAuth2User oAuth2User;
     private final Long missionId = 1L;
@@ -92,7 +91,7 @@ class PostControllerTest {
             MockMultipartFile request = new MockMultipartFile("postSaveReqDto", "request.json",
                     "application/json", objectMapper.writeValueAsBytes(saveRequest));
 
-            when(postService.save(any(CustomOAuth2User.class), eq(saveRequest), eq(file))).thenReturn(1L);
+            when(postService.save(any(CustomOAuth2User.class), eq(saveRequest), eq(file))).thenReturn(saveResponse);
 
             mockMvc.perform(multipart(HttpMethod.POST, "/api/v1/post/save")
                     .file(file)

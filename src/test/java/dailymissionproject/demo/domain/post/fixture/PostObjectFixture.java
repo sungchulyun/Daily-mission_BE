@@ -4,12 +4,10 @@ import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.missionRule.repository.MissionRule;
 import dailymissionproject.demo.domain.missionRule.repository.Week;
+import dailymissionproject.demo.domain.participant.repository.Participant;
 import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
 import dailymissionproject.demo.domain.post.dto.request.PostUpdateRequestDto;
-import dailymissionproject.demo.domain.post.dto.response.PostDetailResponseDto;
-import dailymissionproject.demo.domain.post.dto.response.PostMissionListResponseDto;
-import dailymissionproject.demo.domain.post.dto.response.PostUpdateResponseDto;
-import dailymissionproject.demo.domain.post.dto.response.PostUserListResponseDto;
+import dailymissionproject.demo.domain.post.dto.response.*;
 import dailymissionproject.demo.domain.post.repository.Post;
 import dailymissionproject.demo.domain.user.repository.Role;
 import dailymissionproject.demo.domain.user.repository.User;
@@ -54,7 +52,7 @@ public class PostObjectFixture {
      * @return Mission
      */
     public static Mission getMissionFixture(){
-        return Mission.builder()
+        Mission mission =  Mission.builder()
                 .title("TITLE")
                 .content("CONTENT")
                 .imageUrl("THUMBNAIL.jpg")
@@ -65,6 +63,15 @@ public class PostObjectFixture {
                 .user(getUserFixture())
                 .missionRule(getMissionRuleFixture())
                 .build();
+
+        Participant participant_1 = Participant.builder()
+                .mission(mission)
+                .user(getUserFixture())
+                .build();
+
+        mission.setParticipants(List.of(participant_1));
+
+        return mission;
     }
 
     /**
@@ -88,6 +95,13 @@ public class PostObjectFixture {
     public static PostSaveRequestDto getSaveRequest(){
         return PostSaveRequestDto.builder()
                 .missionId(1L)
+                .title("TITLE")
+                .content("CONTENT")
+                .build();
+    }
+
+    public static PostSaveResponseDto getSaveResponse(){
+        return PostSaveResponseDto.builder()
                 .title("TITLE")
                 .content("CONTENT")
                 .build();
