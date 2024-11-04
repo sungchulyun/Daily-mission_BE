@@ -13,10 +13,7 @@ import dailymissionproject.demo.domain.post.dto.PostScheduleResponseDto;
 import dailymissionproject.demo.domain.post.dto.PostSubmitDto;
 import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
 import dailymissionproject.demo.domain.post.dto.request.PostUpdateRequestDto;
-import dailymissionproject.demo.domain.post.dto.response.PostDetailResponseDto;
-import dailymissionproject.demo.domain.post.dto.response.PostMissionListResponseDto;
-import dailymissionproject.demo.domain.post.dto.response.PostUpdateResponseDto;
-import dailymissionproject.demo.domain.post.dto.response.PostUserListResponseDto;
+import dailymissionproject.demo.domain.post.dto.response.*;
 import dailymissionproject.demo.domain.post.exception.PostException;
 import dailymissionproject.demo.domain.post.repository.Post;
 import dailymissionproject.demo.domain.post.repository.PostRepository;
@@ -68,7 +65,7 @@ public class PostService {
             @CacheEvict(value = "postLists", allEntries = true),
             @CacheEvict(value = "posts", allEntries = true)
     })
-    public Long save(CustomOAuth2User user, PostSaveRequestDto requestDto, MultipartFile file) throws IOException {
+    public PostSaveResponseDto save(CustomOAuth2User user, PostSaveRequestDto requestDto, MultipartFile file) throws IOException {
 
         Mission mission = missionRepository.findByIdAndDeletedIsFalse(requestDto.getMissionId())
                 .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
@@ -84,7 +81,10 @@ public class PostService {
         Post post = requestDto.toEntity(findUser, mission);
         post.setImageUrl(imgUrl);
 
-        return postRepository.save(post).getId();
+        return PostSaveResponseDto.builder()
+                .title(post.getTitle())
+                .content(post.getContent())
+                .build();
     }
 
     /**
