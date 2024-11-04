@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.MISSION_NOT_FOUND;
+import static dailymissionproject.demo.domain.post.exception.PostExceptionCode.INVALID_USER_REQUEST;
 import static dailymissionproject.demo.domain.post.exception.PostExceptionCode.POST_NOT_FOUND;
 import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
 import static org.junit.Assert.*;
@@ -220,6 +221,115 @@ class PostServiceTest {
 
             MissionException missionException = assertThrows(MissionException.class, () -> postService.findAllByMission(missionId, pageable));
             assertEquals(MISSION_NOT_FOUND, missionException.getExceptionCode());
+        }
+    }
+
+    @Nested
+    @DisplayName("포스트 수정 서비스 레이어 테스트")
+    class PostUpdateServiceTest {
+
+        @Test
+        @DisplayName("포스트를 수정할 수 있다.")
+        void post_update_success() throws IOException {
+            final String fileName = "userModifyImage";
+            final String contentType = "image/jpeg";
+            MockMultipartFile file = new MockMultipartFile("file", fileName, contentType, "test data".getBytes(StandardCharsets.UTF_8));
+
+            when(postRepository.findById(postId)).thenReturn(Optional.of(post));
+            when(userRepository.findById(any())).thenReturn(Optional.of(user));
+
+            PostUpdateResponseDto response = postService.update(postId, file, updateRequest, oAuth2User);
+
+            verify(imageService, times(1)).uploadPostS3(any(), any());
+            assertEquals(response.getTitle(), updateResponse.getTitle());
+            assertEquals(response.getContent(), updateResponse.getContent());
+        }
+
+        @Test
+        @DisplayName("포스트가 존재하지 않으면 수정할 수 없다.")
+        void post_update_fail_when_user_is_not_writer() throws Exception {
+            when(postRepository.findById(postId)).thenThrow(new PostException(POST_NOT_FOUND));
+
+            PostException postException = assertThrows(PostException.class, () -> postService.findById(postId));
+            assertEquals(POST_NOT_FOUND, postException.getExceptionCode());
+        }
+
+        @Test
+        @DisplayName("유저가 존재하지 않으면 수정할 수 없다.")
+        void post_update_fail_when_user_is_not_exists() throws Exception {
+            when(postRepository.findById(any())).thenReturn(Optional.of(post));
+            when(userRepository.findById(any())).thenThrow(new UserException(USER_NOT_FOUND));
+
+            UserException userException = assertThrows(UserException.class, () -> postService.update(postId, any(), updateRequest, oAuth2User));
+            assertEquals(USER_NOT_FOUND, userException.getExceptionCode());
+        }
+
+        @Test
+        @DisplayName("포스트의 작성자가 아니면 수정할 수 없다.")
+        void post_update_fail_when_not_writer() throws Exception {
+            //given
+            Post post_1 = Post.builder()
+                    .user(new User(100L, "NAME", "EMAIL.COM", "NICKNAME"))
+                    .build();
+
+            when(postRepository.findById(any())).thenReturn(Optional.of(post_1));
+            when(userRepository.findById(any())).thenReturn(Optional.of(user));
+
+            PostException postException = assertThrows(PostException.class, () -> postService.update(postId, any(), updateRequest, oAuth2User));
+
+            assertEquals(INVALID_USER_REQUEST, postException.getExceptionCode());
+        }
+    }
+
+    @Nested
+    @DisplayName("포스트 삭제 서비스 레이어 테스트")
+    class PostDeleteServiceTest {
+
+        @Test
+        @DisplayName("포스트를 삭제할 수 있다.")
+        void post_delete_success() throws IOException {
+            when(postRepository.findById(postId)).thenReturn(Optional.of(post));
+            when(userRepository.findById(any())).thenReturn(Optional.of(user));
+
+            boolean result = postService.deleteById(postId, oAuth2User);
+
+            assertTrue(result);
+            assertEquals(post.isDeleted(), true);
+        }
+
+        @Test
+        @DisplayName("포스트 작성자가 아니라면 삭제할 수 없다.")
+        void post_delete_fail_when_user_is_not_writer() throws Exception {
+            //given
+            Post post_1 = Post.builder()
+                    .user(new User(100L, "NAME", "EMAIL.COM", "NICKNAME"))
+                    .build();
+
+            when(postRepository.findById(any())).thenReturn(Optional.of(post_1));
+            when(userRepository.findById(any())).thenReturn(Optional.of(user));
+
+            PostException postException = assertThrows(PostException.class, () -> postService.deleteById(postId, oAuth2User));
+
+            assertEquals(INVALID_USER_REQUEST, postException.getExceptionCode());
+        }
+
+        @Test
+        @DisplayName("포스트가 존재하지 않으면 수정할 수 없다.")
+        void post_delete_fail_when_post_is_not_exits() throws Exception {
+            when(postRepository.findById(postId)).thenThrow(new PostException(POST_NOT_FOUND));
+
+            PostException postException = assertThrows(PostException.class, () -> postService.deleteById(postId, oAuth2User));
+            assertEquals(POST_NOT_FOUND, postException.getExceptionCode());
+        }
+
+        @Test
+        @DisplayName("유저가 존재하지 않으면 수정할 수 없다.")
+        void post_delete_fail_when_user_is_not_exists() throws Exception {
+            when(postRepository.findById(any())).thenReturn(Optional.of(post));
+            when(userRepository.findById(any())).thenThrow(new UserException(USER_NOT_FOUND));
+
+            UserException userException = assertThrows(UserException.class, () -> postService.deleteById(postId, oAuth2User));
+            assertEquals(USER_NOT_FOUND, userException.getExceptionCode());
         }
     }
 }
