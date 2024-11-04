@@ -6,8 +6,10 @@ import dailymissionproject.demo.domain.missionRule.repository.MissionRule;
 import dailymissionproject.demo.domain.missionRule.repository.Week;
 import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
 import dailymissionproject.demo.domain.post.dto.request.PostUpdateRequestDto;
-import dailymissionproject.demo.domain.post.dto.response.PostResponseDto;
+import dailymissionproject.demo.domain.post.dto.response.PostDetailResponseDto;
+import dailymissionproject.demo.domain.post.dto.response.PostMissionListResponseDto;
 import dailymissionproject.demo.domain.post.dto.response.PostUpdateResponseDto;
+import dailymissionproject.demo.domain.post.dto.response.PostUserListResponseDto;
 import dailymissionproject.demo.domain.post.repository.Post;
 import dailymissionproject.demo.domain.user.repository.Role;
 import dailymissionproject.demo.domain.user.repository.User;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class PostObjectFixture {
@@ -94,41 +97,37 @@ public class PostObjectFixture {
      * Post 상세조회 fixture를 반환한다.
      * @return PostResponseDto
      */
-    public static PostResponseDto getDetailResponse(){
-        return PostResponseDto.builder()
-                .post(getPostFixture())
-                .build();
+    public static PostDetailResponseDto getDetailResponse(){
+        return PostDetailResponseDto.from(getPostFixture());
     }
 
     /**
      * 유저가 작성한 포스트 리스트 fixture를 반환한다.
      * @return
      */
-    public static List<PostResponseDto> getUserPostList(){
+    public static List<PostUserListResponseDto> getUserPostList(){
         User user =  new User(1L, "윤성철", "google@gamil.com", "sungchul");
 
-        Post post_1 = Post.builder()
-                .user(user)
-                .mission(getMissionFixture())
+        PostUserListResponseDto postResponse_1 = PostUserListResponseDto.builder()
+                .id(1L)
                 .title("TITLE1")
                 .content("CONTENT1")
-                .imgUrl("IMAGE1")
+                .imageUrl("IMAGE1")
+                .missionId(getMissionFixture().getId())
+                .missionTitle(getMissionFixture().getTitle())
+                .createdDate(LocalDateTime.now())
+                .modifiedDate(LocalDateTime.now())
                 .build();
 
-        Post post_2 = Post.builder()
-                .user(user)
-                .mission(getMissionFixture())
+        PostUserListResponseDto postResponse_2 = PostUserListResponseDto.builder()
+                .id(2L)
                 .title("TITLE2")
                 .content("CONTENT2")
-                .imgUrl("IMAGE2")
-                .build();
-
-        PostResponseDto postResponse_1 = PostResponseDto.builder()
-                .post(post_1)
-                .build();
-
-        PostResponseDto postResponse_2 = PostResponseDto.builder()
-                .post(post_2)
+                .imageUrl("IMAGE2")
+                .missionId(getMissionFixture().getId())
+                .missionTitle(getMissionFixture().getTitle())
+                .createdDate(LocalDateTime.now())
+                .modifiedDate(LocalDateTime.now())
                 .build();
 
         return List.of(postResponse_1, postResponse_2);
@@ -138,35 +137,31 @@ public class PostObjectFixture {
      * 미션별로 작성된 포스트 리스트를 반환한다.
      * @return
      */
-    public static List<PostResponseDto> getMissionPostList(){
+    public static List<PostMissionListResponseDto> getMissionPostList(){
         Mission mission = new Mission(1L, getUserFixture(), "MISSION_TITLE", "MISSION_CONTENT"
                 , "IMAGEURL", LocalDate.now(), LocalDate.now());
 
-        Post post_1 = Post.builder()
-                .user(getUserFixture())
-                .mission(mission)
+        PostMissionListResponseDto post_1 = PostMissionListResponseDto.builder()
+                .missionId(getMissionFixture().getId())
+                .id(1L)
                 .title("TITLE1")
                 .content("CONTENT1")
-                .imgUrl("IMAGE1")
+                .imageUrl("IMAGEURL1")
+                .createdDate(LocalDateTime.now())
+                .modifiedDate(LocalDateTime.now())
                 .build();
 
-        Post post_2 = Post.builder()
-                .user(getUserFixture())
-                .mission(mission)
+        PostMissionListResponseDto post_2 = PostMissionListResponseDto.builder()
+                .id(2L)
+                .missionId(getMissionFixture().getId())
                 .title("TITLE2")
                 .content("CONTENT2")
-                .imgUrl("IMAGE2")
+                .imageUrl("IMAGEURL2")
+                .createdDate(LocalDateTime.now())
+                .modifiedDate(LocalDateTime.now())
                 .build();
 
-        PostResponseDto postResponse_1 = PostResponseDto.builder()
-                .post(post_1)
-                .build();
-
-        PostResponseDto postResponse_2 = PostResponseDto.builder()
-                .post(post_2)
-                .build();
-
-        return List.of(postResponse_1, postResponse_2);
+        return List.of(post_1, post_2);
     }
 
     public static PostUpdateRequestDto getPostUpdateRequest(){
