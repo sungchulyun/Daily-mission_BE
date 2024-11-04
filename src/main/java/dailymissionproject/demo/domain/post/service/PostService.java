@@ -249,7 +249,7 @@ public class PostService {
      * @param mission
      * @return
      */
-    private boolean isParticipating(User user, Mission mission){
+    public boolean isParticipating(User user, Mission mission){
 
         for(Participant p : mission.getParticipants()){
             if(p.getUser().getId() == user.getId())
@@ -301,7 +301,7 @@ public class PostService {
      * @param user
      * @return
      */
-    private boolean isPostWriter(Post post, User user){
+    public boolean isPostWriter(Post post, User user){
         if(post.getUser().getId() != user.getId())
             throw new PostException(INVALID_USER_REQUEST);
         return true;
