@@ -13,8 +13,10 @@ import dailymissionproject.demo.domain.post.dto.PostScheduleResponseDto;
 import dailymissionproject.demo.domain.post.dto.PostSubmitDto;
 import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
 import dailymissionproject.demo.domain.post.dto.request.PostUpdateRequestDto;
-import dailymissionproject.demo.domain.post.dto.response.PostResponseDto;
+import dailymissionproject.demo.domain.post.dto.response.PostDetailResponseDto;
+import dailymissionproject.demo.domain.post.dto.response.PostMissionListResponseDto;
 import dailymissionproject.demo.domain.post.dto.response.PostUpdateResponseDto;
+import dailymissionproject.demo.domain.post.dto.response.PostUserListResponseDto;
 import dailymissionproject.demo.domain.post.exception.PostException;
 import dailymissionproject.demo.domain.post.repository.Post;
 import dailymissionproject.demo.domain.post.repository.PostRepository;
@@ -37,6 +39,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
 
 import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.MISSION_NOT_FOUND;
 import static dailymissionproject.demo.domain.post.exception.PostExceptionCode.*;
@@ -90,12 +94,11 @@ public class PostService {
      */
     @Transactional(readOnly = true)
     @Cacheable(value = "posts", key = "#id")
-    public PostResponseDto findById(Long id){
+    public PostDetailResponseDto findById(Long id){
 
         Post post = postRepository.findById(id).orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
-        PostResponseDto responseDto = new PostResponseDto(post);
-        return responseDto;
+        return PostDetailResponseDto.from(post);
     }
 
     /**
@@ -111,10 +114,8 @@ public class PostService {
         User findUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
-        Slice<PostResponseDto> userPostLists = postRepository.findAllByUser(pageable, findUser);
-        if(userPostLists.getContent().size() == 0){
-            throw new PostException(EMPTY_POST_HISTORY);
-        }
+        Slice<PostUserListResponseDto> userPostLists = postRepository.findAllByUser(pageable, findUser);
+
         PageResponseDto pageResponseDto = new PageResponseDto(userPostLists.getContent(), userPostLists.hasNext());
 
         return pageResponseDto;
@@ -133,7 +134,7 @@ public class PostService {
         Mission mission = missionRepository.findById(id)
                 .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
 
-        Slice<PostResponseDto> missionPostList = postRepository.findAllByMission(pageable, mission);
+        Slice<PostMissionListResponseDto> missionPostList = postRepository.findAllByMission(pageable, mission);
 
         PageResponseDto pageResponseDto = new PageResponseDto<>(missionPostList.getContent(), missionPostList.hasNext());
 
@@ -205,18 +206,11 @@ public class PostService {
 
         if(file != null){
             String updateImageUrl = imageService.uploadPostS3(file, requestDto.getTitle());
-
             findPost.setImageUrl(updateImageUrl);
         }
 
-        // DTO 내부 매개변수가 NULL이면, 기존값을 유지한다.
-        if(requestDto.getTitle() != null){
-            findPost.setTitle(requestDto.getTitle());
-        }
-
-        if(requestDto.getContent() != null){
-            findPost.setContent(requestDto.getContent());
-        }
+        Optional.ofNullable(requestDto.getTitle()).ifPresent(findPost::setTitle);
+        Optional.ofNullable(requestDto.getContent()).ifPresent(findPost::setContent);
 
         return PostUpdateResponseDto.builder()
                 .title(findPost.getTitle())
