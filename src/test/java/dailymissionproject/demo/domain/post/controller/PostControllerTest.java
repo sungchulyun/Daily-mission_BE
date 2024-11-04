@@ -8,8 +8,7 @@ import dailymissionproject.demo.domain.mission.exception.MissionException;
 import dailymissionproject.demo.domain.mission.exception.MissionExceptionCode;
 import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
 import dailymissionproject.demo.domain.post.dto.request.PostUpdateRequestDto;
-import dailymissionproject.demo.domain.post.dto.response.PostResponseDto;
-import dailymissionproject.demo.domain.post.dto.response.PostUpdateResponseDto;
+import dailymissionproject.demo.domain.post.dto.response.*;
 import dailymissionproject.demo.domain.post.exception.PostException;
 import dailymissionproject.demo.domain.post.exception.PostExceptionCode;
 import dailymissionproject.demo.domain.post.fixture.PostObjectFixture;
@@ -56,11 +55,13 @@ class PostControllerTest {
     private PostService postService;
 
     private final PostSaveRequestDto saveRequest = PostObjectFixture.getSaveRequest();
-    private final PostResponseDto detailResponse = PostObjectFixture.getDetailResponse();
-    private final List<PostResponseDto> userPostList = PostObjectFixture.getUserPostList();
-    private final List<PostResponseDto> missionPostList = PostObjectFixture.getMissionPostList();
+    private final PostSaveResponseDto saveResponse = PostObjectFixture.getSaveResponse();
+    private final PostDetailResponseDto detailResponse = PostObjectFixture.getDetailResponse();
+    private final List<PostUserListResponseDto> userPostList = PostObjectFixture.getUserPostList();
+    private final List<PostMissionListResponseDto> missionPostList = PostObjectFixture.getMissionPostList();
     private final PostUpdateRequestDto updateRequest = PostObjectFixture.getPostUpdateRequest();
     private final PostUpdateResponseDto updateResponse = PostObjectFixture.getPostUpdateResponse();
+
 
     public static CustomOAuth2User oAuth2User;
     private final Long missionId = 1L;
@@ -85,7 +86,7 @@ class PostControllerTest {
             MockMultipartFile request = new MockMultipartFile("postSaveReqDto", "request.json",
                     "application/json", objectMapper.writeValueAsBytes(saveRequest));
 
-            when(postService.save(any(CustomOAuth2User.class), eq(saveRequest), eq(file))).thenReturn(1L);
+            when(postService.save(any(CustomOAuth2User.class), eq(saveRequest), eq(file))).thenReturn(saveResponse);
 
             mockMvc.perform(multipart(HttpMethod.POST, "/api/v1/post/save")
                     .file(file)
@@ -178,7 +179,7 @@ class PostControllerTest {
         void post_read_user_list_success() throws Exception {
             //given
             Pageable pageable = PageRequest.of(0, 3);
-            Slice<PostResponseDto> sliceList = new SliceImpl<>(userPostList, pageable, false);
+            Slice<PostUserListResponseDto> sliceList = new SliceImpl<>(userPostList, pageable, false);
             PageResponseDto response = new PageResponseDto<>(sliceList, false);
 
             when(postService.findAllByUser(any(), any())).thenReturn(response);
@@ -211,7 +212,7 @@ class PostControllerTest {
         void post_read_mission_list_success() throws Exception {
             //given
             Pageable pageable = PageRequest.of(0, 3);
-            Slice<PostResponseDto> sliceList = new SliceImpl<>(missionPostList, pageable, false);
+            Slice<PostMissionListResponseDto> sliceList = new SliceImpl<>(missionPostList, pageable, false);
             PageResponseDto response = new PageResponseDto<>(sliceList, false);
 
             when(postService.findAllByMission(any(), any())).thenReturn(response);
