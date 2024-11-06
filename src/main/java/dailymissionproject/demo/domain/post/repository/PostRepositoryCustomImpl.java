@@ -114,7 +114,6 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
                 .select(Projections.constructor(PostMissionListResponseDto.class,
                         post.id,
                         post.mission.id,
-                        post.mission.title,
                         post.title,
                         post.content,
                         post.imageUrl,
