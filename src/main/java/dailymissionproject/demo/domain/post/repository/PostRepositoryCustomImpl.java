@@ -115,8 +115,6 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
                         post.id,
                         post.mission.id,
                         post.mission.title,
-                        post.mission.user.nickname,
-                        post.user.imageUrl,
                         post.title,
                         post.content,
                         post.imageUrl,
