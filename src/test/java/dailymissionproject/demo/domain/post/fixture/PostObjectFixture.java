@@ -1,6 +1,5 @@
 package dailymissionproject.demo.domain.post.fixture;
 
-import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.missionRule.repository.MissionRule;
 import dailymissionproject.demo.domain.missionRule.repository.Week;
@@ -11,10 +10,6 @@ import dailymissionproject.demo.domain.post.dto.response.*;
 import dailymissionproject.demo.domain.post.repository.Post;
 import dailymissionproject.demo.domain.user.repository.Role;
 import dailymissionproject.demo.domain.user.repository.User;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

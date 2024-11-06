@@ -23,6 +23,9 @@ public class PostUserListResponseDto {
     @Schema(description = "포스트 미션 ID")
     private final Long missionId;
 
+    @Schema(description = "포스트 미션 제목")
+    private final String missionTitle;
+
     @Schema(description = "포스트 제목")
     private final String title;
     @Schema(description = "포스트 내용")
@@ -45,6 +48,7 @@ public class PostUserListResponseDto {
     , LocalDateTime createdDate, LocalDateTime modifiedDate) {
         this.id = id;
         this.missionId = missionId;
+        this.missionTitle = missionTitle;
         this.title = title;
         this.content = content;
         this.imageUrl = imageUrl;
