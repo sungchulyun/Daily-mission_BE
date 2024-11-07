@@ -23,11 +23,15 @@ public class PostSaveRequestDto {
     @NotEmpty
     private final String content;
 
+    @Schema(description = "포스트 이미지")
+    private final String imageUrl;
+
     @Builder
-    public PostSaveRequestDto(Long missionId, String title, String content) {
+    public PostSaveRequestDto(Long missionId, String title, String content, String imageUrl) {
         this.missionId = missionId;
         this.title = title;
         this.content = content;
+        this.imageUrl = imageUrl;
     }
 
     public Post toEntity(User user, Mission mission){
@@ -36,6 +40,7 @@ public class PostSaveRequestDto {
                 .user(user)
                 .title(this.title)
                 .content(this.content)
+                .imageUrl(this.imageUrl)
                 .build();
     }
 
