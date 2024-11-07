@@ -25,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -75,68 +76,50 @@ class PostControllerTest {
     @Nested
     @DisplayName("포스트 생성 컨트롤러 테스트")
     class PostSaveControllerTest {
-        final String fileName = "https://AWS-S3/postThumbnail.jpg";
-        final String contentType = "image/jpeg";
-
         @Test
         @DisplayName("포스트를 생성 할 수 있다.")
         void post_save_success() throws Exception {
-            MockMultipartFile file = new MockMultipartFile("file", fileName, contentType
-                    , "test data".getBytes(StandardCharsets.UTF_8));
-            MockMultipartFile request = new MockMultipartFile("postSaveReqDto", "request.json",
-                    "application/json", objectMapper.writeValueAsBytes(saveRequest));
+            when(postService.save(any(), any(PostSaveRequestDto.class))).thenReturn(saveResponse);
 
-            when(postService.save(any(CustomOAuth2User.class), eq(saveRequest), eq(file))).thenReturn(saveResponse);
-
-            mockMvc.perform(multipart(HttpMethod.POST, "/api/v1/post/save")
-                    .file(file)
-                    .file(request)
+            mockMvc.perform(post("/api/v1/post/save")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsBytes(saveRequest))
                     .with(csrf()))
                     .andExpect(status().isOk())
                     .andDo(print());
 
             verify(postService, description("save 메서드가 정상적으로 호출됨"))
-                    .save(any(), any(PostSaveRequestDto.class), any());
+                    .save(any(), any(PostSaveRequestDto.class));
         }
 
         @Test
         @DisplayName("미션이 존재하지 않을경우 포스트 생성에 실패한다.")
         void post_save_fail() throws Exception {
-            MockMultipartFile file = new MockMultipartFile("file", fileName, contentType
-                    , "test data".getBytes(StandardCharsets.UTF_8));
-            MockMultipartFile request = new MockMultipartFile("postSaveReqDto", "request.json", "application/json"
-            , objectMapper.writeValueAsBytes(saveRequest));
+            when(postService.save(any(), any())).thenThrow(new MissionException(MissionExceptionCode.MISSION_NOT_FOUND));
 
-            when(postService.save(any(), any(), any())).thenThrow(new MissionException(MissionExceptionCode.MISSION_NOT_FOUND));
-
-            mockMvc.perform(multipart(HttpMethod.POST, "/api/v1/post/save")
-                    .file(file)
-                    .file(request)
+            mockMvc.perform(post("/api/v1/post/save")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsBytes(saveRequest))
                     .with(csrf()))
                     .andExpect(status().isBadRequest());
 
             verify(postService, description("save 메서드가 정상적으로 호출됨"))
-                    .save(any(CustomOAuth2User.class), any(), any());
+                    .save(any(CustomOAuth2User.class), any());
         }
 
         @Test
         @DisplayName("미션 참여자가 아닐경우 포스트 생성에 실패한다.")
         void post_save_fail_when_user_is_not_participating() throws Exception {
-            MockMultipartFile file = new MockMultipartFile("file", fileName, contentType
-                    , "test data".getBytes(StandardCharsets.UTF_8));
-            MockMultipartFile request = new MockMultipartFile("postSaveReqDto", "request.json", "application/json"
-                    , objectMapper.writeValueAsBytes(saveRequest));
+            when(postService.save(any(), any())).thenThrow(new PostException(PostExceptionCode.INVALID_POST_SAVE_REQUEST));
 
-            when(postService.save(any(), any(), any())).thenThrow(new PostException(PostExceptionCode.INVALID_POST_SAVE_REQUEST));
-
-            mockMvc.perform(multipart(HttpMethod.POST, "/api/v1/post/save")
-                    .file(file)
-                    .file(request)
+            mockMvc.perform(post("/api/v1/post/save")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsBytes(saveRequest))
                     .with(csrf()))
                     .andExpect(status().isBadRequest());
 
             verify(postService, description("save 메서드가 정상적으로 호출됨"))
-                    .save(any(CustomOAuth2User.class), any(), any());
+                    .save(any(CustomOAuth2User.class), any());
         }
     }
 
@@ -250,62 +233,48 @@ class PostControllerTest {
         @Test
         @DisplayName("포스트를 수정할 수 있다.")
         void post_update_success() throws Exception {
-            MockMultipartFile file = new MockMultipartFile("file", fileName, contentType
-                    , "test data".getBytes(StandardCharsets.UTF_8));
-            MockMultipartFile request = new MockMultipartFile("postUpdateRequestDto", "request.json", "application/json"
-                    , objectMapper.writeValueAsBytes(updateRequest));
+            when(postService.update(anyLong(), any(), any())).thenReturn(updateResponse);
 
-            when(postService.update(anyLong(), any(), any(), any())).thenReturn(updateResponse);
-
-            mockMvc.perform(multipart(HttpMethod.PUT, ("/api/v1/post/{id}"), postId)
-                    .file(file)
-                    .file(request)
+            mockMvc.perform(put("/api/v1/post/{id}", postId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(updateRequest))
                     .with(csrf()))
-                    .andExpect(status().isOk())
-                    .andDo(print());
+                    .andExpect(status().isOk());
 
             verify(postService, description("update 메서드가 정상 호출됨"))
-                    .update(anyLong(), any(), any(), any());
+                    .update(anyLong(), any(), any());
         }
 
         @Test
         @DisplayName("포스트가 없을경우 예외를 반환한다.")
         void post_update_fail() throws Exception {
             //given
-            MockMultipartFile file = new MockMultipartFile("file", fileName, contentType
-                    , "test data".getBytes(StandardCharsets.UTF_8));
-            MockMultipartFile request = new MockMultipartFile("postUpdateRequestDto", "request.json", "application/json"
-                    , objectMapper.writeValueAsBytes(updateRequest));
+            when(postService.update(anyLong(), any(), any())).thenThrow(new PostException(PostExceptionCode.POST_NOT_FOUND));
 
-            when(postService.update(anyLong(), any(), any(), any())).thenThrow(new PostException(PostExceptionCode.POST_NOT_FOUND));
-
-            mockMvc.perform(multipart(HttpMethod.PUT, ("/api/v1/post/{id}"), postId)
-                    .file(file)
-                    .file(request)
-                    .with(csrf()))
+            mockMvc.perform(put("/api/v1/post/{id}", postId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(updateRequest))
+                            .with(csrf()))
                     .andExpect(status().isBadRequest());
 
             verify(postService, description("update 메서드가 정상 호출됨"))
-                    .update(anyLong(), any(), any(), any());
+                    .update(anyLong(), any(), any());
         }
 
         @Test
         @DisplayName("포스트 작성자가 아닐경우 예외를 반환한다.")
         void post_update_fail_when_user_is_not_writer() throws Exception {
             //given
-            MockMultipartFile file = new MockMultipartFile("file", fileName, contentType
-                    , "test data".getBytes(StandardCharsets.UTF_8));
-            MockMultipartFile request = new MockMultipartFile("postUpdateRequestDto", "request.json", "application/json"
-                    , objectMapper.writeValueAsBytes(updateRequest));
+            when(postService.update(anyLong(), any(), any())).thenThrow(new PostException(PostExceptionCode.INVALID_USER_REQUEST));
 
-            when(postService.update(anyLong(), any(), any(), any())).thenThrow(new PostException(PostExceptionCode.INVALID_USER_REQUEST));
-
-            mockMvc.perform(multipart(HttpMethod.PUT, ("/api/v1/post/{id}"), postId)
-                            .file(file)
-                            .file(request)
+            mockMvc.perform(put("/api/v1/post/{id}", postId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(updateRequest))
                             .with(csrf()))
                     .andExpect(status().isBadRequest());
 
+            verify(postService, description("update 메서드가 정상 호출됨"))
+                    .update(anyLong(), any(), any());
         }
     }
 

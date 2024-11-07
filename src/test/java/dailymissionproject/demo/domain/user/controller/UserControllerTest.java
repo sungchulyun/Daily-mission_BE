@@ -76,7 +76,7 @@ class UserControllerTest {
         //when
         mockMvc.perform(put("/api/v1/user/profile")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(updateResponse))
+                .content(objectMapper.writeValueAsBytes(updateRequest))
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andDo(print());

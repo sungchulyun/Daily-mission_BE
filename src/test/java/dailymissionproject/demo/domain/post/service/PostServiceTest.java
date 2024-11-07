@@ -2,7 +2,6 @@ package dailymissionproject.demo.domain.post.service;
 
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.auth.dto.UserDto;
-import dailymissionproject.demo.domain.image.ImageService;
 import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
 import dailymissionproject.demo.domain.mission.exception.MissionException;
 import dailymissionproject.demo.domain.mission.exception.MissionExceptionCode;
@@ -60,8 +59,6 @@ class PostServiceTest {
     private MissionRepository missionRepository;
     @Mock
     private UserRepository userRepository;
-    @Mock
-    private ImageService imageService;
 
     private final Mission mission = PostObjectFixture.getMissionFixture();
     private final User user = PostObjectFixture.getUserFixture();
@@ -92,16 +89,13 @@ class PostServiceTest {
         @Test
         @DisplayName("포스트를 생성할 수 있다.")
         void post_save_success() throws IOException {
-            MockMultipartFile file = new MockMultipartFile("file", fileName, contentType, "test data".getBytes(StandardCharsets.UTF_8));
-
             when(missionRepository.findByIdAndDeletedIsFalse(anyLong())).thenReturn(Optional.of(mission));
             when(userRepository.findById(any())).thenReturn(Optional.of(user));
 
-            boolean result = postService.isParticipating(user, mission);
-            PostSaveResponseDto saveResponse = postService.save(oAuth2User, saveRequest, file);
+            //boolean result = postService.isParticipating(user, mission);
+            PostSaveResponseDto saveResponse = postService.save(oAuth2User, saveRequest);
 
-            verify(imageService, times(1)).uploadPostS3(any(), any());
-            assertTrue(result);
+
             assertEquals(saveResponse.getTitle(), saveRequest.getTitle());
         }
 
@@ -110,7 +104,7 @@ class PostServiceTest {
         void post_save_fail_when_mission_not_exists() throws Exception {
             when(missionRepository.findByIdAndDeletedIsFalse(saveRequest.getMissionId())).thenThrow(new MissionException(MISSION_NOT_FOUND));
 
-            MissionException missionException = assertThrows(MissionException.class, () -> postService.save(oAuth2User, saveRequest, any()));
+            MissionException missionException = assertThrows(MissionException.class, () -> postService.save(oAuth2User, saveRequest));
 
             assertEquals(MISSION_NOT_FOUND, missionException.getExceptionCode());
         }
@@ -121,7 +115,7 @@ class PostServiceTest {
             when(missionRepository.findByIdAndDeletedIsFalse(saveRequest.getMissionId())).thenReturn(Optional.of(mission));
             when(userRepository.findById(any())).thenThrow(new UserException(USER_NOT_FOUND));
 
-            UserException userException = assertThrows(UserException.class, () -> postService.save(oAuth2User, saveRequest, any()));
+            UserException userException = assertThrows(UserException.class, () -> postService.save(oAuth2User, saveRequest));
             assertEquals(USER_NOT_FOUND, userException.getExceptionCode());
         }
 
@@ -134,7 +128,7 @@ class PostServiceTest {
             when(missionRepository.findByIdAndDeletedIsFalse(saveRequest.getMissionId())).thenReturn(Optional.of(mission));
             when(userRepository.findById(any())).thenReturn(Optional.of(user));
 
-            PostException postException = assertThrows(PostException.class, () -> postService.save(oAuth2User, saveRequest, any()));
+            PostException postException = assertThrows(PostException.class, () -> postService.save(oAuth2User, saveRequest));
             assertEquals(PostExceptionCode.INVALID_POST_SAVE_REQUEST, postException.getExceptionCode());
         }
     }
@@ -238,9 +232,8 @@ class PostServiceTest {
             when(postRepository.findById(postId)).thenReturn(Optional.of(post));
             when(userRepository.findById(any())).thenReturn(Optional.of(user));
 
-            PostUpdateResponseDto response = postService.update(postId, file, updateRequest, oAuth2User);
+            PostUpdateResponseDto response = postService.update(postId, updateRequest, oAuth2User);
 
-            verify(imageService, times(1)).uploadPostS3(any(), any());
             assertEquals(response.getTitle(), updateResponse.getTitle());
             assertEquals(response.getContent(), updateResponse.getContent());
         }
@@ -260,7 +253,7 @@ class PostServiceTest {
             when(postRepository.findById(any())).thenReturn(Optional.of(post));
             when(userRepository.findById(any())).thenThrow(new UserException(USER_NOT_FOUND));
 
-            UserException userException = assertThrows(UserException.class, () -> postService.update(postId, any(), updateRequest, oAuth2User));
+            UserException userException = assertThrows(UserException.class, () -> postService.update(postId, updateRequest, oAuth2User));
             assertEquals(USER_NOT_FOUND, userException.getExceptionCode());
         }
 
@@ -275,7 +268,7 @@ class PostServiceTest {
             when(postRepository.findById(any())).thenReturn(Optional.of(post_1));
             when(userRepository.findById(any())).thenReturn(Optional.of(user));
 
-            PostException postException = assertThrows(PostException.class, () -> postService.update(postId, any(), updateRequest, oAuth2User));
+            PostException postException = assertThrows(PostException.class, () -> postService.update(postId, updateRequest, oAuth2User));
 
             assertEquals(INVALID_USER_REQUEST, postException.getExceptionCode());
         }
