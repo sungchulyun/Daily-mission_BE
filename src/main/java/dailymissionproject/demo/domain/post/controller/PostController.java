@@ -50,7 +50,7 @@ public class PostController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
     public ResponseEntity<GlobalResponse> save(@CurrentUser CustomOAuth2User user
-                    , @Valid @RequestPart  PostSaveRequestDto postSaveReqDto)throws IOException {
+                    , @Valid @RequestBody PostSaveRequestDto postSaveReqDto)throws IOException {
 
         return ResponseEntity.ok(success(postService.save(user, postSaveReqDto)));
     }
@@ -132,7 +132,7 @@ public class PostController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
     public ResponseEntity<GlobalResponse> updateById(@PathVariable("id") Long id
-                        , @RequestPart PostUpdateRequestDto postUpdateRequestDto
+                        , @RequestBody PostUpdateRequestDto postUpdateRequestDto
                         , @CurrentUser CustomOAuth2User user) throws IOException {
         return ResponseEntity.ok(success(postService.update(id, postUpdateRequestDto, user)));
     }
