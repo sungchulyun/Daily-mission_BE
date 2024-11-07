@@ -54,7 +54,7 @@ public class UserController {
     })
     public void home(HttpServletResponse httpServletResponse) throws IOException {
 
-        httpServletResponse.sendRedirect("https://daily-mission.leey00nsu.com/sign-in/callback");
+        //httpServletResponse.sendRedirect("https://daily-mission.leey00nsu.com/sign-in/callback");
     }
 
     @GetMapping("/detail")
@@ -80,10 +80,9 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
     public ResponseEntity<GlobalResponse> update(@CurrentUser CustomOAuth2User user
-                                                , @RequestPart UserUpdateRequestDto requestDto
-                                                , @RequestPart(required = false) MultipartFile file)throws IOException {
+                                                , @RequestBody UserUpdateRequestDto requestDto)throws IOException {
 
-        return ResponseEntity.ok(success(userService.updateProfile(user, requestDto, file)));
+        return ResponseEntity.ok(success(userService.updateProfile(user, requestDto)));
     }
 
     //유저 마이페이지에서 참여중인 미션, 참여했는데 종료된 미션, 제출한 포스트 목록 무한스크롤
