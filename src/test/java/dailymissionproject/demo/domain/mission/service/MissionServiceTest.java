@@ -83,17 +83,13 @@ class MissionServiceTest {
             @DisplayName("미션을 생성할 수 있다.")
             @Test
             void mission_save_success() throws IOException {
-                final String fileName = "userModifyImage";
-                final String contentType = "image/jpeg";
-                //given
-                MockMultipartFile file = new MockMultipartFile("file", fileName, contentType, "test data".getBytes(StandardCharsets.UTF_8));
-
                 when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
                 when(participantRepository.save(MissionObjectFixture.getParticipant())).thenReturn(MissionObjectFixture.getParticipant());
 
-                MissionSaveResponseDto missionSaveResponse = missionService.save(oAuth2User, missionSaveRequest, file);
+                //when
+                MissionSaveResponseDto missionSaveResponse = missionService.save(oAuth2User, missionSaveRequest);
 
-                verify(imageService, times(1)).uploadMissionS3(any(), any());
+                //then
                 assertEquals(missionSaveResponse.getCredential(), mission.getCredential());
             }
         }

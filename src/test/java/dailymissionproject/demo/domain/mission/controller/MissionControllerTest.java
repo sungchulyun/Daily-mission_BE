@@ -279,27 +279,19 @@ class MissionControllerTest {
         @Test
         @DisplayName("미션을 생성할 수 있다.")
         void save_mission_test() throws Exception {
-
-            final String fileName = "https://AWS-s3/missionThumbnail.jpg";
-            final String contentType = "image/jpeg";
-
-            MockMultipartFile file = new MockMultipartFile("file", fileName, contentType, "test data".getBytes(StandardCharsets.UTF_8));
-            MockMultipartFile request = new MockMultipartFile("missionReqDto", "request.json", "application/json", objectMapper.writeValueAsBytes(missionSaveRequest));
-
-            //given
-            when(missionService.save(any(), eq(missionSaveRequest), eq(file))).thenReturn(missionSaveResponse);
+            when(missionService.save(any(), any(MissionSaveRequestDto.class))).thenReturn(missionSaveResponse);
 
             //when
-            mockMvc.perform(multipart(HttpMethod.POST, "/api/v1/mission/save")
-                    .file(file)
-                    .file(request)
+            mockMvc.perform(post("/api/v1/mission/save")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsBytes(missionSaveRequest))
                     .with(csrf()))
                     .andExpect(status().isOk())
                     .andDo(print());
 
             //then
             verify(missionService, description("save 메서드가 정상적으로 호출됨"))
-                    .save(any(), any(MissionSaveRequestDto.class), eq(file));
+                    .save(any(), any(MissionSaveRequestDto.class));
         }
     }
 
