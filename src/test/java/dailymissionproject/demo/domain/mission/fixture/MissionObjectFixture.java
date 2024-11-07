@@ -92,6 +92,7 @@ public class MissionObjectFixture {
         return MissionSaveRequestDto.builder()
                 .title("TITLE")
                 .content("CONTENT")
+                .imageUrl("THUMBNAIL.jpg")
                 .hint("HINT")
                 .credential("CREDENTIAL")
                 .startDate(LocalDate.now())
