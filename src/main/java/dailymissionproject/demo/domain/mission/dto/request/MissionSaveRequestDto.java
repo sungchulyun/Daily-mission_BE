@@ -24,6 +24,9 @@ public class MissionSaveRequestDto {
     @Schema(description = "미션 내용")
     private final String content;
 
+    @Schema(description = "미션 이미지")
+    private final String imageUrl;
+
     @Schema(description = "미션 참여코드 힌트")
     private final String hint;
 
@@ -39,11 +42,12 @@ public class MissionSaveRequestDto {
     private LocalDate endDate;
 
     @Builder
-    private MissionSaveRequestDto(Week week, String title, String content, String hint, String credential
+    private MissionSaveRequestDto(Week week, String title, String content, String imageUrl, String hint, String credential
                                 , LocalDate startDate, LocalDate endDate){
         this.week = week;
         this.title = title;
         this.content = content;
+        this.imageUrl = imageUrl;
         this.hint = hint;
         this.credential = credential;
         this.startDate = startDate;
@@ -60,6 +64,7 @@ public class MissionSaveRequestDto {
                 .missionRule(missionRule)
                 .title(title)
                 .content(content)
+                .imageUrl(imageUrl)
                 .hint(hint)
                 .credential(credential)
                 .startDate(startDate)
