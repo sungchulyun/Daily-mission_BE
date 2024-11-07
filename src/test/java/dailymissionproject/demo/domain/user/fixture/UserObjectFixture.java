@@ -41,6 +41,7 @@ public class UserObjectFixture {
      */
     public static UserUpdateRequestDto getUserUpdateRequest(){
         return UserUpdateRequestDto.builder()
+                .imageUrl("https://AWS-s3/modifedImages.jpg")
                 .nickname("sungchul")
                 .build();
     }
