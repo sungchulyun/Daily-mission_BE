@@ -41,7 +41,6 @@ public class MissionController {
      * 미션 생성
      * @param user
      * @param missionReqDto
-     * @param file
      * @return
      * @throws IOException
      */
@@ -55,10 +54,9 @@ public class MissionController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
     public ResponseEntity<GlobalResponse> create(@CurrentUser CustomOAuth2User user
-                                                , @RequestPart MissionSaveRequestDto missionReqDto
-                                                , @RequestPart MultipartFile file) throws IOException {
+                                                , @RequestBody MissionSaveRequestDto missionReqDto) throws IOException {
 
-        return ResponseEntity.ok(success(missionService.save(user, missionReqDto, file)));
+        return ResponseEntity.ok(success(missionService.save(user, missionReqDto)));
     }
 
     /**
