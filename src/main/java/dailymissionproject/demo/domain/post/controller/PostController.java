@@ -37,7 +37,6 @@ public class PostController {
      * 인증글을 작성하는 API
      * @param user
      * @param postSaveReqDto
-     * @param file
      * @return
      * @throws IOException
      */
@@ -51,10 +50,9 @@ public class PostController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
     public ResponseEntity<GlobalResponse> save(@CurrentUser CustomOAuth2User user
-                    , @Valid @RequestPart  PostSaveRequestDto postSaveReqDto
-                    , @RequestPart MultipartFile file)throws IOException {
+                    , @Valid @RequestPart  PostSaveRequestDto postSaveReqDto)throws IOException {
 
-        return ResponseEntity.ok(success(postService.save(user, postSaveReqDto, file)));
+        return ResponseEntity.ok(success(postService.save(user, postSaveReqDto)));
     }
 
     /**
@@ -120,7 +118,6 @@ public class PostController {
     /**
      * 포스트를 수정할 때 사용하는 API
      * @param id
-     * @param file
      * @param postUpdateRequestDto
      * @return
      * @throws IOException
@@ -135,10 +132,9 @@ public class PostController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
     public ResponseEntity<GlobalResponse> updateById(@PathVariable("id") Long id
-                        , @RequestPart(required = false) MultipartFile file
                         , @RequestPart PostUpdateRequestDto postUpdateRequestDto
                         , @CurrentUser CustomOAuth2User user) throws IOException {
-        return ResponseEntity.ok(success(postService.update(id, file, postUpdateRequestDto, user)));
+        return ResponseEntity.ok(success(postService.update(id, postUpdateRequestDto, user)));
     }
 
     /**

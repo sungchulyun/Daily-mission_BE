@@ -37,6 +37,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
+import java.util.Optional;
 
 import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.MISSION_NOT_FOUND;
 import static dailymissionproject.demo.domain.post.exception.PostExceptionCode.*;
@@ -55,7 +56,6 @@ public class PostService {
      * 포스트를 작성할 때 사용하는 메서드
      * @param user
      * @param requestDto
-     * @param file
      * @return
      * @throws IOException
      */
@@ -64,7 +64,7 @@ public class PostService {
             @CacheEvict(value = "postLists", allEntries = true),
             @CacheEvict(value = "posts", allEntries = true)
     })
-    public Long save(CustomOAuth2User user, PostSaveRequestDto requestDto, MultipartFile file) throws IOException {
+    public Long save(CustomOAuth2User user, PostSaveRequestDto requestDto) throws IOException {
 
         Mission mission = missionRepository.findByIdAndDeletedIsFalse(requestDto.getMissionId())
                 .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
@@ -75,11 +75,7 @@ public class PostService {
         // 미션 참여자인지 검증
         isParticipating(findUser, mission);
 
-        String imgUrl = imageService.uploadPostS3(file, requestDto.getTitle());
-
         Post post = requestDto.toEntity(findUser, mission);
-        post.setImageUrl(imgUrl);
-
         return postRepository.save(post).getId();
     }
 
@@ -181,7 +177,6 @@ public class PostService {
     /**
      * 작성한 포스트를 수정할 때 사용하는 메서드
      * @param id
-     * @param file
      * @param requestDto
      * @return
      * @throws IOException
@@ -192,7 +187,7 @@ public class PostService {
             @CacheEvict(value = "postLists", allEntries = true),
             @CacheEvict(value = "posts", allEntries = true)
     })
-    public PostUpdateResponseDto update(Long id, MultipartFile file, PostUpdateRequestDto requestDto, CustomOAuth2User user) throws IOException {
+    public PostUpdateResponseDto update(Long id, PostUpdateRequestDto requestDto, CustomOAuth2User user) throws IOException {
 
         Post findPost = postRepository.findById(id)
                 .orElseThrow(() -> new PostException(POST_NOT_FOUND));
@@ -203,20 +198,9 @@ public class PostService {
         // 해당 포스트의 작성자가 맞는지 검증
         isPostWriter(findPost, findUser);
 
-        if(file != null){
-            String updateImageUrl = imageService.uploadPostS3(file, requestDto.getTitle());
-
-            findPost.setImageUrl(updateImageUrl);
-        }
-
-        // DTO 내부 매개변수가 NULL이면, 기존값을 유지한다.
-        if(requestDto.getTitle() != null){
-            findPost.setTitle(requestDto.getTitle());
-        }
-
-        if(requestDto.getContent() != null){
-            findPost.setContent(requestDto.getContent());
-        }
+        Optional.ofNullable(requestDto.getTitle()).ifPresent(findPost::setTitle);
+        Optional.ofNullable(requestDto.getContent()).ifPresent(findPost::setContent);
+        Optional.ofNullable(requestDto.getImageUrl()).ifPresent(findPost::setImageUrl);
 
         return PostUpdateResponseDto.builder()
                 .title(findPost.getTitle())
