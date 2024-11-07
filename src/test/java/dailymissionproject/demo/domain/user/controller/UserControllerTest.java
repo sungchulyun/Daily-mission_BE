@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -25,8 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class UserControllerTest {
 
     @Autowired
-    protected ObjectMapper mapper;
+    protected ObjectMapper objectMapper;
     @Autowired
     protected MockMvc mockMvc;
 
@@ -70,26 +70,18 @@ class UserControllerTest {
     @Test
     @DisplayName("유저 정보 업데이트 할 수 있다.")
     void update_userDetail_test() throws Exception {
-
-        final String fileName = "https://AWS-s3/modifedImages.jpg";
-        final String contentType = "image/jpeg";
-
-        MockMultipartFile file = new MockMultipartFile("file", fileName, contentType, "test data".getBytes(StandardCharsets.UTF_8));
-        MockMultipartFile requestDto = new MockMultipartFile("requestDto", "request.json", "application/json", mapper.writeValueAsBytes(updateRequest));
-
         //given
-        when(userService.updateProfile(any(), eq(updateRequest), eq(file))).thenReturn(updateResponse);
+        when(userService.updateProfile(any(), eq(updateRequest))).thenReturn(updateResponse);
 
         //when
-        mockMvc.perform(multipart(HttpMethod.PUT,"/api/v1/user/profile")
-                .file(file)
-                .file(requestDto)
-                        .with(csrf()))
+        mockMvc.perform(put("/api/v1/user/profile")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(updateResponse))
+                .with(csrf()))
                 .andExpect(status().isOk())
                 .andDo(print());
-
         //then
         verify(userService, description("updateProfile 메서드가 정상적으로 호출됨"))
-                .updateProfile(any(), any(UserUpdateRequestDto.class), eq(file));
+                .updateProfile(any(), any(UserUpdateRequestDto.class));
     }
 }
