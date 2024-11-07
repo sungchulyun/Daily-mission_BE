@@ -45,12 +45,12 @@ public class Post extends BaseTimeEntity {
     private LocalDateTime modifiedDate;
 
     @Builder
-    public Post(Mission mission, User user, String title, String content, String imgUrl){
+    public Post(Mission mission, User user, String title, String content, String imageUrl){
         this.mission = mission;
         this.user = user;
         this.title = title;
         this.content = content;
-        this.imageUrl = imgUrl;
+        this.imageUrl = imageUrl;
     }
 
     public void update(String title, String content, String imgUrl){
