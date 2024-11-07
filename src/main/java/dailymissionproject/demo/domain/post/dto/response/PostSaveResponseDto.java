@@ -16,10 +16,14 @@ public class PostSaveResponseDto {
     @Schema(description = "포스트 내용")
     private final String content;
 
+    @Schema(description = "포스트 이미지")
+    private final String imageUrl;
+
 
     @Builder
-    public PostSaveResponseDto(String title, String content) {
+    public PostSaveResponseDto(String title, String content, String imageUrl) {
         this.title = title;
         this.content = content;
+        this.imageUrl = imageUrl;
     }
 }
