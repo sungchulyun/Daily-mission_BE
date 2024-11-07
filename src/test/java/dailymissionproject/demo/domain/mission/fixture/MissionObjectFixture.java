@@ -1,15 +1,20 @@
 package dailymissionproject.demo.domain.mission.fixture;
 
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
 import dailymissionproject.demo.domain.mission.dto.request.MissionSaveRequestDto;
 import dailymissionproject.demo.domain.mission.dto.request.MissionUpdateRequestDto;
 import dailymissionproject.demo.domain.mission.dto.response.*;
 import dailymissionproject.demo.domain.mission.repository.Mission;
+import dailymissionproject.demo.domain.mission.repository.QMission;
 import dailymissionproject.demo.domain.missionRule.dto.MissionRuleResponseDto;
 import dailymissionproject.demo.domain.missionRule.repository.MissionRule;
 import dailymissionproject.demo.domain.missionRule.repository.Week;
 import dailymissionproject.demo.domain.participant.dto.response.ParticipantUserDto;
 import dailymissionproject.demo.domain.participant.repository.Participant;
+import dailymissionproject.demo.domain.participant.repository.QParticipant;
 import dailymissionproject.demo.domain.user.repository.Role;
 import dailymissionproject.demo.domain.user.repository.User;
 import org.springframework.data.domain.PageRequest;
@@ -324,6 +329,7 @@ public class MissionObjectFixture {
                 .nickname("yoonsu")
                 .startDate(LocalDate.now().minusDays(10))
                 .endDate(LocalDate.now().plusDays(10))
+                .participating(true)
                 .build();
 
         MissionAllListResponseDto allMission_2 = MissionAllListResponseDto.builder()
@@ -334,6 +340,7 @@ public class MissionObjectFixture {
                 .nickname("sungchul")
                 .startDate(LocalDate.now().minusDays(7))
                 .endDate(LocalDate.now().plusDays(7))
+                .participating(true)
                 .build();
 
         List<MissionAllListResponseDto> listResponse = List.of(allMission_1, allMission_2);
@@ -370,6 +377,23 @@ public class MissionObjectFixture {
     public static List<Mission> getMissionList() {
         Mission mission_1 = getMissionFixture();
 
+        List<Participant> participantList = List.of(getParticipant());
+        mission_1.setParticipants(participantList);
+
         return List.of(mission_1);
+    }
+
+    public static Expression<Boolean> getParticipantExpression(QMission mission, Long userId) {
+        QParticipant participant = QParticipant.participant;
+
+        return Expressions.as(
+                JPAExpressions
+                        .selectOne()
+                        .from(participant)
+                        .where(participant.mission.eq(mission)
+                                .and(participant.user.id.eq(userId)))
+                        .isNotNull(),
+                "participating"
+        );
     }
 }

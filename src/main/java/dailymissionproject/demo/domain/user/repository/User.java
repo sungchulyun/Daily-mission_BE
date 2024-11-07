@@ -66,6 +66,14 @@ public class User extends BaseTimeEntity {
         this.imageUrl = imageUrl;
     }
 
+    @Builder
+    public User(Long id, String name, String email, String nickname){
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.nickname = nickname;
+    }
+
 
     public String getRoleKey(){
         return this.role.getKey();
@@ -95,7 +103,7 @@ public class User extends BaseTimeEntity {
         if (!(o instanceof User user))
             return false;
 
-        return Objects.equals(getId(), user.getId());
+        return Objects.equals(this.getId(), user.getId());
     }
 
     @Override

@@ -12,13 +12,13 @@ public interface MissionRepositoryCustom {
 
     //== Pagination 적용 ==//
     //Hot 미션 목록
-    Slice<MissionHotListResponseDto> findAllByParticipantSize(Pageable pageable);
+    Slice<MissionHotListResponseDto> findAllByParticipantSize(Pageable pageable, Long userId);
 
     //New 미션 목록
-    Slice<MissionNewListResponseDto> findAllByCreatedInMonth(Pageable pageable);
+    Slice<MissionNewListResponseDto> findAllByCreatedInMonth(Pageable pageable, Long userId);
 
     //All 미션 목록
-    Slice<MissionAllListResponseDto> findAllByCreatedDate(Pageable pageable);
+    Slice<MissionAllListResponseDto> findAllByCreatedDate(Pageable pageable, Long userId);
     List<Mission> findAllByCreatedDate();
     /*
         @Override

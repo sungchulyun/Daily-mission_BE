@@ -23,6 +23,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -186,9 +188,9 @@ public class MissionService {
      */
     @Transactional(readOnly = true)
     @Cacheable(value = "missionLists", key = "'hot-' + 'page-' + #pageable.getPageNumber() + 'size-' + #pageable.getPageSize()")
-    public PageResponseDto findHotList(Pageable pageable){
+    public PageResponseDto findHotList(Pageable pageable, CustomOAuth2User user){
 
-        Slice<MissionHotListResponseDto> responseList = missionRepository.findAllByParticipantSize(pageable);
+        Slice<MissionHotListResponseDto> responseList = missionRepository.findAllByParticipantSize(pageable, user.getId());
 
         PageResponseDto pageResponseDto = new PageResponseDto(responseList.getContent(), responseList.hasNext());
 
@@ -203,9 +205,9 @@ public class MissionService {
      */
     @Transactional(readOnly = true)
     @Cacheable(value = "missionLists", key = "'new-' + 'page-' + #pageable.getPageNumber() + 'size-' + #pageable.getPageSize()")
-    public PageResponseDto findNewList(Pageable pageable){
+    public PageResponseDto findNewList(Pageable pageable, CustomOAuth2User user){
 
-        Slice<MissionNewListResponseDto> responseList = missionRepository.findAllByCreatedInMonth(pageable);
+        Slice<MissionNewListResponseDto> responseList = missionRepository.findAllByCreatedInMonth(pageable, user.getId());
 
         PageResponseDto pageResponseDto = new PageResponseDto(responseList.getContent(), responseList.hasNext());
 
@@ -220,9 +222,13 @@ public class MissionService {
      */
     @Transactional(readOnly = true)
     @Cacheable(value = "missionLists", key = "'all-' + 'page-' + #pageable.getPageNumber() + 'size-' + #pageable.getPageSize()")
-    public PageResponseDto findAllList(Pageable pageable){
+    public PageResponseDto findAllList(Pageable pageable, CustomOAuth2User user){
 
-        Slice<MissionAllListResponseDto> responseList = missionRepository.findAllByCreatedDate(pageable);
+        Slice<MissionAllListResponseDto> responseList = missionRepository.findAllByCreatedDate(pageable, user.getId());
+
+        if (Objects.isNull(responseList)) {
+            responseList = new SliceImpl<>(Collections.emptyList(), pageable, false);
+        }
 
         PageResponseDto pageResponseDto = new PageResponseDto(responseList.getContent(), responseList.hasNext());
 
@@ -306,7 +312,7 @@ public class MissionService {
      * @param particiPatinglist
      * @return
      */
-    private boolean isParticipating(List<MissionUserListResponseDto> particiPatinglist){
+    public boolean isParticipating(List<MissionUserListResponseDto> particiPatinglist){
         if(particiPatinglist.size() < 1) return false;
         return true;
     }

@@ -40,6 +40,9 @@ public class MissionHotListResponseDto {
     @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate endDate;
 
+    @Schema(description = "미션 참여중 여부")
+    private boolean participating;
+
     @Builder
     MissionHotListResponseDto(Long id, String title, String content, String imageUrl, String nickname, LocalDate startDate, LocalDate endDate){
         this.id = id;
