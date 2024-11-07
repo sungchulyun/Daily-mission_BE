@@ -21,8 +21,8 @@ public class ImageController {
     }
 
     @GetMapping("/presigned-url/put")
-    public ResponseEntity<String> getPutPresignedUrl(@RequestParam String fileName) {
-        String presignedUrl = String.valueOf(imageService.generatePostPresignedUrl(fileName));
+    public ResponseEntity<String> getPutPresignedUrl(@RequestParam String fileName, @RequestParam String title) {
+        String presignedUrl = String.valueOf(imageService.generatePostPresignedUrl(fileName, title));
         return ResponseEntity.ok(presignedUrl);
     }
 

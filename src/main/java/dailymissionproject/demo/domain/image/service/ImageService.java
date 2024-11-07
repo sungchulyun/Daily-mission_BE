@@ -61,8 +61,12 @@ public class ImageService {
         return s3Util.upload(multipartFile, dirName);
     }
 
+    /**
+     * 파일 get을 위한 presignedurl 생성 메서드
+     * @param fileName
+     * @return
+     */
     public URL generateGetPresignedUrl(String fileName){
-
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucketName)
                 .key(fileName)
@@ -76,10 +80,18 @@ public class ImageService {
         return presigner.presignGetObject(getObjectPresignRequest).url();
     }
 
-    public URL generatePostPresignedUrl(String fileName){
+    /**
+     * 파일 업로드를 위한 presignedUrl 생성 메서드
+     * @param fileName
+     * @param title
+     * @return
+     */
+    public URL generatePostPresignedUrl(String fileName, String title){
+        String name = title + "/" + fileName + getPostDir();
+
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
-                .key(fileName)
+                .key(name)
                 .build();
 
         PutObjectPresignRequest putObjectPresignRequest = PutObjectPresignRequest.builder()
@@ -89,23 +101,4 @@ public class ImageService {
 
         return presigner.presignPutObject(putObjectPresignRequest).url();
     }
-
-
-    /*
-    public String uploadImg(MultipartFile file)throws IOException {
-        try {
-            String fileName = file.getOriginalFilename();
-            String fileUrl = bucketUrl + "/" + fileName;
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentType(file.getContentType());
-            metadata.setContentLength(file.getSize());
-            amazonS3.putObject(bucket, fileName, file.getInputStream(), metadata);
-            return fileUrl;
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("이미지 업로드에 실패했습니다.");
-        }
-    }
-
-     */
 }
