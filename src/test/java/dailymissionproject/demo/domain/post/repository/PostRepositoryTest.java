@@ -31,6 +31,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static dailymissionproject.demo.domain.post.repository.QPost.post;
@@ -197,6 +198,25 @@ class PostRepositoryTest {
             assertThat(list.get(1).getTitle()).isEqualTo("TITLE1");
             assertThat(list.get(0).getModifiedDate()).isAfterOrEqualTo(list.get(1).getModifiedDate());
             assertThat(list.size()).isLessThanOrEqualTo(pageable.getPageSize());
+        }
+
+        @DisplayName("금일 포스트 제출 유무를 검증할 수 있다.")
+        @Test
+        void post_read_submitted_today_success(){
+            LocalDateTime startDate = LocalDateTime.now().minusMinutes(5);
+            LocalDateTime endDate = startDate.plusDays(1);
+
+            Long postCount = queryFactory
+                    .select(post.countDistinct())
+                    .from(post)
+                    .where(post.mission.eq(findMission)
+                            .and(post.user.eq(findUser))
+                            .and(post.createdDate.after(startDate))
+                            .and(post.createdDate.before(endDate))
+                            .and(post.deleted.isFalse()))
+                    .fetchOne();
+
+            assertThat(postCount).isEqualTo(1);
         }
     }
 }
