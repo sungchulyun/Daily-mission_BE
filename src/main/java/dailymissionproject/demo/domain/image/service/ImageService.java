@@ -1,4 +1,4 @@
-package dailymissionproject.demo.domain.image;
+package dailymissionproject.demo.domain.image.service;
 
 import dailymissionproject.demo.common.util.S3Util;
 import lombok.RequiredArgsConstructor;
