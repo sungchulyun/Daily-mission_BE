@@ -115,10 +115,10 @@ class PostRepositoryTest {
         missionRepository.saveAll(missions);
 
         List<Post> posts = List.of(
-                Post.builder().user(users.get(0)).mission(missions.get(0)).title("TITLE1").content("CONTENT1").imgUrl("IMAGE1").build(),
-                Post.builder().user(users.get(1)).mission(missions.get(0)).title("TITLE2").content("CONTENT2").imgUrl("IMAGE2").build(),
-                Post.builder().user(users.get(1)).mission(missions.get(1)).title("TITLE3").content("CONTENT3").imgUrl("IMAGE3").build(),
-                Post.builder().user(findUser).mission(missions.get(1)).title("TITLE4").content("CONTENT4").imgUrl("IMAGE4").build()
+                Post.builder().user(users.get(0)).mission(missions.get(0)).title("TITLE1").content("CONTENT1").imageUrl("IMAGE1").build(),
+                Post.builder().user(users.get(1)).mission(missions.get(0)).title("TITLE2").content("CONTENT2").imageUrl("IMAGE2").build(),
+                Post.builder().user(users.get(1)).mission(missions.get(1)).title("TITLE3").content("CONTENT3").imageUrl("IMAGE3").build(),
+                Post.builder().user(findUser).mission(missions.get(1)).title("TITLE4").content("CONTENT4").imageUrl("IMAGE4").build()
         );
 
         postRepository.saveAll(posts);
