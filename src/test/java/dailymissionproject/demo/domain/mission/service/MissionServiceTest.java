@@ -2,7 +2,7 @@ package dailymissionproject.demo.domain.mission.service;
 
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.auth.dto.UserDto;
-import dailymissionproject.demo.domain.image.ImageService;
+import dailymissionproject.demo.domain.image.service.ImageService;
 import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
 import dailymissionproject.demo.domain.mission.dto.request.MissionSaveRequestDto;
 import dailymissionproject.demo.domain.mission.dto.request.MissionUpdateRequestDto;
@@ -33,7 +33,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
