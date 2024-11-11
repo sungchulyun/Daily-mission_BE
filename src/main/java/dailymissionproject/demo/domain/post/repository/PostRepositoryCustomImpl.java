@@ -58,20 +58,20 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
      * @return
      */
     public List<PostUserListResponseDto> fetchAllByUser(Pageable pageable, User user) {
-        return queryFactory.select(Projections.constructor(PostUserListResponseDto.class,
-                post.id,
-                post.mission.id,
-                post.mission.title,
-                post.title,
-                post.content,
-                post.imageUrl,
-                post.createdTime,
-                post.modifiedDate))
+        return queryFactory.select(Projections.fields(PostUserListResponseDto.class,
+                 post.id.as("id"),
+                 post.mission.id.as("missionId"),
+                 post.mission.title.as("missionTitle"),  // 필요한 필드 이름을 DTO와 맞춤
+                 post.title.as("title"),
+                 post.content.as("content"),
+                 post.imageUrl.as("imageUrl"),
+                 post.createdDate.as("createdDate"),
+                 post.modifiedDate.as("modifiedDate")))
                 .from(post)
-                .where(post.user.eq(user).and(post.deleted.isFalse()))
+                .where(post.user.id.eq(user.getId()).and(post.deleted.isFalse()))
+                .orderBy(post.createdDate.desc())
                 .offset(pageable.getOffset())
-                .limit(pageable.getOffset() + 1)
-                .orderBy(post.modifiedDate.desc())
+                .limit(pageable.getPageSize() + 1)
                 .fetch();
     }
 
@@ -110,13 +110,11 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
      * @return
      */
     List<PostMissionListResponseDto> fetchAllByMission(Pageable pageable, Mission mission) {
+        System.out.println("미션 아이디는 : " + mission.getId());
         return queryFactory
-                .select(Projections.constructor(PostMissionListResponseDto.class,
+                .select(Projections.fields(PostMissionListResponseDto.class,
                         post.id,
-                        post.mission.id,
-                        post.mission.title,
-                        post.mission.user.nickname,
-                        post.user.imageUrl,
+                        post.mission.id.as("missionId"),
                         post.title,
                         post.content,
                         post.imageUrl,
