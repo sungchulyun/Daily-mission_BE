@@ -1,0 +1,2 @@
+INSERT INTO user (user_id, name, username, nickname, image_url, email)
+VALUES (1,  '윤성철', 'naver ldoqdcDgsM0fZ-Q9zI44qCCg2lF4Ugno3k70nGIYmfA', '윤성철', 'https://phinf.pstatic.net/contact/20240627_12/1719462406630ECMIs_PNG/avatar_profile.png', 'proattacker@naver.com');
