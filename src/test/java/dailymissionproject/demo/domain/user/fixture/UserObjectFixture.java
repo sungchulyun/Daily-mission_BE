@@ -41,8 +41,8 @@ public class UserObjectFixture {
      */
     public static UserUpdateRequestDto getUserUpdateRequest(){
         return UserUpdateRequestDto.builder()
-                .imageUrl("https://AWS-s3/modifedImages.jpg")
-                .nickname("sungchul")
+                .imageUrl("https://integration-test-profile-image.jpeg")
+                .nickname("TestSungchul")
                 .build();
     }
 
@@ -52,9 +52,9 @@ public class UserObjectFixture {
      */
     public static UserUpdateResponseDto getUserUpdateResponse(){
         return UserUpdateResponseDto.builder()
-                .username("google 1923819273")
-                .nickname("sungchul")
-                .imageUrl("https://AWS-s3/modifedImages.jpg")
+                .username("naver ldoqdcDgsM0fZ-Q9zI44qCCg2lF4Ugno3k70nGIYmfA")
+                .nickname("TestSungchul")
+                .imageUrl("https://integration-test-profile-image.jpeg")
                 .build();
     }
 }
