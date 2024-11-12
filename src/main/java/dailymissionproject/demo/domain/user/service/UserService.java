@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Optional;
 
-import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.NICKNAME_ALREADY_EXITS;
+import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.NICKNAME_ALREADY_EXISTS;
 import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
 
 @Service
@@ -60,7 +60,7 @@ public class UserService {
 
         Optional<User> hasNicknameUser = userRepository.findByNickname(request.getNickname());
         // 변경하려는 닉네임이 사용중이면, 에러를 반환한다.
-        if(hasNicknameUser.isPresent()) throw new UserException(NICKNAME_ALREADY_EXITS);
+        if(hasNicknameUser.isPresent()) throw new UserException(NICKNAME_ALREADY_EXISTS);
 
         Optional.ofNullable(request.getImageUrl()).ifPresent(findUser::setImageUrl);
         Optional.ofNullable(request.getNickname()).ifPresent(findUser::setNickname);
