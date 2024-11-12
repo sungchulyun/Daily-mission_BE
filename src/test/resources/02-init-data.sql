@@ -1,2 +1,3 @@
 INSERT INTO user (user_id, name, username, nickname, image_url, email)
-VALUES (1,  '윤성철', 'naver ldoqdcDgsM0fZ-Q9zI44qCCg2lF4Ugno3k70nGIYmfA', '윤성철', 'https://phinf.pstatic.net/contact/20240627_12/1719462406630ECMIs_PNG/avatar_profile.png', 'proattacker@naver.com');
+VALUES (1,  '윤성철', 'naver ldoqdcDgsM0fZ-Q9zI44qCCg2lF4Ugno3k70nGIYmfA', '윤성철', 'https://phinf.pstatic.net/contact/20240627_12/1719462406630ECMIs_PNG/avatar_profile.png', 'proattacker@naver.com'),
+       (2, '윤성철', 'google 106088487779653945150', 'sungchul', 'https://lh3.googleusercontent.com/a/ACg8ocLuIomy21grZAe-_HDhHm7HDPbL6R9_5a1JY_i3o4-KutpPdw=s96-c', 'proattacker641@gmail.com');
