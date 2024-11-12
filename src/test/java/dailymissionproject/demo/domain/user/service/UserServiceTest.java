@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
-import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.NICKNAME_ALREADY_EXITS;
+import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.NICKNAME_ALREADY_EXISTS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -108,14 +108,14 @@ class UserServiceTest {
         @Test
         @DisplayName("유저 정보를 수정할 수 없다.")
         void update_user_detail_fail_when_nickname_is_using() throws IOException {
-            when(userRepository.findById(anyLong())).thenThrow(new UserException(NICKNAME_ALREADY_EXITS));
+            when(userRepository.findById(anyLong())).thenThrow(new UserException(NICKNAME_ALREADY_EXISTS));
 
             //when
             UserException userException = assertThrows(UserException.class,
                     () -> userService.updateProfile(user, updateRequest));
 
             //then
-            assertEquals(NICKNAME_ALREADY_EXITS, userException.getExceptionCode());
+            assertEquals(NICKNAME_ALREADY_EXISTS, userException.getExceptionCode());
         }
     }
 }
