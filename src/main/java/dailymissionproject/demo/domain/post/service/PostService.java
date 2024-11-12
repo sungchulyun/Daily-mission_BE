@@ -21,6 +21,9 @@ import dailymissionproject.demo.domain.user.exception.UserException;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -57,10 +60,10 @@ public class PostService {
      * @throws IOException
      */
     @Transactional
-//    @Caching(evict = {
-//            @CacheEvict(value = "postLists", allEntries = true),
-//            @CacheEvict(value = "posts", allEntries = true)
-//    })
+    @Caching(evict = {
+            @CacheEvict(value = "postLists", allEntries = true),
+            @CacheEvict(value = "posts", allEntries = true)
+    })
     public PostSaveResponseDto save(CustomOAuth2User user, PostSaveRequestDto requestDto, MultipartFile file) throws IOException {
 
         Mission mission = missionRepository.findByIdAndDeletedIsFalse(requestDto.getMissionId())
@@ -76,6 +79,8 @@ public class PostService {
 
         Post post = requestDto.toEntity(findUser, mission);
         post.setImageUrl(imgUrl);
+
+        postRepository.save(post);
 
         return PostSaveResponseDto.builder()
                 .title(post.getTitle())
@@ -104,7 +109,7 @@ public class PostService {
      * @return
      */
     @Transactional(readOnly = true)
-    //@Cacheable(value = "postLists", key = "'user-' + #user.getId() +#page")
+    @Cacheable(value = "postLists", key = "'user-' + #user.getId() +#page")
     public PageResponseDto findAllByUser(CustomOAuth2User user, Pageable pageable){
 
         User findUser = userRepository.findById(user.getId())
@@ -124,7 +129,7 @@ public class PostService {
      * @return
      */
     @Transactional(readOnly = true)
-    //@Cacheable(value = "postLists", key = "'mission-' + #id")
+    @Cacheable(value = "postLists", key = "'mission-' + #id")
     public PageResponseDto findAllByMission(Long id, Pageable pageable){
 
         Mission mission = missionRepository.findById(id)
@@ -184,11 +189,11 @@ public class PostService {
      * @throws IOException
      */
     @Transactional
-//    @Caching(evict = {
-//            //전체 포스트
-//            @CacheEvict(value = "postLists", allEntries = true),
-//            @CacheEvict(value = "posts", allEntries = true)
-//    })
+    @Caching(evict = {
+            //전체 포스트
+            @CacheEvict(value = "postLists", allEntries = true),
+            @CacheEvict(value = "posts", allEntries = true)
+    })
     public PostUpdateResponseDto update(Long id, MultipartFile file, PostUpdateRequestDto requestDto, CustomOAuth2User user) throws IOException {
 
         Post findPost = postRepository.findById(id)
@@ -221,10 +226,10 @@ public class PostService {
      * @return
      */
     @Transactional
-//    @Caching(evict = {
-//            @CacheEvict(value = "postLists", allEntries = true),
-//            @CacheEvict(value = "posts", allEntries = true)
-//    })
+    @Caching(evict = {
+            @CacheEvict(value = "postLists", allEntries = true),
+            @CacheEvict(value = "posts", allEntries = true)
+    })
     public boolean deleteById(Long id, CustomOAuth2User user){
         Post findPost = postRepository.findById(id)
                 .orElseThrow(() -> new PostException(POST_NOT_FOUND));
