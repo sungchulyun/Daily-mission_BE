@@ -46,6 +46,13 @@ public class UserObjectFixture {
                 .build();
     }
 
+    public static UserUpdateRequestDto getDuplicateNicknameUpdateRequest(){
+        return UserUpdateRequestDto.builder()
+                .imageUrl("https://lh3.googleusercontent.com/a/ACg8ocLuIomy21grZAe-_HDhHm7HDPbL6R9_5a1JY_i3o4-KutpPdw=s96-c")
+                .nickname("sungchul")
+                .build();
+    }
+
     /**
      * 유저 수정 응답 객체를 반환합니다.
      * @return
