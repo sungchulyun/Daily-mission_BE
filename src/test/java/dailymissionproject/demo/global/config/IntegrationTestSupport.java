@@ -1,6 +1,7 @@
 package dailymissionproject.demo.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dailymissionproject.demo.domain.auth.jwt.JWTUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,8 @@ public abstract class IntegrationTestSupport {
     protected ObjectMapper objectMapper;
     @Autowired
     protected MockMvc mockMvc;
+    @Autowired
+    protected JWTUtil jwtUtil;
     @Autowired
     private DataInitializer dataInitializer;
 

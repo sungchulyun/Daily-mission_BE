@@ -38,8 +38,6 @@ class UserIntegrationTest extends IntegrationTestSupport {
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private JWTUtil jwtUtil;
 
     private UserUpdateRequestDto userUpdateRequest;
     private UserUpdateRequestDto duplicateNicknameUpdateRequest;
