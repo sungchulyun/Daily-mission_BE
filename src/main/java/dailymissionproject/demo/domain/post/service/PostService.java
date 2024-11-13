@@ -37,7 +37,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalInt;
 
 import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.MISSION_NOT_FOUND;
 import static dailymissionproject.demo.domain.post.exception.PostExceptionCode.*;
@@ -78,6 +77,8 @@ public class PostService {
         Post post = requestDto.toEntity(findUser, mission);
         postRepository.save(post);
 
+        postRepository.save(post);
+
         return PostSaveResponseDto.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
@@ -91,7 +92,7 @@ public class PostService {
      * @return
      */
     @Transactional(readOnly = true)
-    @Cacheable(value = "posts", key = "#id")
+    //@Cacheable(value = "posts", key = "#id")
     public PostDetailResponseDto findById(Long id){
 
         Post post = postRepository.findById(id).orElseThrow(() -> new PostException(POST_NOT_FOUND));
@@ -106,7 +107,7 @@ public class PostService {
      * @return
      */
     @Transactional(readOnly = true)
-    @Cacheable(value = "postLists", key = "'user-' + #user.getId()")
+    @Cacheable(value = "postLists", key = "'user-' + #user.getId() +#page")
     public PageResponseDto findAllByUser(CustomOAuth2User user, Pageable pageable){
 
         User findUser = userRepository.findById(user.getId())

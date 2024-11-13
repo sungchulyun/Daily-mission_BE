@@ -2,6 +2,7 @@ package dailymissionproject.demo.domain.mission.service;
 
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.auth.dto.UserDto;
+import dailymissionproject.demo.domain.image.service.ImageService;
 import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
 import dailymissionproject.demo.domain.mission.dto.request.MissionSaveRequestDto;
 import dailymissionproject.demo.domain.mission.dto.request.MissionUpdateRequestDto;
@@ -57,6 +58,8 @@ class MissionServiceTest {
     private MissionRepository missionRepository;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private ImageService imageService;
     @Mock
     private ParticipantRepository participantRepository;
 
