@@ -62,6 +62,8 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
                  post.id.as("id"),
                  post.mission.id.as("missionId"),
                  post.mission.title.as("missionTitle"),  // 필요한 필드 이름을 DTO와 맞춤
+                 post.user.nickname.as("nickname"),
+                 post.user.imageUrl.as("userImageUrl"),
                  post.title.as("title"),
                  post.content.as("content"),
                  post.imageUrl.as("imageUrl"),
@@ -110,17 +112,19 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
      * @return
      */
     List<PostMissionListResponseDto> fetchAllByMission(Pageable pageable, Mission mission) {
-        System.out.println("미션 아이디는 : " + mission.getId());
         return queryFactory
                 .select(Projections.fields(PostMissionListResponseDto.class,
-                        post.id,
+                        post.id.as("id"),
                         post.mission.id.as("missionId"),
+                        post.user.nickname.as("nickname"),
+                        post.user.imageUrl.as("userImageUrl"),
                         post.title,
                         post.content,
                         post.imageUrl,
                         post.createdDate,
                         post.modifiedDate))
                 .from(post)
+                .join(post.user)
                 .where(post.mission.eq(mission).and(post.deleted.isFalse()))
                 .orderBy(post.modifiedDate.desc())
                 .offset(pageable.getOffset())
