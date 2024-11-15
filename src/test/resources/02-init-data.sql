@@ -10,3 +10,6 @@ VALUES (1, 1, 1, 'TITLE', 'CONTENT', 'THUMBNAIL.jpg', 'HINT', 'CREDENTIAL', '202
 
 INSERT INTO participant (participant_id, mission_id, user_id, banned)
 VALUES (1, 1, 1, FALSE);
+
+INSERT INTO post(post_id, mission_id, user_id, title, content, image_url)
+VALUES (1, 1, 1, 'TITLE', 'CONTENT', 'IMAGE_URL');
