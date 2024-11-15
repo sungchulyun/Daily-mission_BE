@@ -177,7 +177,7 @@ public class PostObjectFixture {
 
     public static PostUpdateRequestDto getPostUpdateRequest(){
         return PostUpdateRequestDto.builder()
-                .title("TITLE")
+                .title("Modified_TITLE")
                 .content("CONTENT")
                 .imageUrl("IMAGE")
                 .build();
