@@ -49,7 +49,7 @@ class MissionIntegrationTest extends IntegrationTestSupport {
     private MissionUpdateRequestDto nullUpdateRequest;
     private MissionUpdateRequestDto hintUpdateRequest;
     private Long missionId = 1L;
-    private Long savedMissionId = 2L;
+    private Long savedMissionId = 3L;
 
     @BeforeEach
     void setUp() {
