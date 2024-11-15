@@ -7,7 +7,7 @@ public class ParticipantObjectFixture {
     public static ParticipantSaveRequestDto getParticipantSaveRequest(){
         return ParticipantSaveRequestDto.builder()
                 .credential("CREDENTIAL")
-                .missionId(1L)
+                .missionId(2L)
                 .build();
     }
 }
