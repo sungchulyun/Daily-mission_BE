@@ -56,3 +56,20 @@ CREATE TABLE `participant` (
                                CONSTRAINT fk_participant_mission_id FOREIGN KEY (mission_id) REFERENCES mission(mission_id) ON DELETE CASCADE,
                                CONSTRAINT fk_participant_user_id FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE SET NULL
 );
+
+CREATE TABLE `post` (
+                            post_id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '포스트 PK',
+                            mission_id BIGINT COMMENT '참조하는 미션 ID',
+                            user_id BIGINT COMMENT '참조하는 유저 ID',
+                            title VARCHAR(255) NULL COMMENT '포스트 제목',
+                            content VARCHAR(255) NULL COMMENT '포스트 내용',
+                            image_url VARCHAR(255) NULL COMMENT '포스트 이미지',
+                            deleted BOOLEAN DEFAULT FALSE COMMENT '삭제 여부',
+                            created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '생성일자',
+                            modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일자',
+                            created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                            last_modified_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+                            CONSTRAINT fk_post_mission_id FOREIGN KEY (mission_id) REFERENCES mission(mission_id) ON DELETE CASCADE,
+                            CONSTRAINT fk_post_user_id FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE SET NULL
+);
