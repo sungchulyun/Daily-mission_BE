@@ -145,6 +145,17 @@ public class MissionObjectFixture {
                 .build();
     }
 
+    public static MissionUpdateRequestDto getNullUpdateRequest(){
+        return MissionUpdateRequestDto.builder()
+                .build();
+    }
+
+    public static MissionUpdateRequestDto getHintUpdateRequest(){
+        return MissionUpdateRequestDto.builder()
+                .hint("Modified_HINT")
+                .build();
+    }
+
     /**
      * 미션 수정 응답 객체를 반환합니다.
      * @return MissionUpdateResponseDto
