@@ -3,12 +3,12 @@ VALUES (1,  '윤성철', 'naver ldoqdcDgsM0fZ-Q9zI44qCCg2lF4Ugno3k70nGIYmfA', '�
        (2, '윤성철', 'google 106088487779653945150', 'sungchul', 'https://lh3.googleusercontent.com/a/ACg8ocLuIomy21grZAe-_HDhHm7HDPbL6R9_5a1JY_i3o4-KutpPdw=s96-c', 'proattacker641@gmail.com');
 
 INSERT INTO mission_rule (SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, DELETED)
-VALUES (TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE),
-       (TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE);
+VALUES (0, 0, 0, 1, 1, 1, 1),
+       (1, 1, 0, 0, 0, 0, 0);
 
 INSERT INTO mission (mission_id, mission_rule_id, user_id, title, content, image_url, hint, credential, start_date, end_date, ended, deleted)
-VALUES (1, 1, 1, 'TITLE', 'CONTENT', 'THUMBNAIL.jpg', 'HINT', 'CREDENTIAL', '2024-11-16', '2024-11-30', FALSE, FALSE),
-       (2, 2, 2, 'TITLE', 'CONTENT', 'THUMBNAIL.jpg', 'HINT', 'CREDENTIAL', '2024-11-16', '2024-11-30', FALSE, FALSE);
+VALUES (1, 1, 1, 'TITLE', 'CONTENT', 'THUMBNAIL.jpg', 'HINT', 'CREDENTIAL', '2024-11-16', '2024-11-30'),
+       (2, 2, 2, 'TITLE', 'CONTENT', 'THUMBNAIL.jpg', 'HINT', 'CREDENTIAL', '2024-11-16', '2024-11-30');
 
 INSERT INTO participant (participant_id, mission_id, user_id, banned)
 VALUES (1, 1, 1, FALSE);
