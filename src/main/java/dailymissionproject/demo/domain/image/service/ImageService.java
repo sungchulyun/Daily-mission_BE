@@ -12,7 +12,6 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 import java.io.IOException;
-import java.net.URL;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.util.Calendar;
@@ -104,7 +103,7 @@ public class ImageService {
             throw new ImageException(INPUT_VALUE_IS_EMPTY);
         }
 
-        if(!(input.matches("^[a-zA-Z0-9가-힣-_.]+$"))){
+        if(!(input.matches("^[a-zA-Z0-9가-힣-_.\\s]+$"))){
             throw new ImageException(INPUT_VALUE_IS_NOT_VALID);
         }
         return true;
