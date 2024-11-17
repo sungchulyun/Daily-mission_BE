@@ -3,8 +3,8 @@ VALUES (1,  '윤성철', 'naver ldoqdcDgsM0fZ-Q9zI44qCCg2lF4Ugno3k70nGIYmfA', '�
        (2, '윤성철', 'google 106088487779653945150', 'sungchul', 'https://lh3.googleusercontent.com/a/ACg8ocLuIomy21grZAe-_HDhHm7HDPbL6R9_5a1JY_i3o4-KutpPdw=s96-c', 'proattacker641@gmail.com');
 
 INSERT INTO mission_rule (mission_rule_id, SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, DELETED)
-VALUES (1, 0, 0, 1, 1, 1, 1, 1),
-       (2, 1, 0, 0, 0, 0, 0,1);
+VALUES (1, true, true, true, true, false, false, true),
+       (2, true, true, true, true, false, false, true);
 
 INSERT INTO mission (mission_id, mission_rule_id, user_id, title, content, image_url, hint, credential, start_date, end_date, ended, deleted)
 VALUES (1, 1, 1, 'TITLE', 'CONTENT', 'THUMBNAIL.jpg', 'HINT', 'CREDENTIAL', '2024-11-16', '2024-11-30'),
