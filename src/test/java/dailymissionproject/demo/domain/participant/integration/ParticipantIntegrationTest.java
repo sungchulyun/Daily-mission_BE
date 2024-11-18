@@ -12,6 +12,7 @@ import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Tag("integration")
 @DisplayName("[integration] [controller] ParticipantController")
+@ActiveProfiles("integration-test")
 @WithMockCustomUser
 class ParticipantIntegrationTest extends IntegrationTestSupport {
 

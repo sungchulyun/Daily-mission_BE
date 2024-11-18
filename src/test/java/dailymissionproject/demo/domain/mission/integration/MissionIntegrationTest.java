@@ -19,6 +19,7 @@ import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -33,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Tag("integration")
 @DisplayName("[integration] [controller] MissionController")
+@ActiveProfiles("integration-test")
 @WithMockCustomUser
 class MissionIntegrationTest extends IntegrationTestSupport {
 
