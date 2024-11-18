@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.test.context.ActiveProfiles;
 
 /**
  * @DataJpaTest 어노테이션을 통해서 Repository에 대한 Bean만 등록한다.
@@ -22,6 +23,7 @@ import org.springframework.context.annotation.FilterType;
 
 @Tag(value = "data-jpa-test")
 @DisplayName("[Database] [repository] JpaUserRepository")
+@ActiveProfiles("unit-test")
 @DataJpaTest(includeFilters = @ComponentScan.Filter(
         type = FilterType.ASSIGNABLE_TYPE,
         classes = {JPAConfig.class}
