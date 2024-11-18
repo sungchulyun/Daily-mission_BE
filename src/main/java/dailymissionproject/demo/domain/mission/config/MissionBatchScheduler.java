@@ -16,14 +16,14 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class MissionBatchScheduler {
 
-    private final JobLauncher jobLauncher;
-    private final JobRegistry jobRegistry;
+    private final JobLauncher endJobLauncher;
+    private final JobRegistry endJobRegistry;
 
     /*
     @Bean
     public JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor(){
         JobRegistryBeanPostProcessor jobProcessor = new JobRegistryBeanPostProcessor();
-        jobProcessor.setJobRegistry(jobRegistry);
+        jobProcessor.setJobRegistry(endJobRegistry);
         return jobProcessor;
     }
 
@@ -36,7 +36,7 @@ public class MissionBatchScheduler {
     public void runJob(){
         LocalDate time = LocalDate.now();
         try {
-            Job job = jobRegistry.getJob("endJob");
+            Job job = endJobRegistry.getJob("endJob");
             JobParametersBuilder jobParam = new JobParametersBuilder().addLocalDate("time", time);
             jobLauncher.run(job, jobParam.toJobParameters());
         } catch (NoSuchJobException |

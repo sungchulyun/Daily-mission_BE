@@ -20,8 +20,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class ParticipantBatchScheduler {
 
-    private final JobLauncher jobLauncher;
-    private final JobRegistry jobRegistry;
+    private final JobLauncher banJobLauncher;
+    private final JobRegistry banJobRegistry;
 
 
     /**
@@ -32,7 +32,7 @@ public class ParticipantBatchScheduler {
         LocalDateTime time = LocalDateTime.now();
         String key = "수행시간";
         try {
-            Job job = jobRegistry.getJob("BanJob");
+            Job job = banJobRegistry.getJob("BanJob");
             JobParametersBuilder jobParam = new JobParametersBuilder().addLocalDateTime(key, LocalDateTime.now());
             jobLauncher.run(job, jobParam.toJobParameters());
         } catch (NoSuchJobException |
