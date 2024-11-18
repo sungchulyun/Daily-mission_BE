@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Tag("integration")
 @DisplayName("[integration][controller] UserController")
-@ActiveProfiles("integration-test")
+@ActiveProfiles("test")
 @WithMockCustomUser
 class UserIntegrationTest extends IntegrationTestSupport {
 
