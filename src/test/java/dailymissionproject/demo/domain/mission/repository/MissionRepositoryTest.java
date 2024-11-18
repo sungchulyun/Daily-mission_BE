@@ -29,7 +29,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -43,7 +42,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
         classes = {JPAConfig.class, QueryDSLConfig.class}
 ))
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles("test")
+@ActiveProfiles("unit-test")
 class MissionRepositoryTest {
 
     @Autowired

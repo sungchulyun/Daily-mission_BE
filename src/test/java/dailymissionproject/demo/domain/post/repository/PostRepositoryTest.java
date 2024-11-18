@@ -11,7 +11,6 @@ import dailymissionproject.demo.domain.missionRule.repository.MissionRuleReposit
 import dailymissionproject.demo.domain.missionRule.repository.Week;
 import dailymissionproject.demo.domain.post.dto.response.PostMissionListResponseDto;
 import dailymissionproject.demo.domain.post.dto.response.PostUserListResponseDto;
-import dailymissionproject.demo.domain.post.fixture.PostObjectFixture;
 import dailymissionproject.demo.domain.user.repository.Role;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
@@ -42,7 +41,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
         classes = {JPAConfig.class, QueryDSLConfig.class}
 ))
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles("test")
+@ActiveProfiles("unit-test")
 class PostRepositoryTest {
 
     @Autowired

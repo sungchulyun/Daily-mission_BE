@@ -1,7 +1,6 @@
 package dailymissionproject.demo.domain.user.repository;
 
 import dailymissionproject.demo.common.config.JPAConfig;
-import dailymissionproject.demo.common.config.QueryDSLConfig;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -23,7 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @Tag(value = "data-jpa-test")
 @DisplayName("[Database] [repository] JpaUserRepository")
-@ActiveProfiles("test")
+@ActiveProfiles("unit-test")
 @DataJpaTest(includeFilters = @ComponentScan.Filter(
         type = FilterType.ASSIGNABLE_TYPE,
         classes = {JPAConfig.class}
