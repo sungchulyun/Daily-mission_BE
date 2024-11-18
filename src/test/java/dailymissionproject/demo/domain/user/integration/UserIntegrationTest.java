@@ -3,7 +3,6 @@ package dailymissionproject.demo.domain.user.integration;
 import dailymissionproject.demo.common.config.response.GlobalResponse;
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.auth.dto.UserDto;
-import dailymissionproject.demo.domain.auth.jwt.JWTUtil;
 import dailymissionproject.demo.domain.user.dto.request.UserUpdateRequestDto;
 import dailymissionproject.demo.domain.user.dto.response.UserUpdateResponseDto;
 import dailymissionproject.demo.domain.user.exception.UserException;
@@ -11,7 +10,6 @@ import dailymissionproject.demo.domain.user.exception.UserExceptionCode;
 import dailymissionproject.demo.domain.user.fixture.UserObjectFixture;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
-import dailymissionproject.demo.global.WithMockCustomUser;
 import dailymissionproject.demo.global.config.IntegrationTestSupport;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.*;
@@ -34,8 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Tag("integration")
 @DisplayName("[integration][controller] UserController")
-@ActiveProfiles("test")
-@WithMockCustomUser
+@ActiveProfiles("integration-test")
 class UserIntegrationTest extends IntegrationTestSupport {
 
     @Autowired

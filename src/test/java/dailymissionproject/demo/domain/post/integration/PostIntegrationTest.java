@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Tag("integration")
 @DisplayName("[integration] [controller] PostController")
-@ActiveProfiles("test")
+@ActiveProfiles("integration-test")
 @WithMockCustomUser
 class PostIntegrationTest extends IntegrationTestSupport {
 

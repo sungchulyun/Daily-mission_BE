@@ -13,7 +13,6 @@ import dailymissionproject.demo.domain.mission.exception.MissionExceptionCode;
 import dailymissionproject.demo.domain.mission.fixture.MissionObjectFixture;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
-import dailymissionproject.demo.global.WithMockCustomUser;
 import dailymissionproject.demo.global.config.IntegrationTestSupport;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.*;
@@ -34,8 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Tag("integration")
 @DisplayName("[integration] [controller] MissionController")
-@ActiveProfiles("test")
-@WithMockCustomUser
+@ActiveProfiles("integration-test")
 class MissionIntegrationTest extends IntegrationTestSupport {
 
     @Autowired
