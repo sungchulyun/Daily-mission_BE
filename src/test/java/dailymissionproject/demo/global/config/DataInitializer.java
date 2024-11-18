@@ -14,7 +14,7 @@ import java.util.function.Predicate;
 import static jakarta.transaction.Transactional.TxType.REQUIRES_NEW;
 
 @Component
-@Profile("integration-test")
+@Profile("test")
 public class DataInitializer {
 
     private static final String OFF_FOREIGN_CONSTRAINTS = "SET foreign_key_checks = false";
