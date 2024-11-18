@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.METHOD})
-@WithSecurityContext(factory = WithMockCustomUserSecurityContextFactory.class)
+@WithSecurityContext(factory = WithMockCustomUserSecurityContextFactoryImpl.class)
 public @interface WithMockCustomUser{
 
     String username() default "google 106088487779653945150";

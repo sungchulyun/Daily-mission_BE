@@ -10,7 +10,7 @@ import org.springframework.security.test.context.support.WithSecurityContextFact
 import org.springframework.stereotype.Component;
 
 @Component
-public class WithMockCustomUserSecurityContextFactory implements WithSecurityContextFactory<WithMockCustomUser> {
+public class WithMockCustomUserSecurityContextFactoryImpl implements WithSecurityContextFactory<WithMockCustomUser> {
 
     @Override
     public SecurityContext createSecurityContext(WithMockCustomUser annotation) {
