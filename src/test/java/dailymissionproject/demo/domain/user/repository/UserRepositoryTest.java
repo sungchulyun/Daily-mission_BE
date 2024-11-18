@@ -23,7 +23,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @Tag(value = "data-jpa-test")
 @DisplayName("[Database] [repository] JpaUserRepository")
-@ActiveProfiles("unit-test")
+@ActiveProfiles("test")
 @DataJpaTest(includeFilters = @ComponentScan.Filter(
         type = FilterType.ASSIGNABLE_TYPE,
         classes = {JPAConfig.class}

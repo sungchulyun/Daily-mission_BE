@@ -43,7 +43,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
         classes = {JPAConfig.class, QueryDSLConfig.class}
 ))
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles("unit-test")
+@ActiveProfiles("test")
 class MissionRepositoryTest {
 
     @Autowired
