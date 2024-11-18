@@ -22,6 +22,12 @@ public class PostMissionListResponseDto {
     @Schema(description = "포스트 미션 ID")
     private final Long missionId;
 
+    @Schema(description = "포스트 작성자 닉네임")
+    private final String nickname;
+
+    @Schema(description = "포스트 작성자 이미지")
+    private final String userImageUrl;
+
     @Schema(description = "포스트 제목")
     private final String title;
     @Schema(description = "포스트 내용")
@@ -40,9 +46,12 @@ public class PostMissionListResponseDto {
     private final LocalDateTime modifiedDate;
 
     @Builder
-    public PostMissionListResponseDto(Long id, Long missionId, String nickname, String userImageUrl, String title, String content, String imageUrl, LocalDateTime createdDate, LocalDateTime modifiedDate) {
+    public PostMissionListResponseDto(Long id, Long missionId, String nickname, String userImageUrl, String title
+            , String content, String imageUrl, LocalDateTime createdDate, LocalDateTime modifiedDate) {
         this.id = id;
         this.missionId = missionId;
+        this.nickname = nickname;
+        this.userImageUrl = userImageUrl;
         this.title = title;
         this.content = content;
         this.imageUrl = imageUrl;
