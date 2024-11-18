@@ -22,7 +22,8 @@ bin/
 application.properties
 application-dev.properties
 application-prod.properties
-application-test.properties
+application-unit-test.properties
+application-integration-test.properties
 data.sql
 .idea
 *.iws
