@@ -48,8 +48,9 @@ jobs:
     - name: Run Unit Tests
       run: |
         touch ./src/main/resources/application-unit-test.properties
-        echo "${{ secrets.UNIT_TEST_APPLICATION }}" > ./src/main/resources/application-unit-test.properties  # 테스트용 비밀 설정
-        ./gradlew --info test -Dspring.config.location=classpath:/application-unit-test.properties
+        ./gradlew clean test --info -Dspring.config.location=classpath:/application-unit-test.properties \
+          -Dorg.gradle.testkit.outputdir=build/unit-test-results
+
     # 테스트 후 Result 출력
     - name: Publish Unit Test Results
       uses: EnricoMi/publish-unit-test-result-action@v1
@@ -61,10 +62,12 @@ jobs:
       run: |
         touch ./src/main/resources/application-integration-test.properties
         echo "${{ secrets.INTEGRATION_TEST_APPLICATION }}" > ./src/main/resources/application-integration-test.properties  # 테스트용 비밀 설정
-        ./gradlew --info test -Dspring.config.location=classpath:/application-integration-test.properties
+        ./gradlew clean integrationTest --info -Dspring.config.location=classpath:/application-integration-test.properties \
+          -Dorg.gradle.testkit.outputdir=build/integration-test-results
+
       # 테스트 후 Result 출력
     - name: Publish Integration Test Results
-      uses: EnricoMi/publish-integration-test-result-action@v1
+      uses: EnricoMi/publish-unit-test-result-action@v1
       if: ${{ always() }}  # 'always' : 테스트 실패해도 Result 출력
       with:
         files: build/integration-test-results/**/*.xml
