@@ -4,10 +4,8 @@ import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.auth.dto.UserDto;
 import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
 import dailymissionproject.demo.domain.mission.exception.MissionException;
-import dailymissionproject.demo.domain.mission.exception.MissionExceptionCode;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
-import dailymissionproject.demo.domain.participant.repository.ParticipantRepository;
 import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
 import dailymissionproject.demo.domain.post.dto.request.PostUpdateRequestDto;
 import dailymissionproject.demo.domain.post.dto.response.*;
@@ -17,7 +15,6 @@ import dailymissionproject.demo.domain.post.fixture.PostObjectFixture;
 import dailymissionproject.demo.domain.post.repository.Post;
 import dailymissionproject.demo.domain.post.repository.PostRepository;
 import dailymissionproject.demo.domain.user.exception.UserException;
-import dailymissionproject.demo.domain.user.exception.UserExceptionCode;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
 import dailymissionproject.demo.global.WithMockCustomUser;
@@ -28,7 +25,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -234,8 +230,8 @@ class PostServiceTest {
 
             PostUpdateResponseDto response = postService.update(postId, updateRequest, oAuth2User);
 
-            assertEquals(response.getTitle(), updateResponse.getTitle());
-            assertEquals(response.getContent(), updateResponse.getContent());
+            assertEquals(response.getTitle(), updateRequest.getTitle());
+            assertEquals(response.getContent(), updateRequest.getContent());
         }
 
         @Test
