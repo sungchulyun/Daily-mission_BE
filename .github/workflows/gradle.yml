@@ -49,13 +49,13 @@ jobs:
         run: |
           touch ./src/main/resources/application-test.properties
           echo "${{ secrets.UNIT_TEST_APPLICATION }}" > ./src/main/resources/application-unit-test.properties  # 테스트용 비밀 설정
-          ./gradlew --info test -Dspring.config.location=classpath:/application-unit-test.properties
+          ./gradlew --info unitTest -Dspring.config.location=classpath:/application-unit-test.properties
 
       - name: Integration Test with Gradle
         run: |
           touch ./src/main/resources/application-integration-test.properties
           echo "${{ secrets.INTEGRATION_TEST_APPLICATION }}" > ./src/main/resources/application-integration-test.properties  # 테스트용 비밀 설정
-          ./gradlew --info test -Dspring.config.location=classpath:/application-integration-test.properties
+          ./gradlew --info integrationTest -Dspring.config.location=classpath:/application-integration-test.properties
 
       # 테스트 후 Result 출력
       - name: Publish Unit Test Results
