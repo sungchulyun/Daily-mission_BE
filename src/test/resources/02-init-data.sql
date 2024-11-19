@@ -10,8 +10,8 @@ VALUES
 
 INSERT INTO `mission` (`mission_rule_id`, `user_id`, `title`, `content`, `image_url`, `hint`, `credential`, `start_date`, `end_date`, `ended`, `deleted`)
 VALUES
-    (1, 1, 'TITLE', 'CONTENT', 'THUMBNAIL.jpg', 'HINT', 'CREDENTIAL', LOCALTIME, '2024-12-30', FALSE, FALSE),
-    (2, 2,  'TITLE', 'CONTENT', 'THUMBNAIL.jpg', 'HINT', 'CREDENTIAL', LOCALTIME, '2024-12-30', FALSE, FALSE);
+    (1, 1, 'TITLE', 'CONTENT', 'THUMBNAIL.jpg', 'HINT', 'CREDENTIAL', DATE_ADD(CURDATE(), INTERVAL 1 DAY), DATE_ADD(CURDATE(), INTERVAL 1 MONTH), FALSE, FALSE),
+    (2, 2,  'TITLE', 'CONTENT', 'THUMBNAIL.jpg', 'HINT', 'CREDENTIAL', DATE_ADD(CURDATE(), INTERVAL 1 DAY), DATE_ADD(CURDATE(), INTERVAL 1 MONTH), FALSE, FALSE);
 
 INSERT INTO `participant` (`mission_id`, `user_id`, `banned`)
 VALUES
@@ -19,5 +19,4 @@ VALUES
 
 INSERT INTO `post` (`mission_id`, `user_id`, `title`, `content`, `image_url`)
 VALUES
-    (1, 1, 'TITLE', 'CONTENT', 'IMAGE_URL'),
-    (2, 1, 'TITLE', 'CONTENT', 'IMAGE_URL');
+    (1, 1, 'TITLE', 'CONTENT', 'IMAGE_URL');
