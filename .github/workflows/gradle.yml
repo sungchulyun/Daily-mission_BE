@@ -28,8 +28,20 @@ jobs:
         cd ./src/main/resources
         touch ./unit-test.properties
         touch ./integration-test.properties
-        echo "${{ secrets.UNIT_TEST_PROPERTIES }}" > ./unit-test.properties
-        echo "${{ secrets.INTEGRATION_TEST_PROPERTIES }}" > ./integration-test.properties
+        echo "${{ secrets.UNIT_TEST_APPLICATION }}" > ./unit-test.properties
+        echo "cloud.aws.credentials.accessKey=${{ secrets.CLOUD_AWS_CREDENTIALS_ACCESS_KEY }}" >> ./unit-test.properties
+        echo "cloud.aws.credentials.secretKey=${{ secrets.CLOUD_AWS_CREDENTIALS_SECRET_KEY }}" >> ./unit-test.properties
+        echo "cloud.aws.s3.bucket=${{ secrets.CLOUD_AWS_BUCKET_NAME }}" >> ./unit-test.properties
+        echo "cloud.aws.region.static=ap-northeast-2" >> ./unit-test.properties
+        echo "cloud.aws.stack.auto=false" >> ./unit-test.properties
+        
+        echo "${{ secrets.INTEGRATION_TEST_APPLICATION }}" > ./integration-test.properties
+        echo "cloud.aws.credentials.accessKey=${{ secrets.CLOUD_AWS_CREDENTIALS_ACCESS_KEY }}" >> ./integration-test.properties
+        echo "cloud.aws.credentials.secretKey=${{ secrets.CLOUD_AWS_CREDENTIALS_SECRET_KEY }}" >> ./integration-test.properties
+        echo "cloud.aws.s3.bucket=${{ secrets.CLOUD_AWS_BUCKET_NAME }}" >> ./integration-test.properties
+        echo "cloud.aws.region.static=ap-northeast-2" >> ./integration-test.properties
+        echo "cloud.aws.stack.auto=false" >> ./integration-test.properties
+        
 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
