@@ -113,3 +113,19 @@ tasks.withType(JavaCompile).configureEach {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+tasks.register("unitTest", Test) {
+	useJUnitPlatform {
+		includeTags("unit")
+	}
+	testClassesDirs = sourceSets.test.output.classesDirs
+	classpath = sourceSets.test.runtimeClasspath
+}
+
+tasks.register("integrationTest", Test) {
+	useJUnitPlatform {
+		includeTags("integration")
+	}
+	testClassesDirs = sourceSets.test.output.classesDirs
+	classpath = sourceSets.test.runtimeClasspath
+}
