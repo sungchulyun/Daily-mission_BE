@@ -28,7 +28,7 @@ import org.testcontainers.utility.DockerImageName;
         "cloud.aws.credentials.secretKey=TestKey",
         "cloud.aws.s3.bucket=TestKeyBucket",
         "cloud.aws.region.static=ap-northeast-2",
-        "spring.jwt.secret=fortheTest",
+        "spring.jwt.secret=kdmaskltalksenklawsadasdasdasdjmelq;",
         "cloud.aws.s3.bucket.url=bucketTest",
         "spring.security.oauth2.client.registration.google.client-id=clientId",
         "spring.security.oauth2.client.registration.google.client-secret=secretId",
