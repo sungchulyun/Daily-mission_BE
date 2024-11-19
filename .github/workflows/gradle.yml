@@ -23,6 +23,13 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    - name : Set environment variables
+      run : |
+        echo "cloud.aws.credentials.accessKey=${{ secrets.CLOUD_AWS_CREDENTIALS_ACCESS_KEY }}" >> $GITHUB_ENV
+        echo "cloud.aws.credentials.secretKey=${{ secrets.CLOUD_AWS_CREDENTIALS_SECRET_KEY }}" >> $GITHUB_ENV
+        echo "cloud.aws.s3.bucket=${{ secrets.CLOUD_AWS_BUCKET_NAME }}" >> $GITHUB_ENV
+        echo "cloud.aws.region.static=ap-northeast-2" >> $GITHUB_ENV
+
     - name: Make unit-test and integration-test properties
       run: |
         cd ./src/main/resources
