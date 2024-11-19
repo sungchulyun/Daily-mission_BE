@@ -29,7 +29,17 @@ import org.testcontainers.utility.DockerImageName;
         "cloud.aws.s3.bucket=TestKeyBucket",
         "cloud.aws.region.static=ap-northeast-2",
         "spring.jwt.secret=fortheTest",
-        "cloud.aws.s3.bucket.url=bucketTest"
+        "cloud.aws.s3.bucket.url=bucketTest",
+        "spring.security.oauth2.client.registration.google.client-id=clientId",
+        "spring.security.oauth2.client.registration.google.client-secret=secretId",
+        "spring.security.oauth2.client.registration.google.authorization-grant-type=authorization_code",
+        "spring.security.oauth2.client.registration.google.scope=profile, email",
+        "spring.security.oauth2.client.registration.naver.client-name=naver",
+        "spring.security.oauth2.client.registration.naver.client-id=clientId",
+        "spring.security.oauth2.client.registration.naver.client-secret=secretId",
+        "spring.security.oauth2.client.registration.naver.scope=name, email, profile_image",
+        "spring.security.oauth2.client.registration.naver.authorization-grant-type=authorization_code",
+        "spring.security.oauth2.client.registration.naver.redirectUri=http://localhost:8080/login/oauth2/code/naver"
 })
 public abstract class IntegrationTestSupport {
     protected static final Logger log = LogManager.getLogger(IntegrationTestSupport.class);
