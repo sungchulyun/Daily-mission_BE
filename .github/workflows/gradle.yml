@@ -1,3 +1,10 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
 name: Java CI with Gradle
 
 on:
@@ -11,98 +18,83 @@ jobs:
 
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write  # 'write' 권한 부여
       actions: read
-      checks: write
+      checks: write  # 체크 런을 생성하기 위해 'write' 권한 부여
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-    - name : Set environment variables
-      run : |
-        echo "cloud.aws.credentials.accessKey=${{ secrets.CLOUD_AWS_CREDENTIALS_ACCESS_KEY }}" >> $GITHUB_ENV
-        echo "cloud.aws.credentials.secretKey=${{ secrets.CLOUD_AWS_CREDENTIALS_SECRET_KEY }}" >> $GITHUB_ENV
-        echo "cloud.aws.s3.bucket=${{ secrets.CLOUD_AWS_BUCKET_NAME }}" >> $GITHUB_ENV
-        echo "cloud.aws.region.static=ap-northeast-2" >> $GITHUB_ENV
+      - name: Make application.properties
+        run: |
+          cd ./src/main/resources
+          touch ./application.properties
+          echo "${{ secrets.APPLICATION }}" > ./application.properties
 
-    - name: Make unit-test and integration-test properties
-      run: |
-        cd ./src/main/resources
-        touch ./unit-test.properties
-        touch ./integration-test.properties
-        echo "${{ secrets.UNIT_TEST_APPLICATION }}" > ./unit-test.properties
-        echo "cloud.aws.credentials.accessKey=${{ secrets.CLOUD_AWS_CREDENTIALS_ACCESS_KEY }}" >> ./unit-test.properties
-        echo "cloud.aws.credentials.secretKey=${{ secrets.CLOUD_AWS_CREDENTIALS_SECRET_KEY }}" >> ./unit-test.properties
-        echo "cloud.aws.s3.bucket=${{ secrets.CLOUD_AWS_BUCKET_NAME }}" >> ./unit-test.properties
-        echo "cloud.aws.region.static=ap-northeast-2" >> ./unit-test.properties
-        echo "cloud.aws.stack.auto=false" >> ./unit-test.properties
-        
-        echo "${{ secrets.INTEGRATION_TEST_APPLICATION }}" > ./integration-test.properties
-        echo "cloud.aws.credentials.accessKey=${{ secrets.CLOUD_AWS_CREDENTIALS_ACCESS_KEY }}" >> ./integration-test.properties
-        echo "cloud.aws.credentials.secretKey=${{ secrets.CLOUD_AWS_CREDENTIALS_SECRET_KEY }}" >> ./integration-test.properties
-        echo "cloud.aws.s3.bucket=${{ secrets.CLOUD_AWS_BUCKET_NAME }}" >> ./integration-test.properties
-        echo "cloud.aws.region.static=ap-northeast-2" >> ./integration-test.properties
-        echo "cloud.aws.stack.auto=false" >> ./integration-test.properties
-        
+      # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
+      # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
 
-    - name: Make gradlew executable
-      run: chmod +x ./gradlew
+      # Gradle test 실행 (테스트 시에 application-test.properties 사용)
+      - name: Unit Test with Gradle
+        run: |
+          touch ./src/main/resources/application-test.properties
+          echo "${{ secrets.UNIT_TEST_APPLICATION }}" > ./src/main/resources/application-unit-test.properties  # 테스트용 비밀 설정
+          ./gradlew --info test -Dspring.config.location=classpath:/application-unit-test.properties
 
-    # Unit tests with H2 in-memory DB
-    - name: Run Unit Tests
-      run: |
-        ./gradlew --info test -Dspring.config.location=classpath:/unit-test.properties
+      - name: Integration Test with Gradle
+        run: |
+          touch ./src/main/resources/application-integration-test.properties
+          echo "${{ secrets.INTEGRATION_TEST_APPLICATION }}" > ./src/main/resources/application-integration-test.properties  # 테스트용 비밀 설정
+          ./gradlew --info test -Dspring.config.location=classpath:/application-integration-test.properties
 
-    # Integration tests with TestContainers
-    - name: Run Integration Tests
-      run: |
-        ./gradlew --info integrationTest -Dspring.config.location=classpath:/integration-test.properties
+      # 테스트 후 Result 출력
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: ${{ always() }}  # 'always' : 테스트 실패해도 Result 출력
+        with:
+          files: build/test-results/**/*.xml
 
-    - name: Publish Unit Test Results
-      uses: EnricoMi/publish-unit-test-result-action@v1
-      if: ${{ always() }}
-      with:
-        files: build/test-results/**/*.xml
+      - name: Gradle Build Action
+        uses: gradle/gradle-build-action@v2.6.0
+        with:
+          arguments: clean build
 
-    - name: Gradle Build Action
-      uses: gradle/gradle-build-action@v2.6.0
-      with:
-        arguments: clean build
+      - name: Docker Login
+        uses: docker/login-action@v2.2.0
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Docker Login
-      uses: docker/login-action@v2.2.0
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v4.1.1
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/spring-boot-server
 
-    - name: Build and push Docker images
-      uses: docker/build-push-action@v4.1.1
-      with:
-        context: .
-        push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/spring-boot-server
-
-    - name: Deploy to AWS EC2
-      uses: appleboy/ssh-action@v0.1.10
-      with:
-        host: ${{ secrets.HOST }}
-        username: ubuntu
-        key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-        script: |
-          docker pull ${{ secrets.DOCKER_USERNAME }}/spring-boot-server
-          docker stop $(docker ps -a -q)
-          docker run -d --log-driver=syslog -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/spring-boot-server
-          docker run -p 6379:6379 --name redis -d redis:latest
-          docker rm $(docker ps --filter 'status=exited' -a -q)
-          docker image prune -a -f
+      - name: Deploy to AWS EC2
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }} # pem key
+          script: |
+            docker pull ${{ secrets.DOCKER_USERNAME }}/spring-boot-server
+            docker stop $(docker ps -a -q)
+            docker run -d --log-driver=syslog -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/spring-boot-server
+            docker run -p 6379:6379 --name redis -d redis:latest
+            docker rm $(docker ps --filter 'status=exited' -a -q)
+            docker image prune -a -f
 
   dependency-submission:
 
@@ -111,12 +103,14 @@ jobs:
       contents: write
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-    - name: Generate and submit dependency graph
-      uses: gradle/actions/dependency-submission@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+      # Generates and submits a dependency graph, enabling Dependabot Alerts for all project dependencies.
+      # See: https://github.com/gradle/actions/blob/main/dependency-submission/README.md
+      - name: Generate and submit dependency graph
+        uses: gradle/actions/dependency-submission@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
