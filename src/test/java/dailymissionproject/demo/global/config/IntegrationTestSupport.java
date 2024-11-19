@@ -27,7 +27,8 @@ import org.testcontainers.utility.DockerImageName;
         "cloud.aws.credentials.accessKey=TestKey",
         "cloud.aws.credentials.secretKey=TestKey",
         "cloud.aws.s3.bucket=TestKeyBucket",
-        "cloud.aws.region.static=ap-northeast-2"
+        "cloud.aws.region.static=ap-northeast-2",
+        "spring.jwt.secret=fortheTest"
 })
 public abstract class IntegrationTestSupport {
     protected static final Logger log = LogManager.getLogger(IntegrationTestSupport.class);
