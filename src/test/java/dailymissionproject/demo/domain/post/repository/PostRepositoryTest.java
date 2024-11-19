@@ -145,20 +145,22 @@ class PostRepositoryTest {
         void post_read_user_list_success() throws Exception {
             Pageable pageable = PageRequest.of(0, 3);
 
-            List<PostUserListResponseDto> list = queryFactory.select(Projections.constructor(PostUserListResponseDto.class,
-                            post.id,
-                            post.mission.id,
-                            post.mission.title,
-                            post.title,
-                            post.content,
-                            post.imageUrl,
-                            post.createdTime,
-                            post.modifiedDate))
+            List<PostUserListResponseDto> list = queryFactory.select(Projections.fields(PostUserListResponseDto.class,
+                            post.id.as("id"),
+                            post.mission.id.as("missionId"),
+                            post.mission.title.as("missionTitle"),  // 필요한 필드 이름을 DTO와 맞춤
+                            post.user.nickname.as("nickname"),
+                            post.user.imageUrl.as("userImageUrl"),
+                            post.title.as("title"),
+                            post.content.as("content"),
+                            post.imageUrl.as("imageUrl"),
+                            post.createdDate.as("createdDate"),
+                            post.modifiedDate.as("modifiedDate")))
                     .from(post)
-                    .where(post.user.eq(findUser).and(post.deleted.isFalse()))
+                    .where(post.user.id.eq(findUser.getId()).and(post.deleted.isFalse()))
+                    .orderBy(post.createdDate.desc())
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize() + 1)
-                    .orderBy(post.modifiedDate.desc())
                     .fetch();
 
             assertThat(list.size()).isEqualTo(2);
