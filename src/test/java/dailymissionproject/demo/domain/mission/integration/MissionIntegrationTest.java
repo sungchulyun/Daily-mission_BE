@@ -112,7 +112,7 @@ class MissionIntegrationTest extends IntegrationTestSupport {
     })
     @Nested
     @DisplayName("[Integration] 미션 생성 통합 테스트")
-    class MissionSaveIntegrationTest {
+    class MissionSaveIntegrationTest extends IntegrationTestSupport{
 
         @Test
         @DisplayName("미션 생성에 성공한다.")
@@ -152,7 +152,7 @@ class MissionIntegrationTest extends IntegrationTestSupport {
 
     @Nested
     @DisplayName("[Integration] 미션 수정 통합 테스트")
-    class MissionUpdateIntegrationTest {
+    class MissionUpdateIntegrationTest extends IntegrationTestSupport{
 
         @Test
         @DisplayName("미션을 수정할 수 있다.")

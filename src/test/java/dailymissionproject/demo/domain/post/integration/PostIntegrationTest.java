@@ -63,7 +63,7 @@ class PostIntegrationTest extends IntegrationTestSupport {
     })
     @Nested
     @DisplayName("[Integration] 포스트 생성 통합테스트")
-    class PostSaveIntegrationTest {
+    class PostSaveIntegrationTest extends IntegrationTestSupport{
 
         @Test
         @DisplayName("포스트 생성에 성공한다.")
@@ -91,7 +91,9 @@ class PostIntegrationTest extends IntegrationTestSupport {
             String responseString = afterSave.getResponse().getContentAsString(StandardCharsets.UTF_8);
             GlobalResponse response = objectMapper.readValue(responseString, GlobalResponse.class);
             PostDetailResponseDto afterResponse = objectMapper.convertValue(response.getData(), PostDetailResponseDto.class);
-
+            log.info(afterResponse.getId());
+            log.info(afterResponse.getTitle());
+            log.info(afterResponse.getMissionId());
             assertEquals(postSaveRequest.getMissionId(), afterResponse.getMissionId());
         }
     }
@@ -100,8 +102,8 @@ class PostIntegrationTest extends IntegrationTestSupport {
             "/02-init-data.sql"
     })
     @Nested
-    @DisplayName("포스트 수정 통합 테스트")
-    class PostUpdateIntegrationTest {
+    @DisplayName("[Integration] 포스트 수정 통합 테스트")
+    class PostUpdateIntegrationTest extends IntegrationTestSupport{
 
         @Test
         @DisplayName("포스트 수정에 성공한다.")
