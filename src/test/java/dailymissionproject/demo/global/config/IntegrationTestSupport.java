@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -22,6 +23,12 @@ import org.testcontainers.utility.DockerImageName;
 @ActiveProfiles("integration-test")
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@TestPropertySource(properties = {
+        "cloud.aws.credentials.accessKey=TestKey",
+        "cloud.aws.credentials.secretKey=TestKey",
+        "cloud.aws.s3.bucket=TestKeyBucket",
+        "cloud.aws.region.static=ap-northeast-2"
+})
 public abstract class IntegrationTestSupport {
     protected static final Logger log = LogManager.getLogger(IntegrationTestSupport.class);
     protected static MariaDBContainer<?> MARIADB_CONTAINER;
