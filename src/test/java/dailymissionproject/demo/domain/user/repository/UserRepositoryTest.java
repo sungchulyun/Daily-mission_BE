@@ -20,7 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
  * 실제로 작성된 쿼리가 어떻게 동작하는지 show-SQL 옵션을 통해서 확인한다.
  */
 
-@Tag(value = "data-jpa-test")
+@Tag("unit")
 @DisplayName("[Database] [repository] JpaUserRepository")
 @ActiveProfiles("unit-test")
 @DataJpaTest(includeFilters = @ComponentScan.Filter(
