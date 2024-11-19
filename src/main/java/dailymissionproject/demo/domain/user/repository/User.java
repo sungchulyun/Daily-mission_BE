@@ -16,7 +16,7 @@ import java.util.Objects;
 @Getter
 @Entity
 @NoArgsConstructor
-@Table(name = "user")
+@Table(name = "`user`")
 public class User extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,18 +32,20 @@ public class User extends BaseTimeEntity {
    @OneToMany(mappedBy = "user")
     List<Participant> participants = new ArrayList<>();
 
+    @Column(name = "`name`")
     private String name;
+    @Column(name = "`email`")
     private String email;
     private String nickname;
 
-    @Column(name = "username")
+    @Column(name = "`username`")
     private String username;
 
     @Column(name = "image_url")
     private String imageUrl;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "`role`", nullable = false)
     private Role role;
 
 
