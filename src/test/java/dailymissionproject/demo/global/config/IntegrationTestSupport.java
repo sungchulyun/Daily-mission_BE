@@ -39,7 +39,12 @@ import org.testcontainers.utility.DockerImageName;
         "spring.security.oauth2.client.registration.naver.client-secret=secretId",
         "spring.security.oauth2.client.registration.naver.scope=name, email, profile_image",
         "spring.security.oauth2.client.registration.naver.authorization-grant-type=authorization_code",
-        "spring.security.oauth2.client.registration.naver.redirectUri=http://localhost:8080/login/oauth2/code/naver"
+        "spring.security.oauth2.client.registration.naver.redirectUri=http://localhost:8080/login/oauth2/code/naver",
+        "spring.security.oauth2.client.provider.naver.authorization-uri=https://nid.naver.com/oauth2.0/authorize",
+        "spring.security.oauth2.client.provider.naver.token-uri=https://nid.naver.com/oauth2.0/token",
+        "security.oauth2.client.provider.naver.user-info-uri=https://openapi.naver.com/v1/nid/me",
+        "spring.security.oauth2.client.provider.naver.user-name-attribute=response"
+
 })
 public abstract class IntegrationTestSupport {
     protected static final Logger log = LogManager.getLogger(IntegrationTestSupport.class);
