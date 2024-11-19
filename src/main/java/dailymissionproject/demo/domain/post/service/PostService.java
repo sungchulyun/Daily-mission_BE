@@ -28,7 +28,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.DayOfWeek;
@@ -75,8 +74,6 @@ public class PostService {
         isParticipating(findUser, mission);
 
         Post post = requestDto.toEntity(findUser, mission);
-        postRepository.save(post);
-
         postRepository.save(post);
 
         return PostSaveResponseDto.builder()
