@@ -28,9 +28,9 @@ public abstract class IntegrationTestSupport {
 
      static {
         MARIADB_CONTAINER = new MariaDBContainer<>(DockerImageName.parse("mariadb:10.11"))
-                .withDatabaseName("test")
-                .withUsername("testuser")
-                .withPassword("testpass");
+                .withDatabaseName("dailymission")
+                .withUsername("root")
+                .withPassword("root");
 
                 MARIADB_CONTAINER.start();
     }
