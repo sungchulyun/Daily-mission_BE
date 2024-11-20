@@ -340,7 +340,6 @@ public class MissionObjectFixture {
                 .nickname("yoonsu")
                 .startDate(LocalDate.now().minusDays(10))
                 .endDate(LocalDate.now().plusDays(10))
-                .participating(true)
                 .build();
 
         MissionAllListResponseDto allMission_2 = MissionAllListResponseDto.builder()
@@ -351,7 +350,6 @@ public class MissionObjectFixture {
                 .nickname("sungchul")
                 .startDate(LocalDate.now().minusDays(7))
                 .endDate(LocalDate.now().plusDays(7))
-                .participating(true)
                 .build();
 
         List<MissionAllListResponseDto> listResponse = List.of(allMission_1, allMission_2);
@@ -392,19 +390,5 @@ public class MissionObjectFixture {
         mission_1.setParticipants(participantList);
 
         return List.of(mission_1);
-    }
-
-    public static Expression<Boolean> getParticipantExpression(QMission mission, Long userId) {
-        QParticipant participant = QParticipant.participant;
-
-        return Expressions.as(
-                JPAExpressions
-                        .selectOne()
-                        .from(participant)
-                        .where(participant.mission.eq(mission)
-                                .and(participant.user.id.eq(userId)))
-                        .isNotNull(),
-                "participating"
-        );
     }
 }

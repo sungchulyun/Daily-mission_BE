@@ -40,15 +40,12 @@ public class MissionAllListResponseDto {
     @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate endDate;
 
-    @Schema(description = "미션 참여중 여부")
-    private boolean participating;
-
     @Schema(description = "미션 종료 여부")
     private boolean ended;
 
     @Builder
     MissionAllListResponseDto(Long id, String title, String content, String imageUrl, String nickname
-            , LocalDate startDate, LocalDate endDate, boolean participating, boolean ended) {
+            , LocalDate startDate, LocalDate endDate, boolean ended) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -56,7 +53,6 @@ public class MissionAllListResponseDto {
         this.nickname = nickname;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.participating = participating;
         this.ended = ended;
     }
 }
