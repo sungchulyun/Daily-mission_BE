@@ -393,18 +393,4 @@ public class MissionObjectFixture {
 
         return List.of(mission_1);
     }
-
-    public static Expression<Boolean> getParticipantExpression(QMission mission, Long userId) {
-        QParticipant participant = QParticipant.participant;
-
-        return Expressions.as(
-                JPAExpressions
-                        .selectOne()
-                        .from(participant)
-                        .where(participant.mission.eq(mission)
-                                .and(participant.user.id.eq(userId)))
-                        .isNotNull(),
-                "participating"
-        );
-    }
 }
