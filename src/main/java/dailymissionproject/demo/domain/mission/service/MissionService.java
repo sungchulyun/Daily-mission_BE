@@ -56,7 +56,6 @@ public class MissionService {
      * @return MissionDetailResponseDto
      */
     @Transactional(readOnly = true)
-    @Cacheable(value = "mission", key = "'info-' + #id")
     public MissionDetailResponseDto findById(Long id){
 
         Mission findMission = missionRepository.findByIdAndDeletedIsFalse(id)
@@ -80,14 +79,12 @@ public class MissionService {
      * 미션 생성할 때 사용하는 메서드
      * @param user : 로그인한 유저 객체
      * @param missionReqDto : 생성할 미션 정보가 담긴 DTO
-     * @param file : 생성할 미션의 썸네일 이미지
      * @return MissionSaveResponseDto
      * @throws IOException
      */
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "missionLists", allEntries = true),
-            @CacheEvict(value = "mission", allEntries = true)
     })
     public MissionSaveResponseDto save(CustomOAuth2User user, MissionSaveRequestDto missionReqDto) throws IOException {
 
@@ -121,7 +118,6 @@ public class MissionService {
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "missionLists", allEntries = true),
-            @CacheEvict(value = "mission", allEntries = true)
     })
     public MissionUpdateResponseDto update(Long id, CustomOAuth2User user, MissionUpdateRequestDto request){
 
@@ -159,7 +155,6 @@ public class MissionService {
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "missionLists", allEntries = true),
-            @CacheEvict(value = "mission", allEntries = true)
     })
     public boolean delete(Long id, CustomOAuth2User user){
         User findUser = userRepository.findById(user.getId())
