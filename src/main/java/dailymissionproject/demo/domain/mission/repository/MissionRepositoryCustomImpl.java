@@ -46,8 +46,7 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
                         mission.imageUrl,
                         mission.user.nickname,
                         mission.startDate,
-                        mission.endDate,
-                        participatingExpression(mission, userId)
+                        mission.endDate
                 ))
                 .from(mission)
                 .where(mission.deleted.isFalse().and(mission.ended.isFalse()))
@@ -78,8 +77,7 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
                         mission.imageUrl,
                         mission.user.nickname,
                         mission.startDate,
-                        mission.endDate,
-                        participatingExpression(mission, userId)
+                        mission.endDate
                 ))
                 .from(mission)
                 .where(mission.deleted.isFalse().and(mission.ended.isFalse()))
@@ -112,33 +110,13 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
                         mission.user.nickname,
                         mission.startDate,
                         mission.endDate,
-                        mission.ended,
-                        participatingExpression(mission, userId)
+                        mission.ended
                         ))
                 .from(mission)
                 .orderBy(mission.createdTime.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
-    }
-
-    /**
-     * 참여 여부를 확인하는 Expression 메서드
-     * @param mission
-     * @param userId
-     */
-    public Expression<Boolean> participatingExpression(QMission mission, Long userId){
-        QParticipant participant = QParticipant.participant;
-
-        return Expressions.as(
-                JPAExpressions
-                        .selectOne()
-                        .from(participant)
-                        .where(participant.mission.eq(mission)
-                                .and(participant.user.id.eq(userId)))
-                        .isNotNull(),
-                "participating"
-        );
     }
 
     /**

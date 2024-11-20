@@ -155,8 +155,7 @@ class MissionRepositoryTest {
                             mission.imageUrl,
                             mission.user.nickname,
                             mission.startDate,
-                            mission.endDate,
-                            MissionObjectFixture.getParticipantExpression(mission, userId)
+                            mission.endDate
                     ))
                     .from(mission)
                     .where(mission.deleted.isFalse().and(mission.ended.isFalse()))
@@ -193,8 +192,7 @@ class MissionRepositoryTest {
                             mission.imageUrl,
                             mission.user.nickname,
                             mission.startDate,
-                            mission.endDate,
-                            MissionObjectFixture.getParticipantExpression(mission, userId)
+                            mission.endDate
                     ))
                     .from(mission)
                     .where(mission.createdTime.between(monthBefore, now))
@@ -230,8 +228,7 @@ class MissionRepositoryTest {
                             mission.user.nickname,
                             mission.startDate,
                             mission.endDate,
-                            mission.ended,
-                            MissionObjectFixture.getParticipantExpression(mission, userId)
+                            mission.ended
                     ))
                     .from(mission)
                     .orderBy(mission.createdTime.desc())
