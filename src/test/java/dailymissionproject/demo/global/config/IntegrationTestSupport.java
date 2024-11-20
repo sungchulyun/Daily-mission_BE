@@ -43,8 +43,9 @@ import org.testcontainers.utility.DockerImageName;
         "spring.security.oauth2.client.provider.naver.authorization-uri=https://nid.naver.com/oauth2.0/authorize",
         "spring.security.oauth2.client.provider.naver.token-uri=https://nid.naver.com/oauth2.0/token",
         "security.oauth2.client.provider.naver.user-info-uri=https://openapi.naver.com/v1/nid/me",
-        "spring.security.oauth2.client.provider.naver.user-name-attribute=response"
-
+        "spring.security.oauth2.client.provider.naver.user-name-attribute=response",
+        "spring.data.redis.host=ec2-43-201-86-45.ap-northeast-2.compute.amazonaws.com",
+        "spring.data.redis.port=6379"
 })
 public abstract class IntegrationTestSupport {
     protected static final Logger log = LogManager.getLogger(IntegrationTestSupport.class);
