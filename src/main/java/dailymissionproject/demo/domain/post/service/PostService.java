@@ -104,7 +104,6 @@ public class PostService {
      * @return
      */
     @Transactional(readOnly = true)
-    @Cacheable(value = "postLists", key = "'user-' + #user.getId() +#page")
     public PageResponseDto findAllByUser(CustomOAuth2User user, Pageable pageable){
 
         User findUser = userRepository.findById(user.getId())

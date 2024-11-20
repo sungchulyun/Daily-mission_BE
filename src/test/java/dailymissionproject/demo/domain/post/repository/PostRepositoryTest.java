@@ -149,8 +149,6 @@ class PostRepositoryTest {
                             post.id.as("id"),
                             post.mission.id.as("missionId"),
                             post.mission.title.as("missionTitle"),  // 필요한 필드 이름을 DTO와 맞춤
-                            post.user.nickname.as("nickname"),
-                            post.user.imageUrl.as("userImageUrl"),
                             post.title.as("title"),
                             post.content.as("content"),
                             post.imageUrl.as("imageUrl"),
