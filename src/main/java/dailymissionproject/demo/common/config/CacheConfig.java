@@ -27,9 +27,4 @@ public class CacheConfig extends CachingConfigurerSupport {
                 .cacheDefaults(redisCacheConfiguration)
                 .build();
     }
-
-    @Override
-    public CacheErrorHandler errorHandler() {
-        return new CustomCacheErrorHandler();
-    }
 }
