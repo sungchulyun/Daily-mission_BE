@@ -30,12 +30,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Make application.properties
-        run: |
-          cd ./src/main/resources
-          touch ./application.properties
-          echo "${{ secrets.APPLICATION }}" > ./application.properties
-
       # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
       # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
       - name: Setup Gradle
@@ -63,6 +57,11 @@ jobs:
         if: ${{ always() }}  # 'always' : 테스트 실패해도 Result 출력
         with:
           files: build/test-results/**/*.xml
+
+      - name: Prepare application.properties for deployment
+        run : |
+          touch ./src/main/resources/application.properties
+          echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
 
       - name: Gradle Build Action
         uses: gradle/gradle-build-action@v2.6.0
