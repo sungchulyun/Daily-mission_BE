@@ -14,10 +14,14 @@ public class PostUpdateRequestDto {
     @Schema(description = "포스트 내용")
     private final String content;
 
+    @Schema(description = "포스트 이미지")
+    private final String imageUrl;
+
     @Builder
-    public PostUpdateRequestDto(String title, String content) {
+    public PostUpdateRequestDto(String title, String content, String imageUrl) {
         this.title = title;
         this.content = content;
+        this.imageUrl = imageUrl;
     }
 
 }

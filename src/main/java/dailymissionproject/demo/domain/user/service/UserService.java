@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Optional;
 
-import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.NICKNAME_ALREADY_EXITS;
+import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.NICKNAME_ALREADY_EXISTS;
 import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
 
 @Service
@@ -51,37 +51,24 @@ public class UserService {
     /**
      * 유저 정보 업데이트 메서드
      * @param
-     * @param file
      * @return UserUpdateResponseDto
      */
     @Transactional
-    public UserUpdateResponseDto updateProfile(CustomOAuth2User user, UserUpdateRequestDto request, MultipartFile file) throws IOException {
+    public UserUpdateResponseDto updateProfile(CustomOAuth2User user, UserUpdateRequestDto request) throws IOException {
 
         User findUser = userRepository.findById(user.getId()).orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         Optional<User> hasNicknameUser = userRepository.findByNickname(request.getNickname());
         // 변경하려는 닉네임이 사용중이면, 에러를 반환한다.
-        if(hasNicknameUser.isPresent()) throw new UserException(NICKNAME_ALREADY_EXITS);
+        if(hasNicknameUser.isPresent()) throw new UserException(NICKNAME_ALREADY_EXISTS);
 
-        //수정할 프로필 이미지 존재 유무 검증
-        if(file != null){
-            String updatedImageUrl = imageService.uploadUserS3(file, findUser.getUsername());
-
-            findUser.setImageUrl(updatedImageUrl);
-            findUser.setNickname(request.getNickname());
-
-            return UserUpdateResponseDto.builder()
-                    .username(findUser.getUsername())
-                    .nickname(findUser.getNickname())
-                    .imageUrl(findUser.getImageUrl())
-                    .build();
-        }
-
-        findUser.setNickname(request.getNickname());
+        Optional.ofNullable(request.getImageUrl()).ifPresent(findUser::setImageUrl);
+        Optional.ofNullable(request.getNickname()).ifPresent(findUser::setNickname);
 
         return UserUpdateResponseDto.builder()
                 .username(findUser.getUsername())
                 .nickname(findUser.getNickname())
+                .imageUrl(findUser.getImageUrl())
                 .build();
     }
 }

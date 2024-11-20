@@ -1,20 +1,8 @@
 package dailymissionproject.demo.domain.mission.config;
 
-import dailymissionproject.demo.domain.mission.service.MissionService;
-import dailymissionproject.demo.domain.mission.dto.response.MissionAllListResponseDto;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
-import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.transaction.PlatformTransactionManager;
-import java.util.ArrayList;
-import java.util.List;
+
+/*
+프로덕션 환경에서의 배치를 미룬다.
 
 @Configuration
 @Slf4j
@@ -58,3 +46,6 @@ public class MissionBatchConfig {
                 build();
     }
 }
+
+
+ */

@@ -1,29 +1,19 @@
 package dailymissionproject.demo.domain.mission.config;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.batch.core.*;
-import org.springframework.batch.core.configuration.JobRegistry;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.launch.NoSuchJobException;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
-import org.springframework.batch.core.repository.JobRestartException;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-import java.time.LocalDate;
 
+/*
 @Component
 @RequiredArgsConstructor
 public class MissionBatchScheduler {
 
-    private final JobLauncher jobLauncher;
-    private final JobRegistry jobRegistry;
+    private final JobLauncher endJobLauncher;
+    private final JobRegistry endJobRegistry;
 
     /*
     @Bean
     public JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor(){
         JobRegistryBeanPostProcessor jobProcessor = new JobRegistryBeanPostProcessor();
-        jobProcessor.setJobRegistry(jobRegistry);
+        jobProcessor.setJobRegistry(endJobRegistry);
         return jobProcessor;
     }
 
@@ -36,7 +26,7 @@ public class MissionBatchScheduler {
     public void runJob(){
         LocalDate time = LocalDate.now();
         try {
-            Job job = jobRegistry.getJob("endJob");
+            Job job = endJobRegistry.getJob("endJob");
             JobParametersBuilder jobParam = new JobParametersBuilder().addLocalDate("time", time);
             jobLauncher.run(job, jobParam.toJobParameters());
         } catch (NoSuchJobException |
@@ -48,5 +38,7 @@ public class MissionBatchScheduler {
         }
     }
 
-        */
+
 }
+
+*/

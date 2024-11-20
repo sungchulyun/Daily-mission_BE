@@ -79,7 +79,7 @@ public class PostObjectFixture {
                 .user(getUserFixture())
                 .title("TITLE")
                 .content("CONTENT")
-                .imgUrl("IMAGE")
+                .imageUrl("IMAGE")
                 .build();
     }
 
@@ -92,6 +92,7 @@ public class PostObjectFixture {
                 .missionId(1L)
                 .title("TITLE")
                 .content("CONTENT")
+                .imageUrl("IMAGE")
                 .build();
     }
 
@@ -99,6 +100,7 @@ public class PostObjectFixture {
         return PostSaveResponseDto.builder()
                 .title("TITLE")
                 .content("CONTENT")
+                .imageUrl("IMAGE")
                 .build();
     }
 
@@ -175,8 +177,9 @@ public class PostObjectFixture {
 
     public static PostUpdateRequestDto getPostUpdateRequest(){
         return PostUpdateRequestDto.builder()
-                .title("TITLE")
+                .title("Modified_TITLE")
                 .content("CONTENT")
+                .imageUrl("IMAGE")
                 .build();
     }
 

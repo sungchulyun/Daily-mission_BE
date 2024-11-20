@@ -33,6 +33,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -94,15 +95,13 @@ class MissionServiceTest {
             @DisplayName("미션을 생성할 수 있다.")
             @Test
             void mission_save_success() throws IOException {
-                //given
-                MockMultipartFile file = new MockMultipartFile("file", fileName, contentType, "test data".getBytes(StandardCharsets.UTF_8));
-
                 when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
                 when(participantRepository.save(MissionObjectFixture.getParticipant())).thenReturn(MissionObjectFixture.getParticipant());
 
-                MissionSaveResponseDto missionSaveResponse = missionService.save(oAuth2User, missionSaveRequest, file);
+                //when
+                MissionSaveResponseDto missionSaveResponse = missionService.save(oAuth2User, missionSaveRequest);
 
-                verify(imageService, times(1)).uploadMissionS3(any(), any());
+                //then
                 assertEquals(missionSaveResponse.getCredential(), mission.getCredential());
             }
 
@@ -123,7 +122,7 @@ class MissionServiceTest {
                         .week(new Week(false, true, true, true, true, true, false))
                         .build();
 
-                assertThrows(MissionException.class, () -> missionService.save(oAuth2User, missionSaveRequestDto, file));
+                assertThrows(MissionException.class, () -> missionService.save(oAuth2User, missionSaveRequestDto));
             }
 
             @DisplayName("미션 시작일자가 미션 종료일자보다 이전 날짜라면 미션을 생성할 수 없다.")
@@ -143,7 +142,7 @@ class MissionServiceTest {
                         .week(new Week(false, true, true, true, true, true, false))
                         .build();
 
-                assertThrows(MissionException.class, () -> missionService.save(oAuth2User, missionSaveRequestDto, file));
+                assertThrows(MissionException.class, () -> missionService.save(oAuth2User, missionSaveRequestDto));
             }
         }
 
@@ -173,7 +172,7 @@ class MissionServiceTest {
             @Test
             @DisplayName("인기 미션 리스트를 조회할 수 있다.")
             void test_mission_read_hot_list_success() {
-                when(missionRepository.findAllByParticipantSize(any(), anyLong())).thenReturn(MissionObjectFixture.getHotMissionListPageable());
+                when(missionRepository.findAllByParticipantSize(pageable, 1L)).thenReturn(MissionObjectFixture.getHotMissionListPageable());
 
                 PageResponseDto pageResponseDto = missionService.findHotList(pageable, oAuth2User);
                 List<MissionHotListResponseDto> list = (List<MissionHotListResponseDto>) pageResponseDto.content();
@@ -185,7 +184,7 @@ class MissionServiceTest {
             @Test
             @DisplayName("신규 미션 리스트를 조회할 수 있다.")
             void test_mission_read_new_list_success() {
-                when(missionRepository.findAllByCreatedInMonth(any(), anyLong())).thenReturn(MissionObjectFixture.getNewMissionListPageable());
+                when(missionRepository.findAllByCreatedInMonth(pageable, 1L)).thenReturn(MissionObjectFixture.getNewMissionListPageable());
 
                 PageResponseDto pageResponseDto = missionService.findNewList(pageable, oAuth2User);
                 List<MissionNewListResponseDto> list = (List<MissionNewListResponseDto>) pageResponseDto.content();
@@ -197,7 +196,7 @@ class MissionServiceTest {
             @Test
             @DisplayName("전체 미션 리스트를 조회할 수 있다.")
             void test_mission_read_all_list_success() {
-                when(missionRepository.findAllByCreatedDate(any(), anyLong())).thenReturn(MissionObjectFixture.getAllMissionListPageable());
+                when(missionRepository.findAllByCreatedDate(pageable, 1L)).thenReturn(MissionObjectFixture.getAllMissionListPageable());
 
                 PageResponseDto pageResponseDto = missionService.findAllList(pageable, oAuth2User);
                 List<MissionAllListResponseDto> list = (List<MissionAllListResponseDto>) pageResponseDto.content();

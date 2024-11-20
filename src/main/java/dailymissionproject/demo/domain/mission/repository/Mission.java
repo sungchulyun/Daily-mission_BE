@@ -27,7 +27,7 @@ import static dailymissionproject.demo.domain.mission.exception.MissionException
 @Getter
 public class Mission extends BaseTimeEntity {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "mission_id")
     private Long id;
 

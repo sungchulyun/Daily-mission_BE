@@ -19,7 +19,7 @@ import java.util.Objects;
 @Table(name = "User")
 public class User extends BaseTimeEntity {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
 

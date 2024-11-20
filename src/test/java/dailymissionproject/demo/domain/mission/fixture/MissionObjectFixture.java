@@ -97,6 +97,7 @@ public class MissionObjectFixture {
         return MissionSaveRequestDto.builder()
                 .title("TITLE")
                 .content("CONTENT")
+                .imageUrl("THUMBNAIL.jpg")
                 .hint("HINT")
                 .credential("CREDENTIAL")
                 .startDate(LocalDate.now())
@@ -141,6 +142,17 @@ public class MissionObjectFixture {
         return MissionUpdateRequestDto.builder()
                 .hint("HINT")
                 .credential("CREDENTIAL")
+                .build();
+    }
+
+    public static MissionUpdateRequestDto getNullUpdateRequest(){
+        return MissionUpdateRequestDto.builder()
+                .build();
+    }
+
+    public static MissionUpdateRequestDto getHintUpdateRequest(){
+        return MissionUpdateRequestDto.builder()
+                .hint("Modified_HINT")
                 .build();
     }
 

@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.*;
 import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
@@ -88,16 +89,12 @@ public class MissionService {
             @CacheEvict(value = "missionLists", allEntries = true),
             @CacheEvict(value = "mission", allEntries = true)
     })
-    public MissionSaveResponseDto save(CustomOAuth2User user, MissionSaveRequestDto missionReqDto, MultipartFile file) throws IOException {
+    public MissionSaveResponseDto save(CustomOAuth2User user, MissionSaveRequestDto missionReqDto) throws IOException {
 
         User findUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
-        String imageUrl = imageService.uploadMissionS3(file, missionReqDto.getTitle());
-
         Mission mission = missionReqDto.toEntity(findUser);
-
-        mission.setImageUrl(imageUrl);
 
         mission.isValidStartDate(LocalDate.now());
 
@@ -143,17 +140,8 @@ public class MissionService {
             throw new MissionException(UPDATE_INPUT_IS_EMPTY);
         }
 
-        if(request.getCredential() != null){
-            findMission.setCredential(request.getCredential());
-        }
-
-        if(request.getHint() != null){
-            findMission.setHint(request.getHint());
-        }
-
-        //Predicate<MissionUpdateRequestDto> predicate = (MissionUpdateRequestDto dto) -> Objects.isNull(dto.getHint()) &&
-
-        //missionRepository.save(findMission);
+        Optional.ofNullable(request.getCredential()).ifPresent(findMission::setCredential);
+        Optional.ofNullable(request.getHint()).ifPresent(findMission::setHint);
 
         return MissionUpdateResponseDto.builder()
                 .hint(request.getHint())

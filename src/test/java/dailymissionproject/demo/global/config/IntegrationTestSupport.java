@@ -1,28 +1,78 @@
 package dailymissionproject.demo.global.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dailymissionproject.demo.domain.auth.jwt.JWTUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.MariaDBContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 @Testcontainers
-@SpringBootTest
-@ActiveProfiles("test")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Tag("integration")
+@ActiveProfiles("integration-test")
+@AutoConfigureMockMvc
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class IntegrationTestSupport {
+@TestPropertySource(properties = {
+        "cloud.aws.credentials.accessKey=TestKey",
+        "cloud.aws.credentials.secretKey=TestKey",
+        "cloud.aws.s3.bucket=TestKeyBucket",
+        "cloud.aws.region.static=ap-northeast-2",
+        "spring.jwt.secret=kdmaskltalksenklawsadasdasdasdjmelq;",
+        "cloud.aws.s3.bucket.url=bucketTest",
+        "spring.security.oauth2.client.registration.google.client-id=clientId",
+        "spring.security.oauth2.client.registration.google.client-secret=secretId",
+        "spring.security.oauth2.client.registration.google.authorization-grant-type=authorization_code",
+        "spring.security.oauth2.client.registration.google.scope=profile, email",
+        "spring.security.oauth2.client.registration.naver.client-name=naver",
+        "spring.security.oauth2.client.registration.naver.client-id=clientId",
+        "spring.security.oauth2.client.registration.naver.client-secret=secretId",
+        "spring.security.oauth2.client.registration.naver.scope=name, email, profile_image",
+        "spring.security.oauth2.client.registration.naver.authorization-grant-type=authorization_code",
+        "spring.security.oauth2.client.registration.naver.redirectUri=http://localhost:8080/login/oauth2/code/naver",
+        "spring.security.oauth2.client.provider.naver.authorization-uri=https://nid.naver.com/oauth2.0/authorize",
+        "spring.security.oauth2.client.provider.naver.token-uri=https://nid.naver.com/oauth2.0/token",
+        "security.oauth2.client.provider.naver.user-info-uri=https://openapi.naver.com/v1/nid/me",
+        "spring.security.oauth2.client.provider.naver.user-name-attribute=response",
+        "spring.data.redis.host=ec2-43-201-86-45.ap-northeast-2.compute.amazonaws.com",
+        "spring.data.redis.port=6379"
+})
+public abstract class IntegrationTestSupport {
+    protected static final Logger log = LogManager.getLogger(IntegrationTestSupport.class);
+    protected static MariaDBContainer<?> MARIADB_CONTAINER;
 
-    @Container
-    public static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>("mariadb:10.11")
-            .withReuse(false);
+     static {
+        MARIADB_CONTAINER = new MariaDBContainer<>(DockerImageName.parse("mariadb:10.11"))
+                .withDatabaseName("test")
+                .withUsername("testuser")
+                .withPassword("testpass");
 
-    @DynamicPropertySource
-    static void setProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", () -> mariaDBContainer.getJdbcUrl());
-        registry.add("spring.datasource.username", () -> mariaDBContainer.getUsername());
-        registry.add("spring.datasource.password", () -> mariaDBContainer.getPassword());
+                MARIADB_CONTAINER.start();
+    }
+
+    @Autowired
+    protected ObjectMapper objectMapper;
+    @Autowired
+    protected MockMvc mockMvc;
+    @Autowired
+    protected JWTUtil jwtUtil;
+    @Autowired
+    private DataInitializer dataInitializer;
+
+    @AfterEach
+    void deleteAll(){
+        log.info("데이터 초기화 dataInitializer.deleteAll() 시작");
+        dataInitializer.deleteAll();
+        log.info("데이터 초기화 dataInitializer.deleteAll() 종료");
     }
 }

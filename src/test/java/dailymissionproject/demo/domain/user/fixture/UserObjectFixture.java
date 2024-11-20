@@ -41,6 +41,14 @@ public class UserObjectFixture {
      */
     public static UserUpdateRequestDto getUserUpdateRequest(){
         return UserUpdateRequestDto.builder()
+                .imageUrl("https://integration-test-profile-image.jpeg")
+                .nickname("TestSungchul")
+                .build();
+    }
+
+    public static UserUpdateRequestDto getDuplicateNicknameUpdateRequest(){
+        return UserUpdateRequestDto.builder()
+                .imageUrl("https://lh3.googleusercontent.com/a/ACg8ocLuIomy21grZAe-_HDhHm7HDPbL6R9_5a1JY_i3o4-KutpPdw=s96-c")
                 .nickname("sungchul")
                 .build();
     }
@@ -51,9 +59,9 @@ public class UserObjectFixture {
      */
     public static UserUpdateResponseDto getUserUpdateResponse(){
         return UserUpdateResponseDto.builder()
-                .username("google 1923819273")
-                .nickname("sungchul")
-                .imageUrl("https://AWS-s3/modifedImages.jpg")
+                .username("naver ldoqdcDgsM0fZ-Q9zI44qCCg2lF4Ugno3k70nGIYmfA")
+                .nickname("TestSungchul")
+                .imageUrl("https://integration-test-profile-image.jpeg")
                 .build();
     }
 }

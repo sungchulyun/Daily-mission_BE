@@ -28,7 +28,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.DayOfWeek;
@@ -55,7 +54,6 @@ public class PostService {
      * 포스트를 작성할 때 사용하는 메서드
      * @param user
      * @param requestDto
-     * @param file
      * @return
      * @throws IOException
      */
@@ -64,7 +62,7 @@ public class PostService {
             @CacheEvict(value = "postLists", allEntries = true),
             @CacheEvict(value = "posts", allEntries = true)
     })
-    public PostSaveResponseDto save(CustomOAuth2User user, PostSaveRequestDto requestDto, MultipartFile file) throws IOException {
+    public PostSaveResponseDto save(CustomOAuth2User user, PostSaveRequestDto requestDto) throws IOException {
 
         Mission mission = missionRepository.findByIdAndDeletedIsFalse(requestDto.getMissionId())
                 .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
@@ -75,16 +73,13 @@ public class PostService {
         // 미션 참여자인지 검증
         isParticipating(findUser, mission);
 
-        String imgUrl = imageService.uploadPostS3(file, requestDto.getTitle());
-
         Post post = requestDto.toEntity(findUser, mission);
-        post.setImageUrl(imgUrl);
-
         postRepository.save(post);
 
         return PostSaveResponseDto.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
+                .imageUrl(post.getImageUrl())
                 .build();
     }
 
@@ -183,7 +178,6 @@ public class PostService {
     /**
      * 작성한 포스트를 수정할 때 사용하는 메서드
      * @param id
-     * @param file
      * @param requestDto
      * @return
      * @throws IOException
@@ -194,7 +188,7 @@ public class PostService {
             @CacheEvict(value = "postLists", allEntries = true),
             @CacheEvict(value = "posts", allEntries = true)
     })
-    public PostUpdateResponseDto update(Long id, MultipartFile file, PostUpdateRequestDto requestDto, CustomOAuth2User user) throws IOException {
+    public PostUpdateResponseDto update(Long id, PostUpdateRequestDto requestDto, CustomOAuth2User user) throws IOException {
 
         Post findPost = postRepository.findById(id)
                 .orElseThrow(() -> new PostException(POST_NOT_FOUND));
@@ -205,13 +199,9 @@ public class PostService {
         // 해당 포스트의 작성자가 맞는지 검증
         isPostWriter(findPost, findUser);
 
-        if(file != null){
-            String updateImageUrl = imageService.uploadPostS3(file, requestDto.getTitle());
-            findPost.setImageUrl(updateImageUrl);
-        }
-
         Optional.ofNullable(requestDto.getTitle()).ifPresent(findPost::setTitle);
         Optional.ofNullable(requestDto.getContent()).ifPresent(findPost::setContent);
+        Optional.ofNullable(requestDto.getImageUrl()).ifPresent(findPost::setImageUrl);
 
         return PostUpdateResponseDto.builder()
                 .title(findPost.getTitle())
