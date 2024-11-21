@@ -20,6 +20,7 @@ import dailymissionproject.demo.domain.post.repository.PostRepository;
 import dailymissionproject.demo.domain.user.exception.UserException;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -60,7 +61,6 @@ public class PostService {
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "postLists", allEntries = true),
-            @CacheEvict(value = "posts", allEntries = true)
     })
     public PostSaveResponseDto save(CustomOAuth2User user, PostSaveRequestDto requestDto) throws IOException {
 
@@ -89,7 +89,6 @@ public class PostService {
      * @return
      */
     @Transactional(readOnly = true)
-    //@Cacheable(value = "posts", key = "#id")
     public PostDetailResponseDto findById(Long id){
 
         Post post = postRepository.findById(id).orElseThrow(() -> new PostException(POST_NOT_FOUND));
@@ -124,8 +123,20 @@ public class PostService {
      */
     @Transactional(readOnly = true)
     @Cacheable(value = "postLists", key = "'mission-' + #id")
+    @CircuitBreaker(name = "redis-circuit-breaker", fallbackMethod = "findAllByMissionFallBack")
     public PageResponseDto findAllByMission(Long id, Pageable pageable){
 
+        Mission mission = missionRepository.findById(id)
+                .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
+
+        Slice<PostMissionListResponseDto> missionPostList = postRepository.findAllByMission(pageable, mission);
+
+        PageResponseDto pageResponseDto = new PageResponseDto<>(missionPostList.getContent(), missionPostList.hasNext());
+
+        return pageResponseDto;
+    }
+
+    public PageResponseDto findAllByMissionFallBack(Long id, Pageable pageable, Throwable e){
         Mission mission = missionRepository.findById(id)
                 .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
 
@@ -183,9 +194,7 @@ public class PostService {
      */
     @Transactional
     @Caching(evict = {
-            //전체 포스트
             @CacheEvict(value = "postLists", allEntries = true),
-            @CacheEvict(value = "posts", allEntries = true)
     })
     public PostUpdateResponseDto update(Long id, PostUpdateRequestDto requestDto, CustomOAuth2User user) throws IOException {
 
@@ -195,7 +204,6 @@ public class PostService {
         User findUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
-        // 해당 포스트의 작성자가 맞는지 검증
         isPostWriter(findPost, findUser);
 
         Optional.ofNullable(requestDto.getTitle()).ifPresent(findPost::setTitle);
@@ -217,7 +225,6 @@ public class PostService {
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "postLists", allEntries = true),
-            @CacheEvict(value = "posts", allEntries = true)
     })
     public boolean deleteById(Long id, CustomOAuth2User user){
         Post findPost = postRepository.findById(id)
