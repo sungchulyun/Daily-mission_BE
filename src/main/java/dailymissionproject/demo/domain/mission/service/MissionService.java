@@ -16,6 +16,7 @@ import dailymissionproject.demo.domain.participant.repository.ParticipantReposit
 import dailymissionproject.demo.domain.user.exception.UserException;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -23,15 +24,12 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -183,8 +181,16 @@ public class MissionService {
      */
     @Transactional(readOnly = true)
     @Cacheable(value = "missionLists", key = "'hot-' + 'page-' + #pageable.getPageNumber() + 'size-' + #pageable.getPageSize()")
+    @CircuitBreaker(name = "redis-circuit-breaker", fallbackMethod = "findHotListFallBack")
     public PageResponseDto findHotList(Pageable pageable, CustomOAuth2User user){
+        Slice<MissionHotListResponseDto> responseList = missionRepository.findAllByParticipantSize(pageable, user.getId());
 
+        PageResponseDto pageResponseDto = new PageResponseDto(responseList.getContent(), responseList.hasNext());
+
+        return pageResponseDto;
+    }
+
+    public PageResponseDto findHotListFallBack(Pageable pageable, CustomOAuth2User user, Throwable e){
         Slice<MissionHotListResponseDto> responseList = missionRepository.findAllByParticipantSize(pageable, user.getId());
 
         PageResponseDto pageResponseDto = new PageResponseDto(responseList.getContent(), responseList.hasNext());
@@ -200,8 +206,16 @@ public class MissionService {
      */
     @Transactional(readOnly = true)
     @Cacheable(value = "missionLists", key = "'new-' + 'page-' + #pageable.getPageNumber() + 'size-' + #pageable.getPageSize()")
+    @CircuitBreaker(name = "redis-circuit-breaker", fallbackMethod = "findNewListFallBack")
     public PageResponseDto findNewList(Pageable pageable, CustomOAuth2User user){
+        Slice<MissionNewListResponseDto> responseList = missionRepository.findAllByCreatedInMonth(pageable, user.getId());
 
+        PageResponseDto pageResponseDto = new PageResponseDto(responseList.getContent(), responseList.hasNext());
+
+        return pageResponseDto;
+    }
+
+    public PageResponseDto findNewListFallBack(Pageable pageable, CustomOAuth2User user, Throwable e){
         Slice<MissionNewListResponseDto> responseList = missionRepository.findAllByCreatedInMonth(pageable, user.getId());
 
         PageResponseDto pageResponseDto = new PageResponseDto(responseList.getContent(), responseList.hasNext());
@@ -217,13 +231,18 @@ public class MissionService {
      */
     @Transactional(readOnly = true)
     @Cacheable(value = "missionLists", key = "'all-' + 'page-' + #pageable.getPageNumber() + 'size-' + #pageable.getPageSize()")
+    @CircuitBreaker(name = "redis-circuit-breaker", fallbackMethod = "findAllListFallBack")
     public PageResponseDto findAllList(Pageable pageable, CustomOAuth2User user){
 
         Slice<MissionAllListResponseDto> responseList = missionRepository.findAllByCreatedDate(pageable, user.getId());
 
-        if (Objects.isNull(responseList)) {
-            responseList = new SliceImpl<>(Collections.emptyList(), pageable, false);
-        }
+        PageResponseDto pageResponseDto = new PageResponseDto(responseList.getContent(), responseList.hasNext());
+
+        return pageResponseDto;
+    }
+
+    public PageResponseDto findAllListFallBack(Pageable pageable, CustomOAuth2User user, Throwable e){
+        Slice<MissionAllListResponseDto> responseList = missionRepository.findAllByCreatedDate(pageable, user.getId());
 
         PageResponseDto pageResponseDto = new PageResponseDto(responseList.getContent(), responseList.hasNext());
 

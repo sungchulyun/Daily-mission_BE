@@ -125,4 +125,29 @@ class PostIntegrationTest extends IntegrationTestSupport {
             assertEquals(postUpdateRequest.getTitle(), savedPost.getTitle());
         }
     }
+
+    @Sql(scripts = {
+            "/02-init-data.sql"
+    })
+    @Nested
+    @DisplayName("[Integration] 포스트 조회 통합 테스트")
+    class PostReadIntegrationTest extends IntegrationTestSupport{
+
+        @Test
+        @DisplayName("미션별 포스트 조회에 성공한다.")
+        void test_1() throws Exception {
+            Long missionId = 1L;
+
+            mockMvc.perform(get("/api/v1/post/mission/{missionId}", missionId)
+                    .with(csrf())
+                    .cookie(cookie)
+            )
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.code").value(200))
+                    .andExpect(jsonPath("$.data").exists())
+                    .andReturn();
+
+        }
+    }
 }
