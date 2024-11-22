@@ -1,4 +1,4 @@
-package dailymissionproject.demo.domain.like.dto.request;
+package dailymissionproject.demo.domain.like.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -6,14 +6,17 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(force = true)
-public class LikeRequestDto {
+public class LikesResponseDto {
+
+    private final Long likeId;
 
     private final Long postId;
 
     private final Long userId;
 
     @Builder
-    public LikeRequestDto(Long postId, Long userId) {
+    public LikesResponseDto(Long likeId, Long postId, Long userId) {
+        this.likeId = likeId;
         this.postId = postId;
         this.userId = userId;
     }
