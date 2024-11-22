@@ -1,6 +1,5 @@
 package dailymissionproject.demo.domain.like.service;
 
-import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.like.dto.request.LikesRequestDto;
 import dailymissionproject.demo.domain.like.dto.response.LikesResponseDto;
 import dailymissionproject.demo.domain.like.exception.LikesException;
@@ -20,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class likesService {
+public class LikesService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
