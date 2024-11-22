@@ -8,15 +8,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(force = true)
 public class LikesResponseDto {
 
-    private final Long likeId;
-
     private final Long postId;
 
     private final Long userId;
 
     @Builder
     public LikesResponseDto(Long likeId, Long postId, Long userId) {
-        this.likeId = likeId;
         this.postId = postId;
         this.userId = userId;
     }
