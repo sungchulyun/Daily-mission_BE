@@ -1,6 +1,8 @@
 package dailymissionproject.demo.domain.post.repository;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dailymissionproject.demo.common.repository.BaseTimeEntity;
+import dailymissionproject.demo.domain.like.repository.Likes;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.user.repository.User;
 import jakarta.persistence.*;
@@ -11,6 +13,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -28,6 +32,10 @@ public class Post extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Likes> likes = new ArrayList<>();
 
     private String title;
     private String content;
