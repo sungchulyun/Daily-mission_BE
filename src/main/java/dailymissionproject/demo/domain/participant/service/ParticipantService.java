@@ -4,6 +4,8 @@ import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.mission.exception.MissionException;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
+import dailymissionproject.demo.domain.notify.repository.NotificationType;
+import dailymissionproject.demo.domain.notify.service.NotifyService;
 import dailymissionproject.demo.domain.participant.dto.request.ParticipantSaveRequestDto;
 import dailymissionproject.demo.domain.participant.exception.ParticipantException;
 import dailymissionproject.demo.domain.participant.repository.Participant;
@@ -35,7 +37,7 @@ public class ParticipantService {
     private final UserRepository userRepository;
     private final MissionRepository missionRepository;
     private final PostService postService;
-
+    private final NotifyService notifyService;
 
     /**
      *
@@ -85,7 +87,25 @@ public class ParticipantService {
 
         Participant participant = requestDto.toEntity(findUser, findMission);
         participantRepository.save(participant);
+
+        sendParticipationNotify(findUser, findMission);
         return true;
+    }
+
+    /**
+     * 신규 미션 참여자가 발생할 경우 참여중인 유저들에게 푸시 알람을 보낸다.
+     * @param newUser
+     * @param mission
+     */
+    private void sendParticipationNotify(User newUser, Mission mission){
+
+        for(Participant participant : mission.getParticipants()){
+            if((participant.getUser().getId().equals(newUser.getId()))){
+                continue;
+            }
+
+            notifyService.notify(participant.getUser(), NotificationType.PARTICIPATE, "신규 참여자 " + newUser.getNickname() + "님이 참여했습니다.");
+        }
     }
 
     @Transactional
