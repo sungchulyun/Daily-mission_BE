@@ -16,7 +16,7 @@ public class Notification extends BaseTimeEntity {
     @Column(name = "notification_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User receiver;
 
@@ -31,12 +31,20 @@ public class Notification extends BaseTimeEntity {
     private boolean deleted;
 
     @Builder
-    public Notification(Long id, User receiver, NotificationType notificationType, String content, boolean checked, boolean deleted) {
-        this.id = id;
+    public Notification(User receiver, NotificationType notificationType, String content) {
         this.receiver = receiver;
         this.notificationType = notificationType;
         this.content = content;
-        this.checked = checked;
-        this.deleted = deleted;
+
+        this.checked = false;
+        this.deleted = false;
+    }
+
+    public void isRead(){
+        checked = true;
+    }
+
+    public void delete() {
+        this.deleted = true;
     }
 }

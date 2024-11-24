@@ -33,7 +33,7 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user")
     List<Participant> participants = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "receiver")
     List<Notification> notifications = new ArrayList<>();
 
     private String name;
