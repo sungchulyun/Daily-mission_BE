@@ -11,14 +11,13 @@ import dailymissionproject.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/notify")
+@RequestMapping("/api/v1/notify")
 public class NotifyController {
 
     private final NotifyService notifyService;
@@ -30,10 +29,5 @@ public class NotifyController {
                 .orElseThrow(() -> new UserException(UserExceptionCode.USER_NOT_FOUND));
 
         return notifyService.subscribe(findUser.getId());
-    }
-
-    @PostMapping("/send-data")
-    public void sendData(@CurrentUser CustomOAuth2User user) {
-        notifyService.notify(user.getId(), "data");
     }
 }
