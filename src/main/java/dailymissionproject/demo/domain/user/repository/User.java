@@ -2,6 +2,7 @@ package dailymissionproject.demo.domain.user.repository;
 
 import dailymissionproject.demo.common.repository.BaseTimeEntity;
 import dailymissionproject.demo.domain.mission.repository.Mission;
+import dailymissionproject.demo.domain.notify.repository.Notification;
 import dailymissionproject.demo.domain.participant.repository.Participant;
 import dailymissionproject.demo.domain.post.repository.Post;
 import jakarta.persistence.*;
@@ -29,8 +30,11 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user")
     List<Post> posts = new ArrayList<>();
 
-   @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user")
     List<Participant> participants = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    List<Notification> notifications = new ArrayList<>();
 
     private String name;
     private String email;
