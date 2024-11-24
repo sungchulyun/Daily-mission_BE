@@ -24,7 +24,7 @@ import static dailymissionproject.demo.domain.image.exception.ImageExceptionCode
 @RequiredArgsConstructor
 public class ImageService {
     private final static String FILE_SAVED_URL = "https://missionlabbucket.s3.ap-northeast-2.amazonaws.com";
-    private final static int MAX__LENGTH = 100;
+    private final static int MAX_LENGTH = 100;
 
     private final S3Util s3Util;
     private final S3Presigner presigner;
@@ -74,7 +74,7 @@ public class ImageService {
      * @return
      */
     public PresignedPostResponseDto generatePostPresignedUrl(String fileName, String title){
-        isRequestValid(fileName, title);
+        //isRequestValid(fileName, title);
 
         String name = getPostDir() + "/" + title + "/" + UUID.randomUUID() + "_" + fileName;
         String filePath = FILE_SAVED_URL + "/" + name;
@@ -110,7 +110,7 @@ public class ImageService {
     }
 
     private boolean isLengthValid(String input){
-        if(input.length() > MAX__LENGTH){
+        if(input.length() > MAX_LENGTH){
             throw new ImageException(INPUT_VALUE_LENGTH_IS_NOT_VALID);
         }
         return true;
