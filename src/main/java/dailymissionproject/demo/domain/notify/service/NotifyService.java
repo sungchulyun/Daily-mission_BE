@@ -59,6 +59,8 @@ public class NotifyService {
 
         if (Objects.isNull(emitter)) {
             log.warn("연결중이지 않은 userId={}", receiver.getId());
+            notifyRepository.save(notification);
+            return;
         }
 
         NotifyDto response = NotifyDto.builder()
