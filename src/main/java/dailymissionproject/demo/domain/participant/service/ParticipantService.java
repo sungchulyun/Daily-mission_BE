@@ -94,6 +94,7 @@ public class ParticipantService {
 
     /**
      * 신규 미션 참여자가 발생할 경우 참여중인 유저들에게 푸시 알람을 보낸다.
+     * 미션에 참여한 당사자를 제외하고 알림 발생
      * @param newUser
      * @param mission
      */
@@ -104,7 +105,7 @@ public class ParticipantService {
                 continue;
             }
 
-            notifyService.notify(participant.getUser(), NotificationType.PARTICIPATE, "신규 참여자 " + newUser.getNickname() + "님이 참여했습니다.");
+            notifyService.send(participant.getUser(), NotificationType.PARTICIPATE, "신규 참여자 " + newUser.getNickname() + "님이 참여했습니다.");
         }
     }
 
