@@ -20,7 +20,7 @@
 
 #### 🚀 ERD 
 > 모델링
- <img src="https://github.com/user-attachments/assets/b5ff956d-3387-4b6a-b554-461eae214992">
+ <img src="https://github.com/user-attachments/assets/8bc7fda6-32a3-44c5-9074-6bb93e067b63">
  <br>
  
 #### 🚚 아키텍처 구성도
