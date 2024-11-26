@@ -21,7 +21,7 @@ public class KafkaConsumerConfig {
     @Bean
     public ConsumerFactory<String, NotifyDto> consumerFactory() {
         Map<String, Object> config = new HashMap<>();
-        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "ec2-3-36-88-174.ap-northeast-2.compute.amazonaws.com:9092");
         config.put(ConsumerConfig.GROUP_ID_CONFIG, "group_1");
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 
