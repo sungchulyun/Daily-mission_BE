@@ -2,14 +2,14 @@ package dailymissionproject.demo.domain.post.service;
 
 
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
-import dailymissionproject.demo.domain.image.service.ImageService;
 import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
 import dailymissionproject.demo.domain.mission.exception.MissionException;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
 import dailymissionproject.demo.domain.missionRule.dto.DateDto;
 import dailymissionproject.demo.domain.notify.repository.NotificationType;
-import dailymissionproject.demo.domain.notify.service.NotifyService;
+import dailymissionproject.demo.domain.notify.service.EmitterService;
+import dailymissionproject.demo.domain.notify.service.NotificationService;
 import dailymissionproject.demo.domain.participant.repository.Participant;
 import dailymissionproject.demo.domain.post.dto.PostScheduleResponseDto;
 import dailymissionproject.demo.domain.post.dto.PostSubmitDto;
@@ -51,7 +51,7 @@ public class PostService {
     private final MissionRepository missionRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
-    private final NotifyService notifyService;
+    private final NotificationService notificationService;
     /**
      * 포스트를 작성할 때 사용하는 메서드
      * @param user
@@ -92,7 +92,7 @@ public class PostService {
                 continue;
             }
 
-            notifyService.send(participant.getUser(), NotificationType.POST, poster.getNickname() + "님이 포스트를 제출했습니다!");
+            notificationService.createNotification(participant.getUser(), NotificationType.POST, poster.getNickname() + "님이 포스트를 제출했습니다!");
         }
     }
 

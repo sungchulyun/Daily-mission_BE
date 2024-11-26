@@ -5,7 +5,8 @@ import dailymissionproject.demo.domain.mission.exception.MissionException;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
 import dailymissionproject.demo.domain.notify.repository.NotificationType;
-import dailymissionproject.demo.domain.notify.service.NotifyService;
+import dailymissionproject.demo.domain.notify.service.EmitterService;
+import dailymissionproject.demo.domain.notify.service.NotificationService;
 import dailymissionproject.demo.domain.participant.dto.request.ParticipantSaveRequestDto;
 import dailymissionproject.demo.domain.participant.exception.ParticipantException;
 import dailymissionproject.demo.domain.participant.repository.Participant;
@@ -37,7 +38,7 @@ public class ParticipantService {
     private final UserRepository userRepository;
     private final MissionRepository missionRepository;
     private final PostService postService;
-    private final NotifyService notifyService;
+    private final NotificationService notificationService;
 
     /**
      *
@@ -105,7 +106,7 @@ public class ParticipantService {
                 continue;
             }
 
-            notifyService.send(participant.getUser(), NotificationType.PARTICIPATE, "신규 참여자 " + newUser.getNickname() + "님이 참여했습니다.");
+            notificationService.createNotification(participant.getUser(), NotificationType.PARTICIPATE, "신규 참여자 " + newUser.getNickname() + "님이 참여했습니다.");
         }
     }
 
