@@ -16,9 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import static dailymissionproject.demo.common.config.response.GlobalResponse.success;
@@ -56,5 +54,16 @@ public class NotificationController {
         PageResponseDto response = notificationService.getUserNotifications(user, pageable);
 
         return ResponseEntity.ok(success(response.content(), MetaService.createMetaInfo().add("isNext", response.next())));
+    }
+
+    @PutMapping("/{id}") @Operation(summary = "알림 읽음 표사", description = "알림 읽을 표시할 때 사용하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공!"),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
+            @ApiResponse(responseCode = "404", description = "포스트 생성에 실패하였습니다."),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
+    })
+    public ResponseEntity<GlobalResponse> checkNotification(@CurrentUser CustomOAuth2User user, @PathVariable Long id) {
+        return ResponseEntity.ok(success(notificationService.readNotification(user, id)));
     }
 }
