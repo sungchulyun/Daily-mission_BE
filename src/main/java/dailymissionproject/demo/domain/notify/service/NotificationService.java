@@ -44,7 +44,7 @@ public class NotificationService {
     public PageResponseDto getUserNotifications(CustomOAuth2User user, Pageable pageable){
         User findUser = userRepository.findById(user.getId()).orElseThrow(() -> new UserException(UserExceptionCode.USER_NOT_FOUND));
 
-        Slice<UserNotifyResponseDto> responses = notificationRepository.findUnreadNotificationByUserId(findUser.getId(), pageable);
+        Slice<UserNotifyResponseDto> responses = notificationRepository.findNotificationByUserId(findUser.getId(), pageable);
 
         return new PageResponseDto(responses.getContent(), responses.hasNext());
     }
