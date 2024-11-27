@@ -18,20 +18,20 @@ public class NotificationRepositoryCustomImpl implements NotificationRepositoryC
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Slice<UserNotifyResponseDto> findUnreadNotificationByUserId(Long userId, Pageable pageable) {
-        List<UserNotifyResponseDto> userNotifies = fetchUnreadNotificationByUserId(userId, pageable);
+    public Slice<UserNotifyResponseDto> findNotificationByUserId(Long userId, Pageable pageable) {
+        List<UserNotifyResponseDto> userNotifies = fetchNotificationByUserId(userId, pageable);
         boolean hasNext = hasNextPage(userNotifies, pageable);
 
         return new SliceImpl<>(userNotifies, pageable, hasNext);
     }
 
-    public List<UserNotifyResponseDto> fetchUnreadNotificationByUserId(Long userId, Pageable pageable) {
+    public List<UserNotifyResponseDto> fetchNotificationByUserId(Long userId, Pageable pageable) {
         return queryFactory
                 .select(Projections.fields(UserNotifyResponseDto.class,
                         notification.notificationType,
                         notification.content))
                 .from(notification)
-                .where(notification.receiver.id.eq(userId).and(notification.checked.isFalse()))
+                .where(notification.receiver.id.eq(userId))
                 .orderBy(notification.createdTime.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)

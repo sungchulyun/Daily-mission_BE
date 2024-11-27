@@ -7,5 +7,5 @@ import org.springframework.data.domain.Slice;
 
 public interface NotificationRepositoryCustom {
 
-    Slice<UserNotifyResponseDto> findUnreadNotificationByUserId(Long userId, Pageable pageable);
+    Slice<UserNotifyResponseDto> findNotificationByUserId(Long userId, Pageable pageable);
 }
