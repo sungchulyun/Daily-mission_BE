@@ -92,7 +92,8 @@ public class PostService {
                 continue;
             }
 
-            notificationService.createNotification(participant.getUser(), NotificationType.POST, poster.getNickname() + "님이 포스트를 제출했습니다!");
+            notificationService.createNotification(participant.getUser(), NotificationType.POST,
+                    poster.getNickname() + "님이" + mission.getTitle() + " 미션에 포스트를 제출했습니다!");
         }
     }
 
