@@ -2,5 +2,5 @@ package dailymissionproject.demo.domain.notify.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface NotifyRepository extends JpaRepository<Notification, Long> {
+public interface NotificationRepository extends JpaRepository<Notification, Long>, NotificationRepositoryCustom {
 }
