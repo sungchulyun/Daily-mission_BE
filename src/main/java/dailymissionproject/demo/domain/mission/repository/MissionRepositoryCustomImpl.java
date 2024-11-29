@@ -11,9 +11,8 @@ import dailymissionproject.demo.domain.mission.dto.response.MissionHotListRespon
 import dailymissionproject.demo.domain.mission.dto.response.MissionNewListResponseDto;
 import dailymissionproject.demo.domain.participant.repository.QParticipant;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.domain.*;
+import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
@@ -141,4 +140,19 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
                 .orderBy(mission.createdTime.desc())
                 .fetch();
     }
+
+    @Override
+    public Page<Mission> findAllAndDeletedIsFalse(Pageable pageable) {
+        List<Mission> missions =  queryFactory
+                .select(mission)
+                .from(mission)
+                .where(mission.deleted.isFalse())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        return new PageImpl<>(missions, pageable, missions.size());
+    }
+
 }
