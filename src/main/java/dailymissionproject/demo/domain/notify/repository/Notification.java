@@ -40,8 +40,8 @@ public class Notification extends BaseTimeEntity {
         this.deleted = false;
     }
 
-    public void isRead(){
-        checked = true;
+    public void confirmNotification(){
+        this.checked = true;
     }
 
     public void delete() {
