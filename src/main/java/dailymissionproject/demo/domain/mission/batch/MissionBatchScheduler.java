@@ -21,22 +21,26 @@ public class MissionBatchScheduler {
     private final JobLauncher jobLauncher;
     private final JobRegistry jobRegistry;
 
-    /*
-    @Bean
-    public JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor(){
-        JobRegistryBeanPostProcessor jobProcessor = new JobRegistryBeanPostProcessor();
-        jobProcessor.setJobRegistry(endJobRegistry);
-        return jobProcessor;
-    }
-
-     */
-
     /**
      * 설명 : 스케줄러 설정은 서비스 배포 이후에 수행한다.
     **/
-    @Scheduled(cron = "10 * * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul")
     public void runEndJob() throws Exception {
         log.info("End Mission Batch start ============================");
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String date = dateFormat.format(new Date());
+
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addString("date", date)
+                .toJobParameters();
+
+        jobLauncher.run(jobRegistry.getJob("banJob"), jobParameters);
+    }
+
+    @Scheduled(cron = "10 * * * * *", zone = "Asia/Seoul")
+    public void runBanJob() throws Exception {
+        log.info("Ban participants Batch start ============================");
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String date = dateFormat.format(new Date());
