@@ -1,4 +1,4 @@
-package dailymissionproject.demo.domain.mission.batch;
+package dailymissionproject.demo.common.config;
 
 
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.Date;
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
-public class MissionBatchScheduler {
+public class BatchSchedulerConfig {
 
     private final JobLauncher jobLauncher;
     private final JobRegistry jobRegistry;
