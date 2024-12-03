@@ -149,7 +149,6 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
                 .where(mission.deleted.isFalse())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .limit(pageable.getPageSize())
                 .fetch();
 
         return new PageImpl<>(missions, pageable, missions.size());
