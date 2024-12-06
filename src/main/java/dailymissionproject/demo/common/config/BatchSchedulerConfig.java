@@ -24,7 +24,7 @@ public class BatchSchedulerConfig {
     /**
      * 설명 : 스케줄러 설정은 서비스 배포 이후에 수행한다.
     **/
-    @Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul")
+    //@Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul")
     public void runEndJob() throws Exception {
         log.info("End Mission Batch start ============================");
 
@@ -35,10 +35,10 @@ public class BatchSchedulerConfig {
                 .addString("date", date)
                 .toJobParameters();
 
-        jobLauncher.run(jobRegistry.getJob("banJob"), jobParameters);
+        jobLauncher.run(jobRegistry.getJob("endJob"), jobParameters);
     }
 
-    @Scheduled(cron = "10 * * * * *", zone = "Asia/Seoul")
+    //@Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul")
     public void runBanJob() throws Exception {
         log.info("Ban participants Batch start ============================");
 
