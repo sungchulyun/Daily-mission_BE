@@ -142,11 +142,11 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
     }
 
     @Override
-    public Page<Mission> findAllAndDeletedIsFalse(Pageable pageable) {
+    public Page<Mission> findAllAndEndedIsFalse(Pageable pageable) {
         List<Mission> missions =  queryFactory
                 .select(mission)
                 .from(mission)
-                .where(mission.deleted.isFalse())
+                .where(mission.ended.isFalse())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

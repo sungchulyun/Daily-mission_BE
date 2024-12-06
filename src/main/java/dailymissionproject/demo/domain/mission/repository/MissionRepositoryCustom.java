@@ -22,7 +22,7 @@ public interface MissionRepositoryCustom {
     Slice<MissionAllListResponseDto> findAllByCreatedDate(Pageable pageable, Long userId);
     List<Mission> findAllByCreatedDate();
 
-    Page<Mission> findAllAndDeletedIsFalse(Pageable pageable);
+    Page<Mission> findAllAndEndedIsFalse(Pageable pageable);
     /*
         @Override
         public List<Mission> findAllByParticipantSize() {

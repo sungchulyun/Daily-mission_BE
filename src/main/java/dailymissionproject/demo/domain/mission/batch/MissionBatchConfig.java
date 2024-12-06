@@ -31,7 +31,7 @@ public class MissionBatchConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
     private final MissionRepository missionRepository;
-
+    private final EndWriterListener endWriterListener;
     private static final int chunkSize = 10;
 
     @Bean
@@ -48,6 +48,7 @@ public class MissionBatchConfig {
                 .reader(beforeReader())
                 .processor(endProcessor())
                 .writer(afterWriter())
+                .listener(endWriterListener)
                 .build();
     }
 
@@ -56,7 +57,7 @@ public class MissionBatchConfig {
         return new RepositoryItemReaderBuilder<Mission>()
                 .name("beforeReader")
                 .pageSize(chunkSize)
-                .methodName("findAllAndDeletedIsFalse")
+                .methodName("findAllAndEndedIsFalse")
                 .repository(missionRepository)
                 .sorts(Map.of("id", Sort.Direction.ASC))
                 .build();
