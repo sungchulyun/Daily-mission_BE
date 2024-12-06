@@ -1,13 +1,9 @@
 package dailymissionproject.demo.domain.participant.config;
 
 
-import dailymissionproject.demo.domain.mission.repository.Mission;
-import dailymissionproject.demo.domain.mission.repository.MissionRepository;
 import dailymissionproject.demo.domain.participant.repository.Participant;
 import dailymissionproject.demo.domain.participant.repository.ParticipantRepository;
 import dailymissionproject.demo.domain.post.repository.PostRepository;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.servlet.http.Part;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -38,7 +34,7 @@ public class ParticipantBatchConfig {
     private final PlatformTransactionManager platformTransactionManager;
     private final ParticipantRepository participantRepository;
     private final PostRepository postRepository;
-    private final CustomWriterListener writerListener;
+    private final BanWriterListener writerListener;
 
     private static final int chunkSize = 10;
 
