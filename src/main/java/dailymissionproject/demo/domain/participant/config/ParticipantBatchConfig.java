@@ -38,6 +38,7 @@ public class ParticipantBatchConfig {
     private final PlatformTransactionManager platformTransactionManager;
     private final ParticipantRepository participantRepository;
     private final PostRepository postRepository;
+    private final CustomWriterListener writerListener;
 
     private static final int chunkSize = 10;
 
@@ -55,6 +56,7 @@ public class ParticipantBatchConfig {
                 .reader(banBeforeReader())
                 .processor(banProcessor())
                 .writer(banAfterWriter())
+                .listener(writerListener)
                 .build();
     }
 
@@ -89,9 +91,13 @@ public class ParticipantBatchConfig {
    }
 
     public boolean isSubmitToday(Participant participant, LocalDateTime now){
-
         boolean isSubmit = false;
+        String today = now.getDayOfWeek().toString();
 
+        boolean isNotSubmitDay = participant.getMission().checkMandatory(today);
+        if(isNotSubmitDay){
+            return true;
+        }
         /**
          * 설명 : 현재시간 0시 ~ 3시 : 전날 03시01분 ~ 현재시간까지 제출 여부 확인
          * 현재시간 3시 ~ 24 시 : 금일 03시 ~ 현재시간까지 제출 여부 확인
