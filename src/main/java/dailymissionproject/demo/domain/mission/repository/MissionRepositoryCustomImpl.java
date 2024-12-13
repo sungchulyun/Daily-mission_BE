@@ -19,6 +19,7 @@ import java.util.List;
 import static dailymissionproject.demo.domain.mission.repository.QMission.mission;
 import static dailymissionproject.demo.domain.missionRule.repository.QMissionRule.missionRule;
 import static dailymissionproject.demo.domain.participant.repository.QParticipant.participant;
+import static dailymissionproject.demo.domain.post.repository.QPost.post;
 
 @RequiredArgsConstructor
 public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
@@ -148,7 +149,8 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
                 .select(mission)
                 .from(mission)
                 .leftJoin(mission.participants, participant).fetchJoin()
-                .leftJoin(mission.missionRule, missionRule)
+                .leftJoin(mission.missionRule, missionRule).fetchJoin()
+                .leftJoin(mission.posts, post)
                 .where(mission.ended.isFalse())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
