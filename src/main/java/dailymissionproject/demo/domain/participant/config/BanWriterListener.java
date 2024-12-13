@@ -13,17 +13,22 @@ import org.springframework.batch.core.ItemWriteListener;
 import org.springframework.batch.item.Chunk;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
 @Slf4j
 @RequiredArgsConstructor
 @Configuration
-public class BanWriterListener implements ItemWriteListener<Participant> {
+public class BanWriterListener implements ItemWriteListener<List<Participant>> {
 
     private final NotificationService notificationService;
     private final UserRepository userRepository;
 
     @Override
-    public void afterWrite(Chunk<? extends Participant> items){
-        items.forEach(this::sendBanNotification);
+    public void afterWrite(Chunk<? extends List<Participant>> items){
+        log.info("분기 타는지 ? ");
+        for(List<Participant> participants : items){
+            participants.forEach(this::sendBanNotification);
+        }
     }
 
     private void sendBanNotification(Participant participant) {
