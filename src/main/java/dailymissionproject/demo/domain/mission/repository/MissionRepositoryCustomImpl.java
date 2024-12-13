@@ -17,6 +17,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import java.util.List;
 
 import static dailymissionproject.demo.domain.mission.repository.QMission.mission;
+import static dailymissionproject.demo.domain.missionRule.repository.QMissionRule.missionRule;
 import static dailymissionproject.demo.domain.participant.repository.QParticipant.participant;
 
 @RequiredArgsConstructor
@@ -146,6 +147,8 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
         List<Mission> missions =  queryFactory
                 .select(mission)
                 .from(mission)
+                .leftJoin(mission.participants, participant).fetchJoin()
+                .leftJoin(mission.missionRule, missionRule)
                 .where(mission.ended.isFalse())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
