@@ -28,8 +28,10 @@ public class NotificationRepositoryCustomImpl implements NotificationRepositoryC
     public List<UserNotifyResponseDto> fetchNotificationByUserId(Long userId, Pageable pageable) {
         return queryFactory
                 .select(Projections.fields(UserNotifyResponseDto.class,
+                        notification.id,
                         notification.notificationType,
-                        notification.content))
+                        notification.content,
+                        notification.checked))
                 .from(notification)
                 .where(notification.receiver.id.eq(userId))
                 .orderBy(notification.createdTime.desc())

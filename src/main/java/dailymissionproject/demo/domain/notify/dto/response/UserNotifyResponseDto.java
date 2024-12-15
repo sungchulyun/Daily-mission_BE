@@ -11,14 +11,20 @@ import lombok.NoArgsConstructor;
 @Schema(description = "유저별 알림 응답 DTO")
 public class UserNotifyResponseDto {
 
+    @Schema(description = "PK")
+    private final Long id;
     @Schema(description = "알림 타입")
     private final NotificationType notificationType;
     @Schema(description = "알림 내용")
     private final String content;
+    @Schema(description = "읽음 유무")
+    private final boolean checked;
 
     @Builder
-    public UserNotifyResponseDto(NotificationType notificationType, String content) {
+    public UserNotifyResponseDto(Long id, NotificationType notificationType, String content, boolean checked) {
         this.notificationType = notificationType;
         this.content = content;
+        this.id = id;
+        this.checked = checked;
     }
 }
