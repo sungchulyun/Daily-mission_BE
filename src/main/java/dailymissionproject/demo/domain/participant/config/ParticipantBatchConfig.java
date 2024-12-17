@@ -18,10 +18,18 @@ import org.springframework.batch.item.data.builder.RepositoryItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
+import org.springframework.retry.RetryListener;
+import org.springframework.retry.RetryPolicy;
+import org.springframework.retry.backoff.FixedBackOffPolicy;
+import org.springframework.retry.policy.SimpleRetryPolicy;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +41,6 @@ public class ParticipantBatchConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
     private final MissionRepository missionRepository;
-    private final PostRepository postRepository;
     private final BanWriterListener writerListener;
     private final ParticipantItemWriter banWriter;
 
@@ -54,6 +61,9 @@ public class ParticipantBatchConfig {
                 .processor(banProcessor())
                 .writer(banWriter)
                 .listener(writerListener)
+                .faultTolerant()
+                .retryPolicy(customRetryPolicy())
+                .retryLimit(3)
                 .build();
     }
 
@@ -69,12 +79,13 @@ public class ParticipantBatchConfig {
 
     @Bean
     public ItemProcessor<Mission, List<Participant>> banProcessor() {
-        LocalDate date = LocalDate.now();
-        String today = date.getDayOfWeek().toString();
-        log.info("today is {}", today);
+        RetryTemplate retryTemplate = createRetryTemplate();
 
-        return mission -> {
-            if(!mission.checkMandatory(today)){
+        return mission -> retryTemplate.execute(context -> {
+            String today = LocalDate.now().getDayOfWeek().toString();
+            log.info("Processing BanJob on day: {}", today);
+
+            if (!mission.checkMandatory(today)) {
                 return null;
             }
 
@@ -82,8 +93,9 @@ public class ParticipantBatchConfig {
                     .filter(participant -> !isSubmitToday(participant, LocalDateTime.now()))
                     .peek(Participant::ban)
                     .toList();
-        };
+        });
     }
+
     /**
      * 설명 : 현재시간 0시 ~ 3시 : 전날 03시01분 ~ 현재시간까지 제출 여부 확인
      * 현재시간 3시 ~ 24 시 : 금일 03시 ~ 현재시간까지 제출 여부 확인
@@ -91,15 +103,14 @@ public class ParticipantBatchConfig {
      * 전날 03시 ~ 다음날 03시를 각각 분기 처리한다.
      */
     private boolean isSubmitToday(Participant participant, LocalDateTime now){
-        long postCount = 0;
         LocalDateTime criteria = LocalDate.now().atTime(03,00);
-        if(now.isBefore(criteria)){
+        long postCount = 0;
 
+        if(now.isBefore(criteria)){
             postCount = participant.getUser().getPosts().stream()
                     .filter(post -> post.getCreatedDate().isAfter(criteria.minusDays(1)))
                     .filter(post -> post.getCreatedDate().isBefore(now))
                     .count();
-
         } else {
             postCount = participant.getUser().getPosts().stream()
                     .filter(post -> post.getCreatedDate().isAfter(criteria))
@@ -109,4 +120,30 @@ public class ParticipantBatchConfig {
         return postCount > 0;
     }
 
+    @Bean
+    public RetryTemplate createRetryTemplate(){
+        RetryTemplate retryTemplate = new RetryTemplate();
+
+        SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
+        retryPolicy.setMaxAttempts(3);
+
+        FixedBackOffPolicy fixedBackOffPolicy = new FixedBackOffPolicy();
+        fixedBackOffPolicy.setBackOffPeriod(5000);  //재시도 간 5초 대기
+
+        retryTemplate.setRetryPolicy(retryPolicy);
+        retryTemplate.setListeners(new RetryListener[]{new CustomRetryListener()});
+        retryTemplate.setBackOffPolicy(fixedBackOffPolicy);
+
+        return retryTemplate;
+    }
+
+    @Bean
+    public RetryPolicy customRetryPolicy() {
+        Map<Class<? extends Throwable>, Boolean> retryableExceptions = new HashMap<>();
+        retryableExceptions.put(SQLException.class, true);
+        retryableExceptions.put(IOException.class, true);
+        retryableExceptions.put(RuntimeException.class, true);
+
+        return new SimpleRetryPolicy(3, retryableExceptions, true);
+    }
 }
