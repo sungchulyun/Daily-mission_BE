@@ -61,9 +61,6 @@ public class ParticipantBatchConfig {
                 .processor(banProcessor())
                 .writer(banWriter)
                 .listener(writerListener)
-                .faultTolerant()
-                .retryPolicy(customRetryPolicy())
-                .retryLimit(3)
                 .build();
     }
 
@@ -124,8 +121,7 @@ public class ParticipantBatchConfig {
     public RetryTemplate createRetryTemplate(){
         RetryTemplate retryTemplate = new RetryTemplate();
 
-        SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
-        retryPolicy.setMaxAttempts(3);
+        RetryPolicy retryPolicy = customRetryPolicy();
 
         FixedBackOffPolicy fixedBackOffPolicy = new FixedBackOffPolicy();
         fixedBackOffPolicy.setBackOffPeriod(5000);  //재시도 간 5초 대기
