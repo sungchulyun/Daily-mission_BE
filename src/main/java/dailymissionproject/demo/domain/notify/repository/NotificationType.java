@@ -1,5 +1,5 @@
 package dailymissionproject.demo.domain.notify.repository;
 
 public enum NotificationType {
-    PARTICIPATE, POST, LIKE, BAN
+    LIKE, BAN, POST, END, PARTICIPATE
 }

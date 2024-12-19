@@ -1,10 +1,9 @@
 package dailymissionproject.demo.domain.notify.service;
 
 import dailymissionproject.demo.domain.notify.dto.NotifyDto;
-import dailymissionproject.demo.domain.notify.repository.EmitterRepositoryImpl;
+import dailymissionproject.demo.domain.notify.repository.emitter.EmitterRepositoryImpl;
 import dailymissionproject.demo.domain.notify.repository.Notification;
-import dailymissionproject.demo.domain.notify.repository.NotificationType;
-import dailymissionproject.demo.domain.notify.repository.NotifyRepository;
+import dailymissionproject.demo.domain.notify.repository.NotificationRepository;
 import dailymissionproject.demo.domain.user.exception.UserException;
 import dailymissionproject.demo.domain.user.exception.UserExceptionCode;
 import dailymissionproject.demo.domain.user.repository.User;
@@ -26,7 +25,7 @@ public class EmitterService {
 
     private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
     private final EmitterRepositoryImpl emitterRepository;
-    private final NotifyRepository notifyRepository;
+    private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
 
     private final static String NOTIFY_NAME = "notify";
@@ -64,12 +63,12 @@ public class EmitterService {
 
         if (Objects.isNull(emitter)) {
             log.warn("연결중이지 않은 userId={}", request.getId());
-            notifyRepository.save(notification);
+            notificationRepository.save(notification);
             return;
         }
 
         sendNotification(emitter, request);
-        notifyRepository.save(notification);
+        notificationRepository.save(notification);
     }
 
     private void sendNotification(SseEmitter emitter, NotifyDto response) {

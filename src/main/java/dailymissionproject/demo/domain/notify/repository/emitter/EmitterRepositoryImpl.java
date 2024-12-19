@@ -1,4 +1,4 @@
-package dailymissionproject.demo.domain.notify.repository;
+package dailymissionproject.demo.domain.notify.repository.emitter;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

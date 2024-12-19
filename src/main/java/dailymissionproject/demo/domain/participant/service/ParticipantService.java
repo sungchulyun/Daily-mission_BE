@@ -106,7 +106,8 @@ public class ParticipantService {
                 continue;
             }
 
-            notificationService.createNotification(participant.getUser(), NotificationType.PARTICIPATE, "신규 참여자 " + newUser.getNickname() + "님이 참여했습니다.");
+            notificationService.createNotification(participant.getUser(), NotificationType.PARTICIPATE,
+                    "신규 참여자 " + newUser.getNickname() + "님이" + mission.getTitle() + " 미션에 참여했습니다.");
         }
     }
 }
