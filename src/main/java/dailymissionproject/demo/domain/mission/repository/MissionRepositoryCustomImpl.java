@@ -11,14 +11,15 @@ import dailymissionproject.demo.domain.mission.dto.response.MissionHotListRespon
 import dailymissionproject.demo.domain.mission.dto.response.MissionNewListResponseDto;
 import dailymissionproject.demo.domain.participant.repository.QParticipant;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.domain.*;
+import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
 import static dailymissionproject.demo.domain.mission.repository.QMission.mission;
+import static dailymissionproject.demo.domain.missionRule.repository.QMissionRule.missionRule;
 import static dailymissionproject.demo.domain.participant.repository.QParticipant.participant;
+import static dailymissionproject.demo.domain.post.repository.QPost.post;
 
 @RequiredArgsConstructor
 public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
@@ -141,4 +142,21 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
                 .orderBy(mission.createdTime.desc())
                 .fetch();
     }
+
+    @Override
+    public Page<Mission> findAllAndEndedIsFalse(Pageable pageable) {
+        List<Mission> missions =  queryFactory
+                .select(mission)
+                .from(mission)
+                .leftJoin(mission.participants, participant).fetchJoin()
+                .leftJoin(mission.missionRule, missionRule).fetchJoin()
+                .leftJoin(mission.posts, post)
+                .where(mission.ended.isFalse())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        return new PageImpl<>(missions, pageable, missions.size());
+    }
+
 }

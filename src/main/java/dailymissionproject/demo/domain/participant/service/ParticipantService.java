@@ -110,22 +110,4 @@ public class ParticipantService {
                     "신규 참여자 " + newUser.getNickname() + "님이" + mission.getTitle() + " 미션에 참여했습니다.");
         }
     }
-
-    @Transactional
-    public void ban(){
-
-        LocalDateTime now = LocalDateTime.now();
-
-        List<Mission> missionList = missionRepository.findAll();
-
-        for(Mission mission : missionList){
-            for(Participant p : mission.getParticipants()){
-                boolean submitted = postService.isSubmitToday(p, now);
-
-                if(!submitted){
-                    p.ban();
-                }
-            }
-        }
-    }
 }

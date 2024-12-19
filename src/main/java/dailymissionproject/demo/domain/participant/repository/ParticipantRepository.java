@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ParticipantRepository extends JpaRepository<Participant, Long> {
+public interface ParticipantRepository extends JpaRepository<Participant, Long>, ParticipantRepositoryCustom {
     Optional<Participant> findByMissionAndUser(Mission mission, User user);
 
     List<Participant> findAllByMission(Mission mission);
