@@ -24,6 +24,8 @@ import org.testcontainers.utility.DockerImageName;
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestPropertySource(properties = {
+        "spring.sql.init.mode=always",
+        "spring.sql.init.schema-locations=classpath:01-init-table.sql",
         "cloud.aws.credentials.accessKey=TestKey",
         "cloud.aws.credentials.secretKey=TestKey",
         "cloud.aws.s3.bucket=TestKeyBucket",
@@ -44,8 +46,9 @@ import org.testcontainers.utility.DockerImageName;
         "spring.security.oauth2.client.provider.naver.token-uri=https://nid.naver.com/oauth2.0/token",
         "security.oauth2.client.provider.naver.user-info-uri=https://openapi.naver.com/v1/nid/me",
         "spring.security.oauth2.client.provider.naver.user-name-attribute=response",
-        "spring.data.redis.host=ec2-3-36-88-174.ap-northeast-2.compute.amazonaws.com",
-        "spring.data.redis.port=6379"
+        "spring.redis.host=ec2-3-36-88-174.ap-northeast-2.compute.amazonaws.com",
+        "spring.redis.port=6379",
+        "spring.batch.job.enabled=false"
 })
 public abstract class IntegrationTestSupport {
     protected static final Logger log = LogManager.getLogger(IntegrationTestSupport.class);
