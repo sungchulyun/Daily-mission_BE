@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class NotificationService {
 
-    private final KafkaTemplate<String, NotifyDto> kafkaTemplate;
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
 
@@ -37,7 +36,6 @@ public class NotificationService {
                 .type(notificationType)
                 .build();
 
-        kafkaTemplate.send("notify", notifyDto);
     }
 
     @Transactional(readOnly = true)
