@@ -48,7 +48,6 @@ public class EmitterService {
         return emitter;
     }
 
-    @KafkaListener(topics = "notify", groupId = "group_1")
     @Transactional
     public void listen(NotifyDto request){
         User user = userRepository.findById(request.getId()).orElseThrow(() -> new UserException(UserExceptionCode.USER_NOT_FOUND));
