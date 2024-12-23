@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +27,7 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
+    private final RedisMessageService redisMessageService;
 
     public void createNotification(User receiver, NotificationType notificationType, Object event){
         NotifyDto notifyDto = NotifyDto.builder()
@@ -36,6 +36,7 @@ public class NotificationService {
                 .type(notificationType)
                 .build();
 
+        redisMessageService.publish(String.valueOf(receiver.getId()), notifyDto);
     }
 
     @Transactional(readOnly = true)
