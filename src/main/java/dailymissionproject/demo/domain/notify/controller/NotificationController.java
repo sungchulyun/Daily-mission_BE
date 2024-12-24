@@ -27,7 +27,6 @@ import static dailymissionproject.demo.common.config.response.GlobalResponse.suc
 @RequestMapping("/api/v1/notify")
 public class NotificationController {
 
-    private final EmitterService emitterService;
     private final NotificationService notificationService;
 
     @GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
@@ -39,7 +38,7 @@ public class NotificationController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
     public SseEmitter subscribe(@CurrentUser CustomOAuth2User user) {
-        return emitterService.subscribe(user.getId());
+        return notificationService.subscribe(user.getId());
     }
 
     @GetMapping(value = "/user")
