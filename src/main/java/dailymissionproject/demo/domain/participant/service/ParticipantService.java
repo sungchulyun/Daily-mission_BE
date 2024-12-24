@@ -4,6 +4,7 @@ import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.mission.exception.MissionException;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
+import dailymissionproject.demo.domain.notify.dto.NotifyDto;
 import dailymissionproject.demo.domain.notify.repository.NotificationType;
 import dailymissionproject.demo.domain.notify.service.EmitterService;
 import dailymissionproject.demo.domain.notify.service.NotificationService;
@@ -37,7 +38,6 @@ public class ParticipantService {
     private final ParticipantRepository participantRepository;
     private final UserRepository userRepository;
     private final MissionRepository missionRepository;
-    private final PostService postService;
     private final NotificationService notificationService;
 
     /**
@@ -100,14 +100,22 @@ public class ParticipantService {
      * @param mission
      */
     private void sendParticipationNotify(User newUser, Mission mission){
+        String notificationContent = new StringBuilder()
+                .append("신규 참여자 ")
+                .append(newUser.getNickname())
+                .append("님이 ")
+                .append(mission.getTitle())
+                .append(" 미션에 참여했습니다.")
+                .toString();
 
-        for(Participant participant : mission.getParticipants()){
-            if((participant.getUser().getId().equals(newUser.getId()))){
-                continue;
-            }
-
-            notificationService.createNotification(participant.getUser(), NotificationType.PARTICIPATE,
-                    "신규 참여자 " + newUser.getNickname() + "님이" + mission.getTitle() + " 미션에 참여했습니다.");
-        }
+        mission.getParticipants().stream()
+                .map(Participant::getUser)
+                .filter(user -> !user.getId().equals(newUser.getId())) // 새로운 참여자는 제외
+                .map(user -> NotifyDto.builder()
+                        .id(user.getId())
+                        .type(NotificationType.PARTICIPATE)
+                        .content(notificationContent)
+                        .build())
+                .forEach(notificationService::sendNotification);
     }
 }
