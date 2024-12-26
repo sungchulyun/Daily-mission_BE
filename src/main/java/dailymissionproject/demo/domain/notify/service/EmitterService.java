@@ -28,7 +28,7 @@ public class EmitterService {
     private final static String NOTIFY_NAME = "notify";
     private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
 
-    public SseEmitter subscribe(SseEmitter emitter, Long userId){
+    public void subscribe(SseEmitter emitter, Long userId){
         try {
             emitter.send(SseEmitter.event()
                     .id(String.valueOf(userId))
@@ -37,8 +37,6 @@ public class EmitterService {
         } catch (IOException e) {
             throw new RuntimeException("전송에 실패했습니다.");
         }
-
-        return emitter;
     }
 
     public void send(NotifyDto request){
