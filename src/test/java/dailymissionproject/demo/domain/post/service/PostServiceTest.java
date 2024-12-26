@@ -6,6 +6,7 @@ import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
 import dailymissionproject.demo.domain.mission.exception.MissionException;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
+import dailymissionproject.demo.domain.notify.service.NotificationService;
 import dailymissionproject.demo.domain.post.dto.request.PostSaveRequestDto;
 import dailymissionproject.demo.domain.post.dto.request.PostUpdateRequestDto;
 import dailymissionproject.demo.domain.post.dto.response.*;
@@ -55,6 +56,8 @@ class PostServiceTest {
     private MissionRepository missionRepository;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private NotificationService notificationService;
 
     private final Mission mission = PostObjectFixture.getMissionFixture();
     private final User user = PostObjectFixture.getUserFixture();
@@ -79,16 +82,14 @@ class PostServiceTest {
     @Nested
     @DisplayName("포스트 생성 서비스 레이어 테스트")
     class PostSaveServiceTest {
-        final String fileName = "userModifyImage";
-        final String contentType = "image/jpeg";
 
         @Test
         @DisplayName("포스트를 생성할 수 있다.")
         void post_save_success() throws IOException {
+            User poster = new User(1L, "윤성철", "proattacker@naver.com", "성철");
             when(missionRepository.findByIdAndDeletedIsFalse(anyLong())).thenReturn(Optional.of(mission));
-            when(userRepository.findById(any())).thenReturn(Optional.of(user));
+            when(userRepository.findById(any())).thenReturn(Optional.of(poster));
 
-            //boolean result = postService.isParticipating(user, mission);
             PostSaveResponseDto saveResponse = postService.save(oAuth2User, saveRequest);
 
 

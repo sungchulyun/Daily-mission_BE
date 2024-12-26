@@ -47,6 +47,7 @@ public class PostObjectFixture {
      * @return Mission
      */
     public static Mission getMissionFixture(){
+        User user = new User(1L, "윤성철", "proattacker@naver.com", "성철");
         Mission mission =  Mission.builder()
                 .title("TITLE")
                 .content("CONTENT")
@@ -55,13 +56,13 @@ public class PostObjectFixture {
                 .credential("CREDENTIAL")
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusDays(10))
-                .user(getUserFixture())
+                .user(user)
                 .missionRule(getMissionRuleFixture())
                 .build();
 
         Participant participant_1 = Participant.builder()
                 .mission(mission)
-                .user(getUserFixture())
+                .user(user)
                 .build();
 
         mission.setParticipants(List.of(participant_1));
