@@ -17,32 +17,59 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import java.io.IOException;
+
+import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class NotificationService {
 
-    private final KafkaTemplate<String, NotifyDto> kafkaTemplate;
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
+    private final EmitterService emitterService;
+    private final RedisMessageService redisMessageService;
 
-    public void createNotification(User receiver, NotificationType notificationType, Object event){
-        NotifyDto notifyDto = NotifyDto.builder()
-                .id(receiver.getId())
-                .content(String.valueOf(event))
-                .type(notificationType)
+    public SseEmitter subscribe(Long userId){
+        User findUser = userRepository.findById(userId).orElseThrow(() -> new UserException(USER_NOT_FOUND));
+
+        SseEmitter emitter = emitterService.create(userId);
+        emitter.onTimeout(emitter::complete);
+        emitter.onError((e) -> emitter.complete());
+        emitter.onCompletion(() -> {
+            emitterService.deleteEmitter(userId);
+            redisMessageService.removeSubscribe(String.valueOf(userId));
+        });
+
+        // 최초 connection 생성
+        emitterService.subscribe(emitter, userId);
+        redisMessageService.subscribe(String.valueOf(userId));
+
+        return emitter;
+    }
+
+    @Transactional
+    public void sendNotification(NotifyDto request){
+        User receiver = userRepository.findById(request.getId()).orElseThrow(() -> new UserException(USER_NOT_FOUND));
+
+        Notification notification = Notification.builder()
+                .receiver(receiver)
+                .content(request.getContent())
+                .notificationType(request.getType())
                 .build();
 
-        kafkaTemplate.send("notify", notifyDto);
+        notificationRepository.save(notification);
+        redisMessageService.publish(String.valueOf(request.getId()), request);
     }
 
     @Transactional(readOnly = true)
     public PageResponseDto getUserNotifications(CustomOAuth2User user, Pageable pageable){
-        User findUser = userRepository.findById(user.getId()).orElseThrow(() -> new UserException(UserExceptionCode.USER_NOT_FOUND));
+        User findUser = userRepository.findById(user.getId()).orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         Slice<UserNotifyResponseDto> responses = notificationRepository.findNotificationByUserId(findUser.getId(), pageable);
 
@@ -51,7 +78,7 @@ public class NotificationService {
 
     @Transactional
     public boolean readNotification(CustomOAuth2User user, Long id){
-        User findUser = userRepository.findById(user.getId()).orElseThrow(() -> new UserException(UserExceptionCode.USER_NOT_FOUND));
+        User findUser = userRepository.findById(user.getId()).orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         Notification notification = notificationRepository.findById(id)
                 .orElseThrow(() -> new NotificationException(NotificationExceptionCode.NOTIFICATION_NOT_FOUND));

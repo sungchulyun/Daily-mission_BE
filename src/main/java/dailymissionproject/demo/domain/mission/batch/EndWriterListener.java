@@ -1,6 +1,7 @@
 package dailymissionproject.demo.domain.mission.batch;
 
 import dailymissionproject.demo.domain.mission.repository.Mission;
+import dailymissionproject.demo.domain.notify.dto.NotifyDto;
 import dailymissionproject.demo.domain.notify.repository.NotificationType;
 import dailymissionproject.demo.domain.notify.service.NotificationService;
 import dailymissionproject.demo.domain.participant.repository.Participant;
@@ -21,8 +22,8 @@ import java.util.List;
 @Slf4j
 public class EndWriterListener implements ItemWriteListener<Mission> {
 
-    private final NotificationService notificationService;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     @Override
     public void afterWrite(Chunk<? extends Mission> items){
@@ -33,15 +34,17 @@ public class EndWriterListener implements ItemWriteListener<Mission> {
         User findUser = userRepository.findById(mission.getUser().getId()).orElseThrow(() -> new UserException(UserExceptionCode.USER_NOT_FOUND));
         log.info("참여자 정보 : {}", findUser.getEmail() + findUser.getName());
 
-        if(mission.isEnded()){
-           mission.getParticipants().stream()
-                   .map(Participant::getUser)
-                   .forEach(user -> notificationService.createNotification(
-                           user,
-                           NotificationType.PARTICIPATE,
-                           mission.getTitle() + "미션이 종료되었습니다."
-                   ));
-        }
+        if (mission.isEnded()) {
+            String notificationContent = mission.getTitle() + " 미션이 종료되었습니다.";
 
+            mission.getParticipants().forEach(participant -> {
+                notificationService.sendNotification(
+                        NotifyDto.builder()
+                                .id(participant.getUser().getId())
+                                .content(notificationContent)
+                                .type(NotificationType.END)
+                                .build());
+            });
+        }
     }
 }

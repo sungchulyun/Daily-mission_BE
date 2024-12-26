@@ -1,5 +1,6 @@
 package dailymissionproject.demo.domain.participant.config;
 
+import dailymissionproject.demo.domain.notify.dto.NotifyDto;
 import dailymissionproject.demo.domain.notify.repository.NotificationType;
 import dailymissionproject.demo.domain.notify.service.NotificationService;
 import dailymissionproject.demo.domain.participant.repository.Participant;
@@ -25,7 +26,6 @@ public class BanWriterListener implements ItemWriteListener<List<Participant>> {
 
     @Override
     public void afterWrite(Chunk<? extends List<Participant>> items){
-        log.info("분기 타는지 ? ");
         for(List<Participant> participants : items){
             participants.forEach(this::sendBanNotification);
         }
@@ -33,10 +33,16 @@ public class BanWriterListener implements ItemWriteListener<List<Participant>> {
 
     private void sendBanNotification(Participant participant) {
         User findUser = userRepository.findById(participant.getUser().getId()).orElseThrow(() -> new UserException(UserExceptionCode.USER_NOT_FOUND));
-        log.info("참여자 정보 : {}", findUser.getEmail() + findUser.getNickname());
 
         if(participant.isBanned()) {
-            notificationService.createNotification(participant.getUser(), NotificationType.BAN, participant.getMission().getTitle() + "미션에서 인증글 미제출로 강제퇴장 처리되었습니다.");
+            String notificationContent = "인증글 미제출로 " + participant.getMission().getTitle() + "미션에서 강제퇴장되었습니다.";
+
+            notificationService.sendNotification(
+                    NotifyDto.builder()
+                            .id(participant.getUser().getId())
+                            .content(notificationContent)
+                            .type(NotificationType.BAN)
+                            .build());
         }
     }
 }
