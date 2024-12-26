@@ -86,8 +86,9 @@ class PostServiceTest {
         @Test
         @DisplayName("포스트를 생성할 수 있다.")
         void post_save_success() throws IOException {
+            User poster = new User(1L, "윤성철", "proattacker@naver.com", "성철");
             when(missionRepository.findByIdAndDeletedIsFalse(anyLong())).thenReturn(Optional.of(mission));
-            when(userRepository.findById(any())).thenReturn(Optional.of(user));
+            when(userRepository.findById(any())).thenReturn(Optional.of(poster));
 
             PostSaveResponseDto saveResponse = postService.save(oAuth2User, saveRequest);
 
