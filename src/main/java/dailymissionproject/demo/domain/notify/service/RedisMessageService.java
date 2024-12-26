@@ -8,7 +8,6 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
 
-import java.nio.channels.Channel;
 
 @RequiredArgsConstructor
 @Service
