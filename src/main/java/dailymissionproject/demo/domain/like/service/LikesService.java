@@ -16,6 +16,13 @@ import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+
+import static dailymissionproject.demo.domain.like.exception.LikesExceptionCode.INVALID_LIKE_REQUEST;
+import static dailymissionproject.demo.domain.post.exception.PostExceptionCode.POST_NOT_FOUND;
+import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -25,29 +32,43 @@ public class LikesService {
     private final UserRepository userRepository;
     private final LikesRepository likesRepository;
 
-    //좋아요를 누를 수 있다.
-    public LikesResponseDto save(LikesRequestDto likeRequest) {
-        Post findPost = postRepository.findById(likeRequest.getPostId())
-                .orElseThrow(() -> new PostException(PostExceptionCode.POST_NOT_FOUND));
+    @Transactional
+    public LikesResponseDto addLike(Long postId, Long userId) {
+        User findUser = userRepository.findById(userId).orElseThrow(() -> new UserException(USER_NOT_FOUND));
+        Post findPost = postRepository.findById(postId).orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
-        User findUser = userRepository.findById(likeRequest.getUserId())
-                .orElseThrow(() -> new UserException(UserExceptionCode.USER_NOT_FOUND));
-
-        Likes findLike = likesRepository.findByPostIdAndUserId(findPost.getId(), findUser.getId())
-                .orElseThrow(() -> new LikesException(LikesExceptionCode.INVALID_LIKE_REQUEST));
+        boolean alreadyLiked = likesRepository.exitsByPostIdAndUserId(postId, userId);
+        if(alreadyLiked) {
+            throw new LikesException(INVALID_LIKE_REQUEST);
+        }
 
         Likes likes = Likes.builder()
                 .post(findPost)
                 .user(findUser)
                 .build();
 
+        findPost.incrementLikeCount();
         likesRepository.save(likes);
 
         return LikesResponseDto.builder()
-                .postId(findPost.getId())
+                .likeId(likes.getId())
                 .userId(findUser.getId())
+                .postId(findPost.getId())
                 .build();
     }
 
-    //추가한 좋아요를 취소할 수 있다.
+    @Transactional
+    public boolean removeLike(Long postId, Long userId) {
+        User findUser = userRepository.findById(userId).orElseThrow(() -> new UserException(USER_NOT_FOUND));
+        Post findPost = postRepository.findById(postId).orElseThrow(() -> new PostException(POST_NOT_FOUND));
+
+        Optional<Likes> likes = likesRepository.findByPostIdAndUserId(postId, userId);
+        if(likes.isPresent()) {
+            likesRepository.delete(likes.get());
+            findPost.decrementLikeCount();
+            return true;
+        }
+
+        return false;
+    }
 }
