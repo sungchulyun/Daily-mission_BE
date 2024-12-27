@@ -4,6 +4,10 @@ import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
 import dailymissionproject.demo.domain.mission.exception.MissionException;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
+import dailymissionproject.demo.domain.notify.dto.NotifyDto;
+import dailymissionproject.demo.domain.notify.repository.NotificationType;
+import dailymissionproject.demo.domain.notify.service.EmitterService;
+import dailymissionproject.demo.domain.notify.service.NotificationService;
 import dailymissionproject.demo.domain.participant.dto.request.ParticipantSaveRequestDto;
 import dailymissionproject.demo.domain.participant.exception.ParticipantException;
 import dailymissionproject.demo.domain.participant.repository.Participant;
@@ -34,8 +38,7 @@ public class ParticipantService {
     private final ParticipantRepository participantRepository;
     private final UserRepository userRepository;
     private final MissionRepository missionRepository;
-    private final PostService postService;
-
+    private final NotificationService notificationService;
 
     /**
      *
@@ -85,24 +88,34 @@ public class ParticipantService {
 
         Participant participant = requestDto.toEntity(findUser, findMission);
         participantRepository.save(participant);
+
+        sendParticipationNotify(findUser, findMission);
         return true;
     }
 
-    @Transactional
-    public void ban(){
+    /**
+     * 신규 미션 참여자가 발생할 경우 참여중인 유저들에게 푸시 알람을 보낸다.
+     * 미션에 참여한 당사자를 제외하고 알림 발생
+     * @param newUser
+     * @param mission
+     */
+    private void sendParticipationNotify(User newUser, Mission mission){
+        String notificationContent = new StringBuilder()
+                .append("신규 참여자 ")
+                .append(newUser.getNickname())
+                .append("님이 ")
+                .append(mission.getTitle())
+                .append(" 미션에 참여했습니다.")
+                .toString();
 
-        LocalDateTime now = LocalDateTime.now();
-
-        List<Mission> missionList = missionRepository.findAll();
-
-        for(Mission mission : missionList){
-            for(Participant p : mission.getParticipants()){
-                boolean submitted = postService.isSubmitToday(p, now);
-
-                if(!submitted){
-                    p.ban();
-                }
-            }
-        }
+        mission.getParticipants().stream()
+                .map(Participant::getUser)
+                .filter(user -> !user.getId().equals(newUser.getId())) // 새로운 참여자는 제외
+                .map(user -> NotifyDto.builder()
+                        .id(user.getId())
+                        .type(NotificationType.PARTICIPATE)
+                        .content(notificationContent)
+                        .build())
+                .forEach(notificationService::sendNotification);
     }
 }

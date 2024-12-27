@@ -1,13 +1,14 @@
 package dailymissionproject.demo.domain.post.service;
 
-
 import dailymissionproject.demo.domain.auth.dto.CustomOAuth2User;
-import dailymissionproject.demo.domain.image.service.ImageService;
 import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
 import dailymissionproject.demo.domain.mission.exception.MissionException;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.mission.repository.MissionRepository;
 import dailymissionproject.demo.domain.missionRule.dto.DateDto;
+import dailymissionproject.demo.domain.notify.dto.NotifyDto;
+import dailymissionproject.demo.domain.notify.repository.NotificationType;
+import dailymissionproject.demo.domain.notify.service.NotificationService;
 import dailymissionproject.demo.domain.participant.repository.Participant;
 import dailymissionproject.demo.domain.post.dto.PostScheduleResponseDto;
 import dailymissionproject.demo.domain.post.dto.PostSubmitDto;
@@ -46,18 +47,11 @@ import static dailymissionproject.demo.domain.user.exception.UserExceptionCode.U
 @RequiredArgsConstructor
 public class PostService {
 
-    private final MissionRepository missionRepository;
-    private final UserRepository userRepository;
     private final PostRepository postRepository;
-    private final ImageService imageService;
+    private final UserRepository userRepository;
+    private final MissionRepository missionRepository;
+    private final NotificationService notificationService;
 
-    /**
-     * 포스트를 작성할 때 사용하는 메서드
-     * @param user
-     * @param requestDto
-     * @return
-     * @throws IOException
-     */
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "postLists", allEntries = true),
@@ -76,11 +70,33 @@ public class PostService {
         Post post = requestDto.toEntity(findUser, mission);
         postRepository.save(post);
 
+        sendPostNotifyToParticipants(findUser, mission);
+
         return PostSaveResponseDto.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
                 .imageUrl(post.getImageUrl())
                 .build();
+    }
+
+    private void sendPostNotifyToParticipants(User poster, Mission mission) {
+        String notificationContent = new StringBuilder()
+                .append(mission.getTitle())
+                .append("미션에 ")
+                .append(poster.getNickname())
+                .append("님이 ")
+                .append("포스트를 제출했습니다.")
+                .toString();
+
+        mission.getParticipants().stream()
+                .map(Participant::getUser)
+                .filter(user -> !user.getId().equals(poster.getId())) // 새로운 참여자는 제외
+                .map(user -> NotifyDto.builder()
+                        .id(user.getId())
+                        .type(NotificationType.PARTICIPATE)
+                        .content(notificationContent)
+                        .build())
+                .forEach(notificationService::sendNotification);
     }
 
     /**
@@ -231,7 +247,7 @@ public class PostService {
                 .orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
         User findUser = userRepository.findById(user.getId())
-                        .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         isPostWriter(findPost, findUser);
 
@@ -278,16 +294,16 @@ public class PostService {
         if(now.isBefore(criteria)){
             // 전날 새벽 3시 ~ 현재
             isSubmit = postRepository.countPostSubmit(participant.getMission()
-            , participant.getUser()
-            ,criteria.minusDays(1)
-            , now) > 0;
+                    , participant.getUser()
+                    ,criteria.minusDays(1)
+                    , now) > 0;
 
         } else {
             // 금일 새벽 3시  ~ 현재
             isSubmit = postRepository.countPostSubmit(participant.getMission()
-            ,participant.getUser()
-            ,criteria
-            ,now) > 0;
+                    ,participant.getUser()
+                    ,criteria
+                    ,now) > 0;
         }
         return isSubmit;
     }

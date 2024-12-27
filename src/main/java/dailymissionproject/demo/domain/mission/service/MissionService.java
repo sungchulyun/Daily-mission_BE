@@ -332,24 +332,6 @@ public class MissionService {
     }
 
     /**
-     * 수행중인 전체 미션에서 종료 날짜가 지났거나 참여자가 0명인 미션을 종료시키는 메서드
-     * 설명 : 배치 작업에서 사용됩니다.
-     * @param missionLists
-     */
-    @Transactional
-    public void end(List<MissionAllListResponseDto> missionLists){
-
-        for(MissionAllListResponseDto missionDto : missionLists){
-            Mission mission = missionRepository.findByIdAndDeletedIsFalse(missionDto.getId())
-                    .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
-
-            if(mission.isEndAble(LocalDate.now())){
-                mission.end();
-            }
-        }
-    }
-
-    /**
      * 사용자가 수정 및 삭제 요청할 미션의 방장인지 여부를 검증하는 메서드
      * @param mission
      * @param user

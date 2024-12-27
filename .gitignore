@@ -21,6 +21,7 @@ bin/
 ### IntelliJ IDEA ###
 application.properties
 application-dev.properties
+application-dev01.properties
 application-prod.properties
 application-unit-test.properties
 application-integration-test.properties

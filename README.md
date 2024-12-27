@@ -20,12 +20,12 @@
 
 #### 🚀 ERD 
 > 모델링
- <img src="https://github.com/sungchulyun/Daily-mission/assets/97434717/3ccad2e0-b28b-4935-9c38-8dfbf9a597cd">
+ <img src="https://github.com/user-attachments/assets/8bc7fda6-32a3-44c5-9074-6bb93e067b63">
  <br>
  
 #### 🚚 아키텍처 구성도
 
-![image](https://github.com/user-attachments/assets/77874474-0790-4166-914f-2a96db26867e)
+![image](https://github.com/user-attachments/assets/1e679141-785d-45b7-9779-f0ebec23e3e1)
 
 
 

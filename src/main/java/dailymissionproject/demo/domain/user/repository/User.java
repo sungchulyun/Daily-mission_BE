@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dailymissionproject.demo.common.repository.BaseTimeEntity;
 import dailymissionproject.demo.domain.like.repository.Likes;
 import dailymissionproject.demo.domain.mission.repository.Mission;
+import dailymissionproject.demo.domain.notify.repository.Notification;
 import dailymissionproject.demo.domain.participant.repository.Participant;
 import dailymissionproject.demo.domain.post.repository.Post;
 import jakarta.persistence.*;
@@ -31,8 +32,11 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user")
     List<Post> posts = new ArrayList<>();
 
-   @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user")
     List<Participant> participants = new ArrayList<>();
+
+    @OneToMany(mappedBy = "receiver")
+    List<Notification> notifications = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
