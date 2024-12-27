@@ -7,5 +7,5 @@ import java.util.Optional;
 public interface LikeRepositoryImpl extends LikesRepository, JpaRepository<Likes, Long> {
 
     @Override
-    Optional<Likes> findByPostIdAndUserId(Long postId, Long userId);
+    boolean exitsByPostIdAndUserId(Long postId, Long userId);
 }
