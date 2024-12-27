@@ -37,7 +37,7 @@ public class LikesService {
         User findUser = userRepository.findById(userId).orElseThrow(() -> new UserException(USER_NOT_FOUND));
         Post findPost = postRepository.findById(postId).orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
-        boolean alreadyLiked = likesRepository.exitsByPostIdAndUserId(postId, userId);
+        boolean alreadyLiked = likesRepository.existsByPostIdAndUserId(postId, userId);
         if(alreadyLiked) {
             throw new LikesException(INVALID_LIKE_REQUEST);
         }
