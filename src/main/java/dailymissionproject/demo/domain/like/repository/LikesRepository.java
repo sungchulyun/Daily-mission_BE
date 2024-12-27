@@ -6,10 +6,8 @@ import java.util.Optional;
 
 public interface LikesRepository extends JpaRepository<Likes, Long> {
 
-    boolean exitsByPostIdAndUserId(Long postId, Long userId);
+    boolean existsByPostIdAndUserId(Long postId, Long userId);
 
     Optional<Likes> findByPostIdAndUserId(Long postId, Long userId);
-
-    Long save(Likes likes);
 
 }
