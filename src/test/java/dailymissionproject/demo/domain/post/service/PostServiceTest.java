@@ -143,6 +143,7 @@ class PostServiceTest {
 
             verify(postRepository, times(1)).findById(postId);
             assertEquals(detailResponse.getId(), response.getId());
+            assertEquals(detailResponse.getLikesCount(), response.getLikesCount());
         }
 
         @Test
@@ -168,9 +169,10 @@ class PostServiceTest {
             PageResponseDto response = postService.findAllByUser(oAuth2User, pageable);
             List<PostUserListResponseDto> responseList = (List<PostUserListResponseDto>) response.content();
 
-            assertEquals(responseList.get(0).getTitle(), missionListResponse.get(0).getTitle());
-            assertEquals(responseList.get(0).getContent(), missionListResponse.get(0).getContent());
-            assertEquals(responseList.get(0).getId(), missionListResponse.get(0).getId());
+            assertEquals(responseList.get(0).getTitle(), userListResponse.get(0).getTitle());
+            assertEquals(responseList.get(0).getContent(), userListResponse.get(0).getContent());
+            assertEquals(responseList.get(0).getId(), userListResponse.get(0).getId());
+            assertEquals(responseList.get(0).getLikeCount(), userListResponse.get(0).getLikeCount());
         }
 
         @Test

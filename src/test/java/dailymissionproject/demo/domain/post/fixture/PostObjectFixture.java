@@ -125,6 +125,7 @@ public class PostObjectFixture {
                 .title("TITLE1")
                 .content("CONTENT1")
                 .imageUrl("IMAGE1")
+                .likeCount(1L)
                 .missionId(getMissionFixture().getId())
                 .missionTitle(getMissionFixture().getTitle())
                 .createdDate(LocalDateTime.now())
@@ -159,6 +160,7 @@ public class PostObjectFixture {
                 .title("TITLE1")
                 .content("CONTENT1")
                 .imageUrl("IMAGEURL1")
+                .likeCount(1L)
                 .createdDate(LocalDateTime.now())
                 .modifiedDate(LocalDateTime.now())
                 .build();

@@ -118,6 +118,8 @@ class PostRepositoryTest {
                 Post.builder().user(findUser).mission(missions.get(1)).title("TITLE4").content("CONTENT4").imageUrl("IMAGE4").build()
         );
 
+        posts.get(1).incrementLikeCount();
+        posts.get(3).incrementLikeCount();
         postRepository.saveAll(posts);
     }
 
@@ -152,6 +154,7 @@ class PostRepositoryTest {
                             post.title.as("title"),
                             post.content.as("content"),
                             post.imageUrl.as("imageUrl"),
+                            post.likeCount.as("likeCount"),
                             post.createdDate.as("createdDate"),
                             post.modifiedDate.as("modifiedDate")))
                     .from(post)
@@ -163,6 +166,7 @@ class PostRepositoryTest {
 
             assertThat(list.size()).isEqualTo(2);
             assertThat(list.get(0).getTitle()).isEqualTo("TITLE4");
+            assertThat(list.get(0).getLikeCount()).isEqualTo(1L);
             assertThat(list.get(1).getTitle()).isEqualTo("TITLE1");
             assertThat(list.get(0).getModifiedDate()).isAfterOrEqualTo(list.get(1).getModifiedDate());
             assertThat(list.size()).isLessThanOrEqualTo(pageable.getPageSize());
@@ -181,6 +185,7 @@ class PostRepositoryTest {
                             post.title,
                             post.content,
                             post.imageUrl,
+                            post.likeCount.as("likeCount"),
                             post.createdDate,
                             post.modifiedDate))
                     .from(post)
@@ -192,6 +197,7 @@ class PostRepositoryTest {
 
             assertThat(list.size()).isEqualTo(2);
             assertThat(list.get(0).getTitle()).isEqualTo("TITLE2");
+            assertThat(list.get(0).getLikeCount()).isEqualTo(1L);
             assertThat(list.get(1).getTitle()).isEqualTo("TITLE1");
             assertThat(list.get(0).getModifiedDate()).isAfterOrEqualTo(list.get(1).getModifiedDate());
             assertThat(list.size()).isLessThanOrEqualTo(pageable.getPageSize());
