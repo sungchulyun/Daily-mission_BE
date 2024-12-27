@@ -33,6 +33,10 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToMany(mappedBy = "post")
+    @JsonManagedReference
+    private List<Likes> likes = new ArrayList<>();
+
     private String title;
     private String content;
     @Column(name = "image_url")
