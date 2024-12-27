@@ -65,6 +65,7 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
                  post.title.as("title"),
                  post.content.as("content"),
                  post.imageUrl.as("imageUrl"),
+                 post.likeCount.as("likeCount"),
                  post.createdDate.as("createdDate"),
                  post.modifiedDate.as("modifiedDate")))
                 .from(post)
@@ -119,6 +120,7 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
                         post.title,
                         post.content,
                         post.imageUrl,
+                        post.likeCount.as("likeCount"),
                         post.createdDate,
                         post.modifiedDate))
                 .from(post)

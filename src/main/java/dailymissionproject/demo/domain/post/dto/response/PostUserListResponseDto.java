@@ -32,6 +32,8 @@ public class PostUserListResponseDto {
     private final String content;
     @Schema(description = "포스트 썸네일")
     private final String imageUrl;
+    @Schema(description = "포스트 좋아요")
+    private final Long likeCount;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -45,13 +47,14 @@ public class PostUserListResponseDto {
 
     @Builder
     public PostUserListResponseDto(Long id, Long missionId, String missionTitle, String title, String content, String imageUrl
-                                , LocalDateTime createdDate, LocalDateTime modifiedDate) {
+                                , Long likeCount, LocalDateTime createdDate, LocalDateTime modifiedDate) {
         this.id = id;
         this.missionId = missionId;
         this.missionTitle = missionTitle;
         this.title = title;
         this.content = content;
         this.imageUrl = imageUrl;
+        this.likeCount = likeCount;
         this.createdDate = createdDate;
         this.modifiedDate = modifiedDate;
     }
