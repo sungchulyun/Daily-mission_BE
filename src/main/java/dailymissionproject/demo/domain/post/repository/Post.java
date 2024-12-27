@@ -33,14 +33,13 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
-    private List<Likes> likes = new ArrayList<>();
-
     private String title;
     private String content;
     @Column(name = "image_url")
     private String imageUrl;
+
+    @Column(name = "like_count")
+    private Long likeCount;
 
     private boolean deleted;
 
@@ -59,6 +58,7 @@ public class Post extends BaseTimeEntity {
         this.title = title;
         this.content = content;
         this.imageUrl = imageUrl;
+        this.likeCount = 0L;
     }
 
     public void update(String title, String content, String imgUrl){
@@ -74,6 +74,14 @@ public class Post extends BaseTimeEntity {
     public void setTitle(String title){this.title = title;}
 
     public void setContent(String content){this.content = content;}
+
+    public void incrementLikeCount(){this.likeCount++;}
+
+    public void decrementLikeCount(){
+        if(this.likeCount > 0){
+            this.likeCount--;
+        }
+    }
 
     public void delete(){this.deleted = true;}
 }
