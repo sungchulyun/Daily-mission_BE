@@ -38,7 +38,7 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "receiver")
     List<Notification> notifications = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user")
     @JsonManagedReference
     private List<Likes> likes = new ArrayList<>();
 
