@@ -64,6 +64,7 @@ CREATE TABLE `post` (
                         title VARCHAR(255) NULL COMMENT '포스트 제목',
                         content VARCHAR(255) NULL COMMENT '포스트 내용',
                         image_url VARCHAR(255) NULL COMMENT '포스트 이미지',
+                        like_count BIGINT NULL COMMENT '포스트 좋아요',
                         deleted BOOLEAN DEFAULT FALSE COMMENT '삭제 여부',
                         created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '생성일자',
                         modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일자',
