@@ -91,7 +91,6 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/spring-boot-server
             docker stop $(docker ps -a -q)
             docker run -d --log-driver=syslog -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/spring-boot-server
-            docker run -p 6379:6379 --name redis -d redis:latest
             docker rm $(docker ps --filter 'status=exited' -a -q)
             docker image prune -a -f
 
