@@ -12,9 +12,12 @@ public class LikesResponseDto {
 
     private final Long userId;
 
+    private final boolean isLiked;
+
     @Builder
-    public LikesResponseDto(Long likeId, Long postId, Long userId) {
+    public LikesResponseDto(Long postId, Long userId, boolean isLiked) {
         this.postId = postId;
         this.userId = userId;
+        this.isLiked = isLiked;
     }
 }
