@@ -34,7 +34,7 @@ public class LikesService {
     @Transactional
     public LikesResponseDto likePost(Long postId, Long userId) {
         User findUser = userRepository.findById(userId).orElseThrow(() -> new UserException(USER_NOT_FOUND));
-        Post findPost = postRepository.findById(postId).orElseThrow(() -> new PostException(POST_NOT_FOUND));
+        Post findPost = postRepository.findWithPessimisticLockById(postId).orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
         boolean isLiked = likesRepository.findByPostIdAndUserId(postId, userId)
                 .map(likes -> {
