@@ -59,3 +59,15 @@ jobs:
         uses: gradle/gradle-build-action@v2.6.0
         with:
           arguments: clean build
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: spring-boot-artifact
+          path: build/libs/*.jar
+
+      - name: Upload Build logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-logs
+          path: build/reports/*
