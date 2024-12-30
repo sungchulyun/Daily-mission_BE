@@ -151,4 +151,109 @@ public class LikePostThreadService {
         Post findPost = postRepository.findById(post_1.getId()).get();
         Assertions.assertThat(findPost.getLikeCount()).isEqualTo(4);
     }
+
+    @Test
+    @DisplayName("2명은 좋아요 취소를 나머지 2명은 좋아요를")
+    void likeRequestWithCancel() throws InterruptedException {
+        ExecutorService executorService = Executors.newFixedThreadPool(200);
+
+        CountDownLatch countDownLatch = new CountDownLatch(4);
+
+        User user1 = User.builder()
+                .username("test1")
+                .email("test1@gmail.com")
+                .name("tester1")
+                .role(Role.USER)
+                .build();
+
+        userRepository.save(user1);
+
+        User user2 = User.builder()
+                .username("test2")
+                .email("test2@gmail.com")
+                .name("tester2")
+                .role(Role.USER)
+                .build();
+
+        userRepository.save(user2);
+
+        User user3 = User.builder()
+                .username("test3")
+                .email("test3@gmail.com")
+                .name("tester3")
+                .role(Role.USER)
+                .build();
+
+        userRepository.save(user3);
+
+        User user4 = User.builder()
+                .username("test4")
+                .email("test4@gmail.com")
+                .name("tester4")
+                .role(Role.USER)
+                .build();
+
+        userRepository.save(user4);
+
+        Mission mission_1 = Mission.builder()
+                .title("title1")
+                .content("content1")
+                .missionRule(MissionRule.builder()
+                        .week(new Week(true, true, false, false, false, false, false))
+                        .build())
+                .startDate(LocalDate.now().plusDays(1))
+                .endDate(LocalDate.now().plusMonths(2))
+                .user(user1)
+                .build();
+
+        missionRepository.save(mission_1);
+
+        Post post_1 = Post.builder()
+                .title("title1")
+                .content("content1")
+                .mission(mission_1)
+                .user(user1)
+                .build();
+
+        postRepository.save(post_1);
+
+        System.out.println("------------------------------------------");
+
+        executorService.execute(() -> {
+            try {
+                likesService.likePost(post_1.getId(), user2.getId());
+            } finally {
+                countDownLatch.countDown();
+            }
+        });
+
+        executorService.execute(() -> {
+            try {
+                likesService.likePost(post_1.getId(), user1.getId());
+            } finally {
+                countDownLatch.countDown();
+            }
+        });
+
+        executorService.execute(() -> {
+            try {
+                likesService.likePost(post_1.getId(), user3.getId());
+            } finally {
+                countDownLatch.countDown();
+            }
+        });
+
+        executorService.execute(() -> {
+            try {
+                likesService.likePost(post_1.getId(), user4.getId());
+            } finally {
+                countDownLatch.countDown();
+            }
+        });
+
+        countDownLatch.await();
+
+        Post findPost = postRepository.findById(post_1.getId()).get();
+        Assertions.assertThat(findPost.getLikeCount()).isEqualTo(4);
+    }
 }
