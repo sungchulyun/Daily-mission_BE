@@ -11,6 +11,7 @@ import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import static dailymissionproject.demo.domain.post.exception.PostExceptionCode.POST_NOT_FOUND;
@@ -53,7 +54,7 @@ public class LikesService {
                 .build();
     }
 
-    private boolean addLike(Post post, User user) {
+    private void addLike(Post post, User user) {
         Likes likes = Likes.builder()
                 .post(post)
                 .user(user)
@@ -62,15 +63,11 @@ public class LikesService {
         post.incrementLikeCount();
 
         likesRepository.save(likes);
-
-        return true;
     }
 
-    private boolean removeLike(Post post, Likes likes) {
+    private void removeLike(Post post, Likes likes) {
             post.decrementLikeCount();
 
             likesRepository.delete(likes);
-
-            return false;
     }
 }
