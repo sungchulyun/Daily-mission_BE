@@ -16,7 +16,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
       Post save(Post post);
 
       @Lock(LockModeType.PESSIMISTIC_WRITE)
-      @QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value = "5000")})
+      @QueryHints({@QueryHint(name = "jakarta.persistence.lock.timeout", value = "3000")})
       @Query("SELECT p FROM Post p WHERE p.id = :id")
       Optional<Post> findWithPessimisticLockById(Long id);
 }
