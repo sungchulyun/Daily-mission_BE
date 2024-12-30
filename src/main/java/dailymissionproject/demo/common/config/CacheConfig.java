@@ -1,7 +1,5 @@
 package dailymissionproject.demo.common.config;
 
-import org.springframework.cache.annotation.CachingConfigurerSupport;
-import org.springframework.cache.interceptor.CacheErrorHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -11,12 +9,15 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import java.time.Duration;
+
 @Configuration
 public class CacheConfig {
 
     @Bean
     public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory){
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofSeconds(6000))
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(RedisSerializationContext
                         .SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
