@@ -19,11 +19,11 @@ jobs:
         with:
           ref: dev
 
+      # 아티팩트 다운로드
       - name: Download Build Artifact
         uses: actions/download-artifact@v3
         with:
-          name: spring-boot-artifact
-          path: ./build/libs
+          name: spring-boot-artifact  # CI에서 업로드한 아티팩트 이름
 
       - name: Docker Login
         uses: docker/login-action@v2.2.0
@@ -45,6 +45,9 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
+            # 다운로드된 아티팩트 확인
+            ls -alh
+
             docker pull ${{ secrets.DOCKER_USERNAME }}/spring-boot-server
             docker stop $(docker ps -a -q) || true
             docker run -d --log-driver=syslog -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/spring-boot-server
