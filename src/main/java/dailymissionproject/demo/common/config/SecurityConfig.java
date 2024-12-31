@@ -51,7 +51,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests((auth) -> auth
                         //.requestMatchers("/swagger-ui","/swagger-ui/**").permitAll()
-                        .requestMatchers( "/login", "/error", "/favicon.ico","/").permitAll()
+                        .requestMatchers("/static/**" ,"/login", "/error", "/favicon.ico","/").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
