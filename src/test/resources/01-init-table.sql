@@ -1,4 +1,4 @@
-CREATE TABLE `user` (
+CREATE TABLE `users` (
                         user_id            bigint       NOT NULL AUTO_INCREMENT COMMENT '유저 PK',
                         username           varchar(255) NOT NULL COMMENT '유저 고유이름',
                         name               varchar(255) NOT NULL COMMENT '유저 이름',
@@ -40,7 +40,7 @@ CREATE TABLE `mission` (
                            mission_rule_id  BIGINT COMMENT '미션 규칙',
 
                            CONSTRAINT fk_mission_rule_id FOREIGN KEY (mission_rule_id) REFERENCES mission_rule(mission_rule_id) ON DELETE CASCADE,
-                           CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE SET NULL
+                           CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
 );
 
 CREATE TABLE `participant` (
@@ -54,7 +54,7 @@ CREATE TABLE `participant` (
                                last_modified_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
                                CONSTRAINT fk_participant_mission_id FOREIGN KEY (mission_id) REFERENCES mission(mission_id) ON DELETE CASCADE,
-                               CONSTRAINT fk_participant_user_id FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE SET NULL
+                               CONSTRAINT fk_participant_user_id FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
 );
 
 CREATE TABLE `post` (
@@ -64,6 +64,7 @@ CREATE TABLE `post` (
                         title VARCHAR(255) NULL COMMENT '포스트 제목',
                         content VARCHAR(255) NULL COMMENT '포스트 내용',
                         image_url VARCHAR(255) NULL COMMENT '포스트 이미지',
+                        like_count BIGINT NULL COMMENT '포스트 좋아요',
                         deleted BOOLEAN DEFAULT FALSE COMMENT '삭제 여부',
                         created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '생성일자',
                         modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일자',
@@ -71,5 +72,5 @@ CREATE TABLE `post` (
                         last_modified_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
                         CONSTRAINT fk_post_mission_id FOREIGN KEY (mission_id) REFERENCES mission(mission_id) ON DELETE CASCADE,
-                        CONSTRAINT fk_post_user_id FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE SET NULL
+                        CONSTRAINT fk_post_user_id FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
 );

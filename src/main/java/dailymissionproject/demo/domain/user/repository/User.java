@@ -1,6 +1,8 @@
 package dailymissionproject.demo.domain.user.repository;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dailymissionproject.demo.common.repository.BaseTimeEntity;
+import dailymissionproject.demo.domain.like.repository.Likes;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.notify.repository.Notification;
 import dailymissionproject.demo.domain.participant.repository.Participant;
@@ -17,7 +19,7 @@ import java.util.Objects;
 @Getter
 @Entity
 @NoArgsConstructor
-@Table(name = "User")
+@Table(name = "Users")
 public class User extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +37,10 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "receiver")
     List<Notification> notifications = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    private List<Likes> likes = new ArrayList<>();
 
     private String name;
     private String email;

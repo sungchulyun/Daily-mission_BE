@@ -34,6 +34,8 @@ public class QUser extends EntityPathBase<User> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> lastModifiedTime = _super.lastModifiedTime;
 
+    public final ListPath<dailymissionproject.demo.domain.like.repository.Likes, dailymissionproject.demo.domain.like.repository.QLikes> likes = this.<dailymissionproject.demo.domain.like.repository.Likes, dailymissionproject.demo.domain.like.repository.QLikes>createList("likes", dailymissionproject.demo.domain.like.repository.Likes.class, dailymissionproject.demo.domain.like.repository.QLikes.class, PathInits.DIRECT2);
+
     public final ListPath<dailymissionproject.demo.domain.mission.repository.Mission, dailymissionproject.demo.domain.mission.repository.QMission> missions = this.<dailymissionproject.demo.domain.mission.repository.Mission, dailymissionproject.demo.domain.mission.repository.QMission>createList("missions", dailymissionproject.demo.domain.mission.repository.Mission.class, dailymissionproject.demo.domain.mission.repository.QMission.class, PathInits.DIRECT2);
 
     public final StringPath name = createString("name");

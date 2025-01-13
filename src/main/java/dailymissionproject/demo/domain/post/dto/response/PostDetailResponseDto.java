@@ -39,6 +39,8 @@ public class PostDetailResponseDto {
     private final String content;
     @Schema(description = "포스트 썸네일")
     private final String imageUrl;
+    @Schema(description = "좋아요")
+    private final Long likesCount;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -62,10 +64,12 @@ public class PostDetailResponseDto {
         this.imageUrl = post.getImageUrl();
         this.createdDate = post.getCreatedDate();
         this.modifiedDate = post.getModifiedDate();
+        this.likesCount = post.getLikeCount();
     }
 
     @Builder
-    public PostDetailResponseDto(Long id, Long missionId, String missionTitle, String nickname, String userImageUrl, String title, String content, String imageUrl, LocalDateTime createdDate, LocalDateTime modifiedDate) {
+    public PostDetailResponseDto(Long id, Long missionId, String missionTitle, String nickname, String userImageUrl, String title, String content
+            , String imageUrl, Long likesCount, LocalDateTime createdDate, LocalDateTime modifiedDate) {
         this.id = id;
         this.missionId = missionId;
         this.missionTitle = missionTitle;
@@ -74,10 +78,10 @@ public class PostDetailResponseDto {
         this.title = title;
         this.content = content;
         this.imageUrl = imageUrl;
+        this.likesCount = likesCount;
         this.createdDate = createdDate;
         this.modifiedDate = modifiedDate;
     }
-
 
     public static PostDetailResponseDto from(Post post){
         return new PostDetailResponseDto(post);
