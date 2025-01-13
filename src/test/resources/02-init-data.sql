@@ -17,6 +17,6 @@ INSERT INTO `participant` (`mission_id`, `user_id`, `banned`)
 VALUES
     (1, 1, FALSE);
 
-INSERT INTO `post` (`mission_id`, `user_id`, `title`, `content`, `image_url`)
+INSERT INTO `post` (`mission_id`, `user_id`, `title`, `content`, `image_url`, like_count)
 VALUES
-    (1, 1, 'TITLE', 'CONTENT', 'IMAGE_URL');
+    (1, 1, 'TITLE', 'CONTENT', 'IMAGE_URL', 1);
