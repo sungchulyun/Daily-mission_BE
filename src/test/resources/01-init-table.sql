@@ -1,4 +1,4 @@
-CREATE TABLE `users` (
+CREATE TABLE `user` (
                         user_id            bigint AUTO_INCREMENT PRIMARY KEY COMMENT '유저 PK',
                         username           varchar(255) NOT NULL COMMENT '유저 고유이름',
                         name               varchar(255) NOT NULL COMMENT '유저 이름',
@@ -39,7 +39,7 @@ CREATE TABLE `mission` (
                            mission_rule_id  BIGINT COMMENT '미션 규칙',
 
                            CONSTRAINT fk_mission_rule_id FOREIGN KEY (mission_rule_id) REFERENCES mission_rule(mission_rule_id) ON DELETE CASCADE,
-                           CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
+                           CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE SET NULL
 );
 
 CREATE TABLE `participant` (
@@ -53,7 +53,7 @@ CREATE TABLE `participant` (
                                last_modified_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
                                CONSTRAINT fk_participant_mission_id FOREIGN KEY (mission_id) REFERENCES mission(mission_id) ON DELETE CASCADE,
-                               CONSTRAINT fk_participant_user_id FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
+                               CONSTRAINT fk_participant_user_id FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE SET NULL
 );
 
 CREATE TABLE `post` (
@@ -71,7 +71,7 @@ CREATE TABLE `post` (
                         last_modified_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
                         CONSTRAINT fk_post_mission_id FOREIGN KEY (mission_id) REFERENCES mission(mission_id) ON DELETE CASCADE,
-                        CONSTRAINT fk_post_user_id FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
+                        CONSTRAINT fk_post_user_id FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE SET NULL
 );
 
 CREATE TABLE `likes` (
@@ -84,5 +84,5 @@ CREATE TABLE `likes` (
                         last_modified_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
                         CONSTRAINT fk_likes_post_id FOREIGN KEY (post_id) REFERENCES post(post_id) ON DELETE CASCADE ,
-                        CONSTRAINT fk_likes_user_id FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+                        CONSTRAINT fk_likes_user_id FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
 )
