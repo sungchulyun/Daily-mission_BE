@@ -38,8 +38,14 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer(){
-        return web -> web.ignoring()
-                .requestMatchers("/error", "/favicon.ico");
+        return web -> {
+            web.ignoring()
+                    .requestMatchers(
+                            "/favicon.ico",
+                            "/swagger-ui/**",
+                            "/",
+                            "/error");
+        };
     }
     @Bean
     public SecurityFilterChain config(HttpSecurity http) throws Exception{
@@ -59,7 +65,7 @@ public class SecurityConfig {
                         //.defaultSuccessUrl("/api/v1/user/detail", true)
                 )
                 .authorizeHttpRequests((auth) -> auth
-                        //.requestMatchers("/swagger-ui","/swagger-ui/**").permitAll()
+                        .requestMatchers( "/", "/swagger-ui/**", "/v3/**").permitAll()
                         .requestMatchers("/favicon.ico","/static/**" ,"/login", "/error","/").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement((session) -> session
@@ -71,7 +77,7 @@ public class SecurityConfig {
                         CorsConfiguration configuration = new CorsConfiguration();
 
                        // configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-                        configuration.setAllowedOrigins(Arrays.asList("https://daily-mission.site/", "https://daily-mission.leey00nsu.com/", "http://localhost:3000"));
+                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080", "http://daily-mission-api.leey00nsu.com/", "https://daily-mission.leey00nsu.com/", "http://localhost:3000"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
