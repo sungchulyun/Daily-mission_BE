@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 
 @RequiredArgsConstructor
@@ -105,5 +106,19 @@ public class JWTFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String[] excludePath = {
+                "/swagger-ui/",
+                "/v3/",
+                "/swagger-",
+                "/error"
+        };
+        String path = request.getRequestURI();
+
+        boolean shouldNotFilter = Arrays.stream(excludePath).anyMatch(path::startsWith);
+        return shouldNotFilter;
     }
 }
