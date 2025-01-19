@@ -1,5 +1,5 @@
-CREATE TABLE `users` (
-                        user_id            bigint       NOT NULL AUTO_INCREMENT COMMENT '유저 PK',
+CREATE TABLE `user` (
+                        user_id            bigint AUTO_INCREMENT PRIMARY KEY COMMENT '유저 PK',
                         username           varchar(255) NOT NULL COMMENT '유저 고유이름',
                         name               varchar(255) NOT NULL COMMENT '유저 이름',
                         nickname           varchar(255) NULL COMMENT '유저 닉네임',
@@ -7,8 +7,7 @@ CREATE TABLE `users` (
                         image_url           varchar(255) NULL COMMENT '유저 프로필 사진',
                         created_time       timestamp    NULL COMMENT '최초 생성 시간',
                         last_modified_time timestamp    NULL COMMENT '마지막 수정시간',
-                        role               enum ('GUEST','USER') NOT NULL COMMENT '권한',
-                        primary key (user_id)
+                        role               enum ('GUEST','USER') NOT NULL COMMENT '권한'
 );
 
 CREATE TABLE `mission_rule` (
@@ -40,7 +39,7 @@ CREATE TABLE `mission` (
                            mission_rule_id  BIGINT COMMENT '미션 규칙',
 
                            CONSTRAINT fk_mission_rule_id FOREIGN KEY (mission_rule_id) REFERENCES mission_rule(mission_rule_id) ON DELETE CASCADE,
-                           CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
+                           CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE SET NULL
 );
 
 CREATE TABLE `participant` (
@@ -54,7 +53,7 @@ CREATE TABLE `participant` (
                                last_modified_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
                                CONSTRAINT fk_participant_mission_id FOREIGN KEY (mission_id) REFERENCES mission(mission_id) ON DELETE CASCADE,
-                               CONSTRAINT fk_participant_user_id FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
+                               CONSTRAINT fk_participant_user_id FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE SET NULL
 );
 
 CREATE TABLE `post` (
@@ -72,5 +71,18 @@ CREATE TABLE `post` (
                         last_modified_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
                         CONSTRAINT fk_post_mission_id FOREIGN KEY (mission_id) REFERENCES mission(mission_id) ON DELETE CASCADE,
-                        CONSTRAINT fk_post_user_id FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
+                        CONSTRAINT fk_post_user_id FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE SET NULL
 );
+
+CREATE TABLE `likes` (
+                        like_id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '좋아요 PK',
+                        post_id BIGINT COMMENT '포스트 ID',
+                        user_id BIGINT COMMENT '유저 ID',
+                        created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '생성일자',
+                        modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일자',
+                        created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        last_modified_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+                        CONSTRAINT fk_likes_post_id FOREIGN KEY (post_id) REFERENCES post(post_id) ON DELETE CASCADE ,
+                        CONSTRAINT fk_likes_user_id FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
+)
