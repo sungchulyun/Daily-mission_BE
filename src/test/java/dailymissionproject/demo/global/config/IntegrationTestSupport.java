@@ -46,7 +46,7 @@ import org.testcontainers.utility.DockerImageName;
         "spring.security.oauth2.client.provider.naver.token-uri=https://nid.naver.com/oauth2.0/token",
         "security.oauth2.client.provider.naver.user-info-uri=https://openapi.naver.com/v1/nid/me",
         "spring.security.oauth2.client.provider.naver.user-name-attribute=response",
-        "spring.redis.host=redis-container",
+        "spring.redis.host=ec2-43-201-49-110.ap-northeast-2.compute.amazonaws.com",
         "spring.redis.port=6379",
         "spring.batch.job.enabled=false"
 })
