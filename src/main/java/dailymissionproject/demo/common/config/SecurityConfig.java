@@ -57,7 +57,7 @@ public class SecurityConfig {
                 .logout(AbstractHttpConfigurer::disable)
 
                 .oauth2Login((oauth2) -> oauth2
-                        .loginPage("https://daily-mission.leey00nsu.com/login")
+             //           .loginPage("https://daily-mission.leey00nsu.com/login")
 
                         .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService)))
@@ -66,7 +66,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers( "/", "/swagger-ui/**", "/v3/**").permitAll()
-                        .requestMatchers("/favicon.ico","/static/**" ,"/login", "/error","/").permitAll()
+                        .requestMatchers("/favicon.ico" ,"/login", "/error","/").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -89,8 +89,8 @@ public class SecurityConfig {
                         return configuration;
                     }
                 }))
-                .addFilterAfter(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint));
+                .addFilterAfter(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                //.exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint));
 
         return http.build();
     }
