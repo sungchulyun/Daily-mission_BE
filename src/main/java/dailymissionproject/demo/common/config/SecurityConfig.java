@@ -77,7 +77,7 @@ public class SecurityConfig {
                         CorsConfiguration configuration = new CorsConfiguration();
 
                        // configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080", "http://daily-mission-api.leey00nsu.com/", "https://daily-mission.leey00nsu.com/", "http://localhost:3000"));
+                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080", "http://daily-mission-api.leey00nsu.com:8080/", "https://daily-mission.leey00nsu.com/", "http://localhost:3000"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
