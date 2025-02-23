@@ -57,12 +57,12 @@ public class SecurityConfig {
                 .logout(AbstractHttpConfigurer::disable)
 
                 .oauth2Login((oauth2) -> oauth2
-             //           .loginPage("https://daily-mission.leey00nsu.com/login")
+                        .loginPage("https://daily-mission.site/login")
 
                         .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService)))
                         .successHandler(customSuccessHandler)
-                        //.defaultSuccessUrl("/api/v1/user/detail", true)
+                        .defaultSuccessUrl("/api/v1/user/detail", true)
                 )
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers( "/", "/swagger-ui/**", "/v3/**").permitAll()
@@ -77,7 +77,7 @@ public class SecurityConfig {
                         CorsConfiguration configuration = new CorsConfiguration();
 
                        // configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080", "http://daily-mission-api.leey00nsu.com:8080/", "https://daily-mission.leey00nsu.com/", "http://localhost:3000"));
+                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080", "http://api.daily-mission.site:8080/", "https://daily-mission.site/", "http://localhost:3000"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -89,8 +89,8 @@ public class SecurityConfig {
                         return configuration;
                     }
                 }))
-                .addFilterAfter(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-                //.exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint));
+                .addFilterAfter(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint));
 
         return http.build();
     }
