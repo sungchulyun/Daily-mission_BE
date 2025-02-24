@@ -57,7 +57,7 @@ public class SecurityConfig {
                 .logout(AbstractHttpConfigurer::disable)
 
                 .oauth2Login((oauth2) -> oauth2
-                        .loginPage("https://daily-mission.site/login")
+                        //.loginPage("https://daily-mission.site/login")
 
                         .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService)))
