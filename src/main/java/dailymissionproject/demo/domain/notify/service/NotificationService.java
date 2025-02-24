@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -64,8 +65,15 @@ public class NotificationService {
                 .build();
 
         notificationRepository.save(notification);
+
+        publishNotificationAsync(request);
+    }
+
+    @Async
+    public void publishNotificationAsync(NotifyDto request){
         redisMessageService.publish(String.valueOf(request.getId()), request);
     }
+
 
     @Transactional(readOnly = true)
     public PageResponseDto getUserNotifications(CustomOAuth2User user, Pageable pageable){
