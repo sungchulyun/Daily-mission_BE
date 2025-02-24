@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -57,14 +58,23 @@ public class NotificationService {
     public void sendNotification(NotifyDto request){
         User receiver = userRepository.findById(request.getId()).orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
-        Notification notification = Notification.builder()
+        Notification notification = buildNotification(receiver, request);
+        notificationRepository.save(notification);
+
+        publishNotificationAsync(request);
+    }
+
+    @Async
+    public void publishNotificationAsync(NotifyDto request){
+        redisMessageService.publish(String.valueOf(request.getId()), request);
+    }
+
+    private Notification buildNotification(User receiver, NotifyDto request){
+        return Notification.builder()
                 .receiver(receiver)
                 .content(request.getContent())
                 .notificationType(request.getType())
                 .build();
-
-        notificationRepository.save(notification);
-        redisMessageService.publish(String.valueOf(request.getId()), request);
     }
 
     @Transactional(readOnly = true)
