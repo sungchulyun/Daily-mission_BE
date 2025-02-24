@@ -41,7 +41,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         //response.addCookie(createCookie("Authorization", token));
 
         createCookie(response, "Authorization", token);
-        //response.sendRedirect("https://daily-mission.site/sign-in/callback");
+        response.sendRedirect("https://daily-mission.site");
     }
 
     public static void createCookie(HttpServletResponse response, String key, String value){
