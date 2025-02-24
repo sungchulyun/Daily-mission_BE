@@ -58,12 +58,7 @@ public class NotificationService {
     public void sendNotification(NotifyDto request){
         User receiver = userRepository.findById(request.getId()).orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
-        Notification notification = Notification.builder()
-                .receiver(receiver)
-                .content(request.getContent())
-                .notificationType(request.getType())
-                .build();
-
+        Notification notification = buildNotification(receiver, request);
         notificationRepository.save(notification);
 
         publishNotificationAsync(request);
@@ -74,6 +69,13 @@ public class NotificationService {
         redisMessageService.publish(String.valueOf(request.getId()), request);
     }
 
+    private Notification buildNotification(User receiver, NotifyDto request){
+        return Notification.builder()
+                .receiver(receiver)
+                .content(request.getContent())
+                .notificationType(request.getType())
+                .build();
+    }
 
     @Transactional(readOnly = true)
     public PageResponseDto getUserNotifications(CustomOAuth2User user, Pageable pageable){
