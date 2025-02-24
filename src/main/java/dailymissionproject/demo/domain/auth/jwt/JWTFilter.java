@@ -114,7 +114,6 @@ public class JWTFilter extends OncePerRequestFilter {
                 "/swagger-ui/",
                 "/v3/",
                 "/swagger-",
-                "/error"
         };
         String path = request.getRequestURI();
 

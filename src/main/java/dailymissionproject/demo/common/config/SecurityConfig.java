@@ -35,7 +35,7 @@ public class SecurityConfig {
     private final JWTUtil jwtUtil;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-
+/*
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer(){
         return web -> {
@@ -43,15 +43,16 @@ public class SecurityConfig {
                     .requestMatchers(
                             "/favicon.ico",
                             "/swagger-ui/**",
-                            "/",
                             "/error");
         };
     }
+
+ */
     @Bean
     public SecurityFilterChain config(HttpSecurity http) throws Exception{
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
+                //.cors(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
@@ -62,10 +63,10 @@ public class SecurityConfig {
                         .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService)))
                         .successHandler(customSuccessHandler)
-                        .defaultSuccessUrl("/api/v1/user/detail", true)
+                        //.defaultSuccessUrl("/api/v1/user/detail", true)
                 )
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers( "/", "/swagger-ui/**", "/v3/**").permitAll()
+                        //.requestMatchers( "/", "/swagger-ui/**", "/v3/**").permitAll()
                         .requestMatchers("/favicon.ico" ,"/login", "/error","/").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement((session) -> session
