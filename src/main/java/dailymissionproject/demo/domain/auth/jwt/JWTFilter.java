@@ -30,8 +30,6 @@ public class JWTFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
-
         String requestUri = request.getRequestURI();
         if(requestUri.matches("^\\/login(?:\\/.*)?$")){
 
@@ -46,11 +44,11 @@ public class JWTFilter extends OncePerRequestFilter {
 
         String authorization = "";
         Cookie[] cookies = request.getCookies();
-        for(Cookie cookie : cookies){
-
-            if(cookie.getName().equals("Authorization")){
-
-                authorization = cookie.getValue();
+        if(cookies != null){
+            for(Cookie cookie : cookies) {
+                if (cookie.getName().equals("Authorization")) {
+                    authorization = cookie.getValue();
+                }
             }
         }
 
