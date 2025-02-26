@@ -31,8 +31,8 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String requestUri = request.getRequestURI();
-        if(requestUri.matches("^\\/login(?:\\/.*)?$")){
 
+        if(requestUri.matches("^\\/login(?:\\/.*)?$")){
             filterChain.doFilter(request, response);
             return;
         }
@@ -44,6 +44,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         String authorization = "";
         Cookie[] cookies = request.getCookies();
+
         if(cookies != null){
             for(Cookie cookie : cookies) {
                 if (cookie.getName().equals("Authorization")) {
@@ -52,8 +53,9 @@ public class JWTFilter extends OncePerRequestFilter {
             }
         }
 
-        if(authorization == null){
-            log.info("token is null");
+        if(authorization == null || authorization.isEmpty()){
+            log.info("Exception : 토큰이 존재하지 않습니다.");
+            request.setAttribute("exception", new IllegalArgumentException("토큰이 존재하지 않습니다."));
             filterChain.doFilter(request, response);
             return;
         }
@@ -71,18 +73,15 @@ public class JWTFilter extends OncePerRequestFilter {
             userDto.setUsername(username);
             userDto.setRole("ROLE_USER");
 
-            //인증 객체 담기
-            //CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDto);
             CustomOAuth2User customOAuth2User = CustomOAuth2User.create(userDto);
 
-            if(!jwtUtil.validToken(token, customOAuth2User)){
-                log.info("token is invalid");
-                request.setAttribute("exception", new MalformedJwtException("토큰이 유효하지 않습니다."));
-                filterChain.doFilter(request, response);
-                return;
-            }
+                if(!jwtUtil.validToken(token, customOAuth2User)){
+                    log.info("MalformedJwtException : 토큰이 유효하지 않습니다.");
+                    request.setAttribute("exception", new MalformedJwtException("토큰이 유효하지 않습니다."));
+                    filterChain.doFilter(request, response);
+                    return;
+                }
 
-            //시큐리티 인증 토큰 생성
             Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authToken);
 
