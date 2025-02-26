@@ -35,38 +35,21 @@ public class SecurityConfig {
     private final JWTUtil jwtUtil;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-/*
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer(){
-        return web -> {
-            web.ignoring()
-                    .requestMatchers(
-                            "/favicon.ico",
-                            "/swagger-ui/**",
-                            "/error");
-        };
-    }
-
- */
     @Bean
     public SecurityFilterChain config(HttpSecurity http) throws Exception{
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                //.cors(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
 
                 .oauth2Login((oauth2) -> oauth2
-                        //.loginPage("https://daily-mission.site/login")
 
                         .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService)))
                         .successHandler(customSuccessHandler)
-                        //.defaultSuccessUrl("/api/v1/user/detail", true)
                 )
                 .authorizeHttpRequests((auth) -> auth
-                        //.requestMatchers( "/", "/swagger-ui/**", "/v3/**").permitAll()
                         .requestMatchers("/favicon.ico" ,"/login", "/error","/").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement((session) -> session
@@ -76,8 +59,6 @@ public class SecurityConfig {
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
 
                         CorsConfiguration configuration = new CorsConfiguration();
-
-                       // configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
                         configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080", "http://api.daily-mission.site:8080/", "https://daily-mission.site/", "http://localhost:3000"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
