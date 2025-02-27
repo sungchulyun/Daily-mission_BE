@@ -19,14 +19,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
 
 import static dailymissionproject.demo.common.config.response.GlobalResponse.success;
-
-
 
 @RestController
 @RequiredArgsConstructor
@@ -37,13 +34,6 @@ public class MissionController {
 
     private final MissionService missionService;
 
-    /**
-     * 미션 생성
-     * @param user
-     * @param missionReqDto
-     * @return
-     * @throws IOException
-     */
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/save")
     @Operation(summary = "미션 생성", description = "사용자가 미션을 생성하고 싶을 때 사용하는 API입니다.")
@@ -59,11 +49,6 @@ public class MissionController {
         return ResponseEntity.ok(success(missionService.save(user, missionReqDto)));
     }
 
-    /**
-     * 미션 상세정보 조회
-     * @param id
-     * @return MissionDetailResponseDto
-     */
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/{id}")
     @Operation(summary = "미션 상세 정보 확인", description = "각 미션에 대한 상세정보를 확인하고 싶을 때 사용하는 API입니다.")
@@ -78,11 +63,6 @@ public class MissionController {
         return ResponseEntity.ok(success(missionService.findById(id)));
     }
 
-    /**
-     * 미션 수정
-     * @Param id
-     * @return
-     */
     @PreAuthorize("hasRole('ROLE_USER')")
     @PutMapping("/{id}")
     @Operation(summary = "미션 수정", description = "사용자가 미션을 수정하고 싶을 때 사용하는 API입니다.")
@@ -98,12 +78,6 @@ public class MissionController {
         return ResponseEntity.ok(success(missionService.update(id, user, requestDto)));
     }
 
-    /**
-     * 미션 삭제
-     * @param id
-     * @param user
-     * @return
-     */
     @PreAuthorize("hasRole('ROLE_USER')")
     @DeleteMapping("/{id}")
     @Operation(summary = "미션 삭제", description = "사용자가 미션을 삭제하고 싶을 때 사용하는 API입니다.")
@@ -118,12 +92,6 @@ public class MissionController {
         return ResponseEntity.ok(success(missionService.delete(id, user)));
     }
 
-
-    /**
-     * 인기 미션 리스트 조회
-     * @param pageable
-     * @return PageResponseDto
-     */
     @GetMapping("/hot")
     @Operation(summary = "인기 미션 확인", description = "인기 미션 목록을 확인하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
@@ -137,15 +105,8 @@ public class MissionController {
         PageResponseDto response = missionService.findHotList(pageable, user);
 
         return ResponseEntity.ok(success(response.content(), MetaService.createMetaInfo().add("isNext", response.next())));
-
     }
 
-
-    /**
-     * 신규 미션 리스트 조회
-     * @param pageable
-     * @return PageResponseDto
-     */
     @GetMapping("/new")
     @Operation(summary = "신규 미션 확인", description = "신규 미션 목록을 확인하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
@@ -161,11 +122,6 @@ public class MissionController {
         return ResponseEntity.ok(success(response.content(), MetaService.createMetaInfo().add("isNext", response.next())));
     }
 
-    /**
-     * 전체 미션 리스트 조회
-     * @param pageable
-     * @return PageResponseDto
-     */
     @GetMapping("/all")
     @Operation(summary = "모든 미션 확인", description = "모든 미션 목록을 확인하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
@@ -180,13 +136,6 @@ public class MissionController {
         return ResponseEntity.ok(success(response.content(), MetaService.createMetaInfo().add("isNext", response.next())));
     }
 
-
-    /**
-     * 로그인한 유저가 참여중인 전체 미션 리스트 조회
-     * @param pageable
-     * @param user
-     * @return List<MissionUserListResponseDto>
-     */
     @GetMapping("/user")
     @Operation(summary = "사용자가 참여중인 미션 확인", description = "사용자가 참여 중인 미션 목록을 확인하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
@@ -200,7 +149,4 @@ public class MissionController {
 
         return ResponseEntity.ok(success(response));
     }
-
-
-
 }
