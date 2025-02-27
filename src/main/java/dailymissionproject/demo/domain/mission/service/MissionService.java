@@ -46,7 +46,6 @@ public class MissionService {
     private final MissionRepository missionRepository;
     private final UserRepository userRepository;
     private final ParticipantRepository participantRepository;
-    private final ImageService imageService;
 
     /**
      * 미션 상세 조회할 때 사용하는 메서드
