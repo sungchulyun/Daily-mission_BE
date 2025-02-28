@@ -21,7 +21,6 @@ import dailymissionproject.demo.domain.post.repository.PostRepository;
 import dailymissionproject.demo.domain.user.exception.UserException;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -139,7 +138,6 @@ public class PostService {
      */
     @Transactional(readOnly = true)
     @Cacheable(value = "postLists", key = "'mission-' + #id")
-    @CircuitBreaker(name = "redis-circuit-breaker", fallbackMethod = "findAllByMissionFallBack")
     public PageResponseDto findAllByMission(Long id, Pageable pageable){
 
         Mission mission = missionRepository.findById(id)
