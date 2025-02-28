@@ -3,6 +3,7 @@ package dailymissionproject.demo.domain.mission.repository;
 import dailymissionproject.demo.domain.mission.dto.response.MissionAllListResponseDto;
 import dailymissionproject.demo.domain.mission.dto.response.MissionHotListResponseDto;
 import dailymissionproject.demo.domain.mission.dto.response.MissionNewListResponseDto;
+import dailymissionproject.demo.domain.mission.dto.response.MissionUserListResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -23,32 +24,6 @@ public interface MissionRepositoryCustom {
     List<Mission> findAllByCreatedDate();
 
     Page<Mission> findAllAndEndedIsFalse(Pageable pageable);
-    /*
-        @Override
-        public List<Mission> findAllByParticipantSize() {
-            return queryFactory
-                    .select(mission)
-                    .from(mission)
-                    .where(mission.deleted.isFalse().and(mission.ended.isFalse()))
-                    .orderBy(mission.participants.size().desc(), mission.createdTime.desc())
-                    .fetch();
-        }
 
-        @Override
-        public List<Mission> findAllByCreatedInMonth() {
-            return queryFactory
-                    .select(mission)
-                    .from(mission)
-                    .where(mission.deleted.isFalse(), mission.ended.isFalse())
-                    .orderBy(mission.createdTime.desc())
-                    .fetch();
-        }
-        */
-
-
-
-    //List<Mission> findAllByParticipantSize();
-    //List<Mission> findAllByCreatedInMonth();
-
-    //List<Mission> findAllByCreatedDate();
+    List<MissionUserListResponseDto> findMissionDtoByUser(Long userId);
 }

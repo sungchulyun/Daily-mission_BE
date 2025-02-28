@@ -9,7 +9,9 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import dailymissionproject.demo.domain.mission.dto.response.MissionAllListResponseDto;
 import dailymissionproject.demo.domain.mission.dto.response.MissionHotListResponseDto;
 import dailymissionproject.demo.domain.mission.dto.response.MissionNewListResponseDto;
+import dailymissionproject.demo.domain.mission.dto.response.MissionUserListResponseDto;
 import dailymissionproject.demo.domain.participant.repository.QParticipant;
+import dailymissionproject.demo.domain.user.repository.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -159,4 +161,21 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
         return new PageImpl<>(missions, pageable, missions.size());
     }
 
+    @Override
+    public List<MissionUserListResponseDto> findMissionDtoByUser(Long userId) {
+        return queryFactory
+                .select(Projections.fields(MissionUserListResponseDto.class,
+                        mission.id,
+                        mission.title,
+                        mission.content,
+                        mission.imageUrl,
+                        mission.user.nickname,
+                        mission.startDate,
+                        mission.endDate,
+                        mission.ended))
+                .from(mission)
+                .join(mission.participants, participant)
+                .where(participant.user.id.eq(userId))
+                .fetch();
+    }
 }
