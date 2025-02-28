@@ -210,14 +210,12 @@ class MissionServiceTest {
             @DisplayName("유저가 참여중인 미션 리스트를 조회할 수 있다.")
             void test_mission_read_user_joining_list_success(){
                 when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-                when(missionRepository.findAll()).thenReturn(getMissionList());
+                when(missionRepository.findMissionDtoByUser(user.getId())).thenReturn(getUserMissionList());
 
-                boolean result = missionService.isParticipating(getUserMissionList());
                 List<MissionUserListResponseDto> userMissionResponse = missionService.findByUserList(oAuth2User);
-                assertTrue(result);
+
                 assertEquals(userMissionResponse.get(0).getTitle(), getMissionList().get(0).getTitle());
             }
-
         }
 
         @Nested
