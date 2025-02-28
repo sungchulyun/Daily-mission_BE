@@ -221,45 +221,17 @@ public class MissionService {
 
     /**
      * 현재 로그인한 유저가 참여 전적이 있는 미션 전체를 조회할 때 사용하는 API
-     * 설명 : 전체 미션을 조회하고, 미션 참여자 리스트에 Request 유저가 있다면, List에 추가해 반환한다.
      * @param user : 쿼리스트링으로 Size, Page를 받는다.
      * @return PageResponseDto
      */
     @Transactional(readOnly = true)
     public List<MissionUserListResponseDto> findByUserList(CustomOAuth2User user){
         User findUser = userRepository.findById(user.getId()).orElseThrow(() -> new UserException(USER_NOT_FOUND));
+        List<MissionUserListResponseDto> userMissions = missionRepository.findMissionDtoByUser(findUser.getId());
 
-        List<MissionUserListResponseDto> responses = new ArrayList<>();;
+        if(!isParticipating(userMissions)) throw new MissionException(PARTICIPATING_MISSION_NOT_FOUND);
 
-        List<Mission> MissionList = missionRepository.findAll();
-
-        for(Mission mission : MissionList){
-            List<Participant> participantList = mission.getParticipants();
-
-            for(Participant p : participantList) {
-
-                if (p.getUser().equals(findUser)) {
-
-                    MissionUserListResponseDto dto = MissionUserListResponseDto.builder()
-                            .id(mission.getId())
-                            .title(mission.getTitle())
-                            .content(mission.getContent())
-                            .imageUrl(mission.getImageUrl())
-                            .nickname(mission.getUser().getNickname())
-                            .startDate(mission.getStartDate())
-                            .endDate(mission.getEndDate())
-                            .ended(mission.isEnded())
-                            .build();
-
-                    responses.add(dto);
-                }
-            }
-
-
-        }
-        if(!isParticipating(responses)) throw new MissionException(PARTICIPATING_MISSION_NOT_FOUND);
-
-        return responses;
+        return userMissions;
     }
 
     /**
@@ -292,7 +264,7 @@ public class MissionService {
     }
 
     /**
-     * 유저가 참여중인 미션이 한개라도 있는지 여부를 검증하는 메서드
+     * 유저가 참여중인 미션 존재 여부 검증 메서드
      * @param particiPatinglist
      * @return
      */
