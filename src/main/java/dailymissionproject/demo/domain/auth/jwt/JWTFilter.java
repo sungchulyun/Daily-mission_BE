@@ -42,6 +42,11 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
 
+        if (requestUri.matches("^\\/swagger-ui(?:\\/.*)?$") || requestUri.matches("^\\/v3\\/api-docs(?:\\/.*)?$")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String authorization = "";
         Cookie[] cookies = request.getCookies();
 

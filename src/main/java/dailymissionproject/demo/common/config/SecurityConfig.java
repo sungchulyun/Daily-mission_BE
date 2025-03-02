@@ -36,6 +36,18 @@ public class SecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Bean
+    public WebSecurityCustomizer webSecurityCustomizer(){
+        return web -> {
+            web.ignoring()
+                    .requestMatchers(
+                            "/favicon.ico",
+                            "/swagger-ui/**",
+                            "v3/api-docs/**",
+                            "/",
+                            "/error");
+        };
+    }
+    @Bean
     public SecurityFilterChain config(HttpSecurity http) throws Exception{
         http
                 .csrf(AbstractHttpConfigurer::disable)
