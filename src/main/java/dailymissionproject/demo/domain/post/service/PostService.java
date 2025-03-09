@@ -24,7 +24,6 @@ import dailymissionproject.demo.domain.user.repository.UserRepository;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -53,9 +52,6 @@ public class PostService {
     private final NotificationService notificationService;
 
     @Transactional
-    @Caching(evict = {
-            @CacheEvict(value = "postLists", allEntries = true),
-    })
     public PostSaveResponseDto save(CustomOAuth2User user, PostSaveRequestDto requestDto) throws IOException {
 
         Mission mission = missionRepository.findByIdAndDeletedIsFalse(requestDto.getMissionId())
@@ -106,7 +102,6 @@ public class PostService {
      */
     @Transactional(readOnly = true)
     public PostDetailResponseDto findById(Long id){
-
         Post post = postRepository.findById(id).orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
         return PostDetailResponseDto.from(post);
@@ -138,7 +133,6 @@ public class PostService {
      * @return
      */
     @Transactional(readOnly = true)
-    @Cacheable(value = "postLists", key = "'mission-' + #id")
     @CircuitBreaker(name = "redis-circuit-breaker", fallbackMethod = "findAllByMissionFallBack")
     public PageResponseDto findAllByMission(Long id, Pageable pageable){
 
@@ -209,9 +203,6 @@ public class PostService {
      * @throws IOException
      */
     @Transactional
-    @Caching(evict = {
-            @CacheEvict(value = "postLists", allEntries = true),
-    })
     public PostUpdateResponseDto update(Long id, PostUpdateRequestDto requestDto, CustomOAuth2User user) throws IOException {
 
         Post findPost = postRepository.findById(id)
@@ -239,9 +230,6 @@ public class PostService {
      * @return
      */
     @Transactional
-    @Caching(evict = {
-            @CacheEvict(value = "postLists", allEntries = true),
-    })
     public boolean deleteById(Long id, CustomOAuth2User user){
         Post findPost = postRepository.findById(id)
                 .orElseThrow(() -> new PostException(POST_NOT_FOUND));
