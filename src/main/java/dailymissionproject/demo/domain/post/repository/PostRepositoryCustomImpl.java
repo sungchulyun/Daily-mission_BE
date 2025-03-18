@@ -1,7 +1,10 @@
 package dailymissionproject.demo.domain.post.repository;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import dailymissionproject.demo.domain.like.repository.QLikes;
 import dailymissionproject.demo.domain.mission.repository.Mission;
 import dailymissionproject.demo.domain.post.dto.PostSubmitDto;
 import dailymissionproject.demo.domain.post.dto.response.PostMissionListResponseDto;
@@ -97,8 +100,8 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
      * @return
      */
     @Override
-    public Slice<PostMissionListResponseDto> findAllByMission(Pageable pageable, Mission mission) {
-        List<PostMissionListResponseDto> postList = fetchAllByMission(pageable, mission);
+    public Slice<PostMissionListResponseDto> findAllByMission(Pageable pageable, Mission mission, User user) {
+        List<PostMissionListResponseDto> postList = fetchAllByMission(pageable, mission, user);
         boolean hasNext = hasNextPage(postList, pageable);
 
         return new SliceImpl<>(postList, pageable, hasNext);
@@ -110,7 +113,9 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
      * @param mission
      * @return
      */
-    List<PostMissionListResponseDto> fetchAllByMission(Pageable pageable, Mission mission) {
+    List<PostMissionListResponseDto> fetchAllByMission(Pageable pageable, Mission mission, User user) {
+        QLikes like = QLikes.likes;
+
         return queryFactory
                 .select(Projections.fields(PostMissionListResponseDto.class,
                         post.id.as("id"),
@@ -121,6 +126,12 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
                         post.content,
                         post.imageUrl,
                         post.likeCount.as("likeCount"),
+                        JPAExpressions
+                                .selectOne()
+                                .from(like)
+                                .where(like.user.eq(user)
+                                        .and(like.post.eq(post)))
+                                .exists().as("liked"),
                         post.createdDate,
                         post.modifiedDate))
                 .from(post)
@@ -130,6 +141,17 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
+    }
+
+    private BooleanExpression isLiked(User user, Post post){
+        QLikes like = QLikes.likes;
+
+        return JPAExpressions
+                .selectOne()
+                .from(like)
+                .where(like.user.eq(user)
+                        .and(like.post.eq(post)))
+                .exists();
     }
 
     /**
