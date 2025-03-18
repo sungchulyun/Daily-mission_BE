@@ -20,7 +20,7 @@ public interface PostRepositoryCustom {
 
     Slice<PostUserListResponseDto> findAllByUser(Pageable pageable, User user);
 
-    Slice<PostMissionListResponseDto> findAllByMission(Pageable pageable, Mission mission);
+    Slice<PostMissionListResponseDto> findAllByMission(Pageable pageable, Mission mission, User user);
 
     //List<Post> findAllByUser(User user);
 
