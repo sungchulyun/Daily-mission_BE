@@ -137,7 +137,7 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom{
                 .from(post)
                 .join(post.user)
                 .where(post.mission.eq(mission).and(post.deleted.isFalse()))
-                .orderBy(post.modifiedDate.desc())
+                .orderBy(post.likeCount.desc(), post.createdDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
