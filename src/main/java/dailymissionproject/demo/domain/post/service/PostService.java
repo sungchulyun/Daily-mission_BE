@@ -21,10 +21,7 @@ import dailymissionproject.demo.domain.post.repository.PostRepository;
 import dailymissionproject.demo.domain.user.exception.UserException;
 import dailymissionproject.demo.domain.user.repository.User;
 import dailymissionproject.demo.domain.user.repository.UserRepository;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -133,24 +130,13 @@ public class PostService {
      * @return
      */
     @Transactional(readOnly = true)
-    @CircuitBreaker(name = "redis-circuit-breaker", fallbackMethod = "findAllByMissionFallBack")
-    public PageResponseDto findAllByMission(Long id, Pageable pageable){
-
+    public PageResponseDto findAllByMission(CustomOAuth2User user, Long id, Pageable pageable){
+        User findUser = userRepository.findById(user.getId())
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
         Mission mission = missionRepository.findById(id)
                 .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
 
-        Slice<PostMissionListResponseDto> missionPostList = postRepository.findAllByMission(pageable, mission);
-
-        PageResponseDto pageResponseDto = new PageResponseDto<>(missionPostList.getContent(), missionPostList.hasNext());
-
-        return pageResponseDto;
-    }
-
-    public PageResponseDto findAllByMissionFallBack(Long id, Pageable pageable, Throwable e){
-        Mission mission = missionRepository.findById(id)
-                .orElseThrow(() -> new MissionException(MISSION_NOT_FOUND));
-
-        Slice<PostMissionListResponseDto> missionPostList = postRepository.findAllByMission(pageable, mission);
+        Slice<PostMissionListResponseDto> missionPostList = postRepository.findAllByMission(pageable, mission, findUser);
 
         PageResponseDto pageResponseDto = new PageResponseDto<>(missionPostList.getContent(), missionPostList.hasNext());
 

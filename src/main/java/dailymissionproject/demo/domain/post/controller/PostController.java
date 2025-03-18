@@ -19,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -109,8 +108,8 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "포스트 조회에 실패하였습니다."),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
-    public ResponseEntity<GlobalResponse> findByMission(@PathVariable("id") Long id, Pageable pageable){
-        PageResponseDto response = postService.findAllByMission(id, pageable);
+    public ResponseEntity<GlobalResponse> findByMission(@CurrentUser CustomOAuth2User user, @PathVariable("id") Long id, Pageable pageable){
+        PageResponseDto response = postService.findAllByMission(user, id, pageable);
 
         return ResponseEntity.ok(success(response.content(), MetaService.createMetaInfo().add("isNext", response.next())));
     }

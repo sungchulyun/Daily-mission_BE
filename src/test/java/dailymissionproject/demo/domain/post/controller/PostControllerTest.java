@@ -24,13 +24,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
@@ -198,7 +195,7 @@ class PostControllerTest {
             Slice<PostMissionListResponseDto> sliceList = new SliceImpl<>(missionPostList, pageable, false);
             PageResponseDto response = new PageResponseDto<>(sliceList, false);
 
-            when(postService.findAllByMission(any(), any())).thenReturn(response);
+            when(postService.findAllByMission(any(), any(), any())).thenReturn(response);
 
             ResultActions resultActions = mockMvc.perform(get("/api/v1/post/mission/{id}", missionId)
                     .with(csrf()))
@@ -213,14 +210,14 @@ class PostControllerTest {
         @Test
         @DisplayName("미션 정보가 없을경우 예외를 반환한다.")
         void post_read_mission_list_fail_when_mission_not_exits() throws Exception {
-            when(postService.findAllByMission(any(), any())).thenThrow(new MissionException(MissionExceptionCode.MISSION_NOT_FOUND));
+            when(postService.findAllByMission(any(), any(), any())).thenThrow(new MissionException(MissionExceptionCode.MISSION_NOT_FOUND));
 
             mockMvc.perform(get("/api/v1/post/mission/{id}", missionId)
                     .with(csrf()))
                     .andExpect(status().isBadRequest());
 
             verify(postService, description("findAllByMission 메서드가 정상 호출됨"))
-                    .findAllByMission(any(), any());
+                    .findAllByMission(any(), any(), any());
         }
     }
 
