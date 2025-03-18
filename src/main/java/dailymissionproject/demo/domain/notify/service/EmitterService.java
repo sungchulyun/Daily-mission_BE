@@ -2,8 +2,6 @@ package dailymissionproject.demo.domain.notify.service;
 
 import dailymissionproject.demo.domain.notify.dto.NotifyDto;
 import dailymissionproject.demo.domain.notify.repository.emitter.EmitterRepositoryImpl;
-import dailymissionproject.demo.domain.notify.repository.Notification;
-import dailymissionproject.demo.domain.notify.repository.NotificationRepository;
 import dailymissionproject.demo.domain.user.exception.UserException;
 import dailymissionproject.demo.domain.user.exception.UserExceptionCode;
 import dailymissionproject.demo.domain.user.repository.User;
@@ -11,11 +9,9 @@ import dailymissionproject.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +22,7 @@ public class EmitterService {
     private final UserRepository userRepository;
 
     private final static String NOTIFY_NAME = "notify";
-    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
+    private static final Long DEFAULT_TIMEOUT = 15L * 1000 * 60;
 
     public void subscribe(SseEmitter emitter, Long userId){
         try {
