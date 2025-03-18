@@ -191,13 +191,15 @@ class PostServiceTest {
         @DisplayName("미션별 포스트 리스트를 조회할 수 있다.")
         void post_mission_list_read_success() throws Exception {
             //given
+            User user = new User(1L, "윤성철", "proattacker@naver.com", "성철");
             Pageable pageable = PageRequest.of(0, 3);
 
+            when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
             when(missionRepository.findById(any())).thenReturn(Optional.of(mission));
-            when(postRepository.findAllByMission(pageable, mission))
+            when(postRepository.findAllByMission(pageable, mission, user))
                     .thenReturn(new SliceImpl<>(missionListResponse, pageable, false));
 
-            PageResponseDto pageResponseDto = postService.findAllByMission(missionId, pageable);
+            PageResponseDto pageResponseDto = postService.findAllByMission(oAuth2User, missionId, pageable);
             List<PostMissionListResponseDto> responseList = (List<PostMissionListResponseDto>) pageResponseDto.content();
 
             assertEquals(responseList.get(0).getTitle(), missionListResponse.get(0).getTitle());
@@ -210,9 +212,10 @@ class PostServiceTest {
         void post_mission_list_read_fail_when_mission_is_not_exists() throws Exception {
             Pageable pageable = PageRequest.of(0, 3);
 
+            when(userRepository.findById(oAuth2User.getId())).thenReturn(Optional.of(user));
             when(missionRepository.findById(any())).thenThrow(new MissionException(MISSION_NOT_FOUND));
 
-            MissionException missionException = assertThrows(MissionException.class, () -> postService.findAllByMission(missionId, pageable));
+            MissionException missionException = assertThrows(MissionException.class, () -> postService.findAllByMission(oAuth2User, missionId, pageable));
             assertEquals(MISSION_NOT_FOUND, missionException.getExceptionCode());
         }
     }
