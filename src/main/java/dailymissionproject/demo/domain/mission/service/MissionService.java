@@ -249,6 +249,14 @@ public class MissionService {
         return pageResponseDto;
     }
 
+    public PageResponseDto findEndList(Pageable pageable, CustomOAuth2User user){
+        Slice<MissionEndedListResponseDto> responses = missionRepository.findAllByEnded(pageable, user.getId());
+
+        PageResponseDto pageResponseDto = new PageResponseDto(responses.getContent(), responses.hasNext());
+
+        return pageResponseDto;
+    }
+
     /**
      * 현재 로그인한 유저가 참여 전적이 있는 미션 전체를 조회할 때 사용하는 API
      * 설명 : 전체 미션을 조회하고, 미션 참여자 리스트에 Request 유저가 있다면, List에 추가해 반환한다.
