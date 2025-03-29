@@ -249,6 +249,8 @@ public class MissionService {
         return pageResponseDto;
     }
 
+    @Transactional(readOnly = true)
+    @Cacheable(value = "missionLists", key = "'end-' + 'page-' + #pageable.getPageNumber() + 'size-' + #pageable.getPageSize()")
     public PageResponseDto findEndList(Pageable pageable, CustomOAuth2User user){
         Slice<MissionEndedListResponseDto> responses = missionRepository.findAllByEnded(pageable, user.getId());
 
