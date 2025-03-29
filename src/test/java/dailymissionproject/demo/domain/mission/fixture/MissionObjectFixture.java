@@ -1,20 +1,15 @@
 package dailymissionproject.demo.domain.mission.fixture;
 
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.JPAExpressions;
 import dailymissionproject.demo.domain.mission.dto.page.PageResponseDto;
 import dailymissionproject.demo.domain.mission.dto.request.MissionSaveRequestDto;
 import dailymissionproject.demo.domain.mission.dto.request.MissionUpdateRequestDto;
 import dailymissionproject.demo.domain.mission.dto.response.*;
 import dailymissionproject.demo.domain.mission.repository.Mission;
-import dailymissionproject.demo.domain.mission.repository.QMission;
 import dailymissionproject.demo.domain.missionRule.dto.MissionRuleResponseDto;
 import dailymissionproject.demo.domain.missionRule.repository.MissionRule;
 import dailymissionproject.demo.domain.missionRule.repository.Week;
 import dailymissionproject.demo.domain.participant.dto.response.ParticipantUserDto;
 import dailymissionproject.demo.domain.participant.repository.Participant;
-import dailymissionproject.demo.domain.participant.repository.QParticipant;
 import dailymissionproject.demo.domain.user.repository.Role;
 import dailymissionproject.demo.domain.user.repository.User;
 import org.springframework.data.domain.PageRequest;
@@ -359,6 +354,37 @@ public class MissionObjectFixture {
 
         Slice<MissionAllListResponseDto> allMissionListResponse = new SliceImpl<>(listResponse, pageable ,hasNext);
         PageResponseDto pageResponse = new PageResponseDto(allMissionListResponse.getContent(), allMissionListResponse.hasNext());
+        return pageResponse;
+    }
+
+    public static PageResponseDto getEndMissionListResponse(){
+        MissionEndedListResponseDto endMission_1 = MissionEndedListResponseDto.builder()
+                .id(1L)
+                .title("종료미션")
+                .content("종료된 미션입니다.")
+                .imageUrl("END_THUMBNAIL1.jpg")
+                .nickname("Sungchul")
+                .startDate(LocalDate.now().minusDays(10))
+                .endDate(LocalDate.now().minusDays(1))
+                .build();
+
+        MissionEndedListResponseDto endMission_2 = MissionEndedListResponseDto.builder()
+                .id(2L)
+                .title("미션2")
+                .content("화이팅합시다!")
+                .imageUrl("THUMBNAIL2.jpg")
+                .nickname("sungchul")
+                .startDate(LocalDate.now().minusDays(7))
+                .endDate(LocalDate.now().plusDays(7))
+                .build();
+
+        List<MissionEndedListResponseDto> listResponse = List.of(endMission_1, endMission_2);
+
+        boolean hasNext = false;
+        Pageable pageable = PageRequest.of(0, 3);
+
+        Slice<MissionEndedListResponseDto> endMissionListResponse = new SliceImpl<>(listResponse, pageable ,hasNext);
+        PageResponseDto pageResponse = new PageResponseDto(endMissionListResponse.getContent(), endMissionListResponse.hasNext());
         return pageResponse;
     }
 
