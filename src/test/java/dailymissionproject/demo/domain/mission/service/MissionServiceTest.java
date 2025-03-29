@@ -33,19 +33,15 @@ import org.springframework.security.test.context.support.WithMockUser;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static dailymissionproject.demo.domain.mission.exception.MissionExceptionCode.*;
-import static dailymissionproject.demo.domain.mission.fixture.MissionObjectFixture.getMissionList;
-import static dailymissionproject.demo.domain.mission.fixture.MissionObjectFixture.getUserMissionList;
+import static dailymissionproject.demo.domain.mission.fixture.MissionObjectFixture.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @Tag("unit")
 @DisplayName("[unit] [service] MissionService")
@@ -172,37 +168,50 @@ class MissionServiceTest {
             @Test
             @DisplayName("인기 미션 리스트를 조회할 수 있다.")
             void test_mission_read_hot_list_success() {
-                when(missionRepository.findAllByParticipantSize(pageable, 1L)).thenReturn(MissionObjectFixture.getHotMissionListPageable());
+                when(missionRepository.findAllByParticipantSize(pageable, 1L)).thenReturn(MissionObjectFixture.getHotMissionPageable());
 
                 PageResponseDto pageResponseDto = missionService.findHotList(pageable, oAuth2User);
                 List<MissionHotListResponseDto> list = (List<MissionHotListResponseDto>) pageResponseDto.content();
 
                 assertEquals(list.get(0).getTitle(),
-                        MissionObjectFixture.getHotMissionListPageable().getContent().get(0).getTitle());
+                        MissionObjectFixture.getHotMissionPageable().getContent().get(0).getTitle());
             }
 
             @Test
             @DisplayName("신규 미션 리스트를 조회할 수 있다.")
             void test_mission_read_new_list_success() {
-                when(missionRepository.findAllByCreatedInMonth(pageable, 1L)).thenReturn(MissionObjectFixture.getNewMissionListPageable());
+                when(missionRepository.findAllByCreatedInMonth(pageable, 1L)).thenReturn(MissionObjectFixture.getNewMissionPageable());
 
                 PageResponseDto pageResponseDto = missionService.findNewList(pageable, oAuth2User);
                 List<MissionNewListResponseDto> list = (List<MissionNewListResponseDto>) pageResponseDto.content();
 
                 assertEquals(list.get(0).getTitle(),
-                        MissionObjectFixture.getNewMissionListPageable().getContent().get(0).getTitle());
+                        MissionObjectFixture.getNewMissionPageable().getContent().get(0).getTitle());
             }
 
             @Test
             @DisplayName("전체 미션 리스트를 조회할 수 있다.")
             void test_mission_read_all_list_success() {
-                when(missionRepository.findAllByCreatedDate(pageable, 1L)).thenReturn(MissionObjectFixture.getAllMissionListPageable());
+                when(missionRepository.findAllByCreatedDate(pageable, 1L)).thenReturn(MissionObjectFixture.getAllMissionPageable());
 
                 PageResponseDto pageResponseDto = missionService.findAllList(pageable, oAuth2User);
                 List<MissionAllListResponseDto> list = (List<MissionAllListResponseDto>) pageResponseDto.content();
 
                 assertEquals(list.get(0).getTitle(),
-                        MissionObjectFixture.getAllMissionListPageable().getContent().get(0).getTitle());
+                        MissionObjectFixture.getAllMissionPageable().getContent().get(0).getTitle());
+            }
+
+            @Test
+            @DisplayName("종료 미션 리스트를 조회할 수 있다.")
+            void test_mission_read_end_list_success(){
+                //when
+                when(missionRepository.findAllByEnded(pageable, 1L)).thenReturn(MissionObjectFixture.getEndMissionPageable());
+
+                PageResponseDto pageResponseDto = missionService.findEndList(pageable, oAuth2User);
+                List<MissionEndedListResponseDto> endMissions = (List<MissionEndedListResponseDto>) pageResponseDto.content();
+
+                //then
+                assertEquals(getEndMissions().get(0).getTitle(), endMissions.get(0).getTitle());
             }
 
 
