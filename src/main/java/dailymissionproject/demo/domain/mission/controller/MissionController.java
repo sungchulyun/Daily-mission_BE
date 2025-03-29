@@ -185,7 +185,7 @@ public class MissionController {
      * @return PageResponseDto
      */
     @GetMapping("/end")
-    @Operation(summary = "모든 미션 확인", description = "모든 미션 목록을 확인하고 싶을 때 사용하는 API입니다.")
+    @Operation(summary = "종료 미션 확인", description = "종료된 미션 목록을 확인하고 싶을 때 사용하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공!"),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
