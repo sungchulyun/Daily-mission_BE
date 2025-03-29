@@ -1,18 +1,13 @@
 package dailymissionproject.demo.domain.mission.repository;
 
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import dailymissionproject.demo.domain.mission.dto.response.MissionAllListResponseDto;
+import dailymissionproject.demo.domain.mission.dto.response.MissionEndedListResponseDto;
 import dailymissionproject.demo.domain.mission.dto.response.MissionHotListResponseDto;
 import dailymissionproject.demo.domain.mission.dto.response.MissionNewListResponseDto;
-import dailymissionproject.demo.domain.participant.repository.QParticipant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
-import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
@@ -120,6 +115,33 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom{
                 .fetch();
     }
 
+    @Override
+    public Slice<MissionEndedListResponseDto> findAllByEnded(Pageable pageable, Long userId) {
+        List<MissionEndedListResponseDto> missionList = fetchMissionByEnded(pageable, userId);
+        boolean hasNext = hasNextPage(missionList, pageable);
+
+        return new SliceImpl<>(missionList, pageable, hasNext);
+    }
+
+    public List<MissionEndedListResponseDto> fetchMissionByEnded(Pageable pageable, Long userId){
+
+        return queryFactory
+                .select(Projections.fields(MissionEndedListResponseDto.class,
+                        mission.id,
+                        mission.title,
+                        mission.content,
+                        mission.imageUrl,
+                        mission.user.nickname,
+                        mission.startDate,
+                        mission.endDate
+                ))
+                .from(mission)
+                .where(mission.ended.isTrue())
+                .orderBy(mission.endDate.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+    }
     /**
      * Pageable 요청객체의 사이즈와 비교해서 크다면, true를 리턴한다.
      * @param missionList

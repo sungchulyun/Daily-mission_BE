@@ -19,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -176,6 +175,25 @@ public class MissionController {
     })
     public ResponseEntity<GlobalResponse> findAllList(Pageable pageable, @CurrentUser CustomOAuth2User user){
         PageResponseDto response = missionService.findAllList(pageable, user);
+
+        return ResponseEntity.ok(success(response.content(), MetaService.createMetaInfo().add("isNext", response.next())));
+    }
+
+    /**
+     * 전체 미션 리스트 조회
+     * @param pageable
+     * @return PageResponseDto
+     */
+    @GetMapping("/end")
+    @Operation(summary = "종료 미션 확인", description = "종료된 미션 목록을 확인하고 싶을 때 사용하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공!"),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
+            @ApiResponse(responseCode = "404", description = "권한을 확인해주세요."),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
+    })
+    public ResponseEntity<GlobalResponse> findEndList(Pageable pageable, @CurrentUser CustomOAuth2User user){
+        PageResponseDto response = missionService.findEndList(pageable, user);
 
         return ResponseEntity.ok(success(response.content(), MetaService.createMetaInfo().add("isNext", response.next())));
     }
