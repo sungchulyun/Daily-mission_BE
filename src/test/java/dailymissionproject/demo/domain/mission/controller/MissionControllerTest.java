@@ -22,13 +22,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -76,6 +73,7 @@ class MissionControllerTest {
     private final PageResponseDto hotMissionListResponse = MissionObjectFixture.getHotMissionListResponse();
     private final PageResponseDto newMissionListResponse = MissionObjectFixture.getNewMissionListResponse();
     private final PageResponseDto allMissionListResponse = MissionObjectFixture.getAllMissionListResponse();
+    private final PageResponseDto endMissionListResponse = MissionObjectFixture.getEndMissionListResponse();
 
 
     private final Pageable pageable = PageRequest.of(0,3 );
@@ -232,6 +230,40 @@ class MissionControllerTest {
             resultActions.andExpect(jsonPath("$.data[0].nickname").value(allMission_1.getNickname()));
             resultActions.andExpect(jsonPath("$.data[0].startDate").value(allMission_1.getStartDate().toString()));
             resultActions.andExpect(jsonPath("$.data[0].endDate").value(allMission_1.getEndDate().toString()));
+        }
+
+        @Test
+        @DisplayName("종료된 미션 리스트를 조회할 수 있다.")
+        void end_mission_read_list_success() throws Exception {
+            //given
+            MissionEndedListResponseDto endMission_1 = MissionEndedListResponseDto.builder()
+                    .id(1L)
+                    .title("종료미션")
+                    .content("종료된 미션입니다.")
+                    .imageUrl("END_THUMBNAIL1.jpg")
+                    .nickname("Sungchul")
+                    .startDate(LocalDate.now().minusDays(10))
+                    .endDate(LocalDate.now().minusDays(1))
+                    .build();
+            //when
+            when(missionService.findEndList(eq(pageable), any())).thenReturn(endMissionListResponse);
+            ResultActions resultActions = mockMvc.perform(get("/api/v1/mission/end")
+                    .param("page", String.valueOf(pageable.getPageNumber()))
+                    .param("size", String.valueOf(pageable.getPageSize()))
+                    .with(csrf()))
+               .andExpect(status().isOk())
+               .andDo(print());
+
+            //then
+            resultActions.andExpect(jsonPath("$.success").value(true));
+            resultActions.andExpect(jsonPath("$.code").value(200));
+            resultActions.andExpect(jsonPath("$.data[0].id").value(endMission_1.getId()));
+            resultActions.andExpect(jsonPath("$.data[0].title").value(endMission_1.getTitle()));
+            resultActions.andExpect(jsonPath("$.data[0].content").value(endMission_1.getContent()));
+            resultActions.andExpect(jsonPath("$.data[0].imageUrl").value(endMission_1.getImageUrl()));
+            resultActions.andExpect(jsonPath("$.data[0].nickname").value(endMission_1.getNickname()));
+            resultActions.andExpect(jsonPath("$.data[0].startDate").value(endMission_1.getStartDate().toString()));
+            resultActions.andExpect(jsonPath("$.data[0].endDate").value(endMission_1.getEndDate().toString()));
         }
 
         @Test
