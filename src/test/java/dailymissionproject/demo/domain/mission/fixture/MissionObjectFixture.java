@@ -162,7 +162,12 @@ public class MissionObjectFixture {
                 .build();
     }
 
-    public static Slice<MissionHotListResponseDto> getHotMissionListPageable(){
+    /**
+     * 미션 Collection 객체를 반환합니다.
+     * 신규, 인기, 전체, 종료
+     * @return List<T>
+     */
+    public static List<MissionHotListResponseDto> getHotMissions(){
         MissionHotListResponseDto hotMission_1 = MissionHotListResponseDto.builder()
                 .id(1L)
                 .title("미션1")
@@ -183,16 +188,10 @@ public class MissionObjectFixture {
                 .endDate(LocalDate.now().plusDays(7))
                 .build();
 
-        List<MissionHotListResponseDto> listResponse = List.of(hotMission_1, hotMission_2);
-
-        boolean hasNext = false;
-        Pageable pageable = PageRequest.of(0, 3);
-
-        Slice<MissionHotListResponseDto> hotMissionListResponse = new SliceImpl<>(listResponse, pageable ,hasNext);
-        return hotMissionListResponse;
+        return List.of(hotMission_1, hotMission_2);
     }
 
-    public static Slice<MissionNewListResponseDto> getNewMissionListPageable(){
+    public static List<MissionNewListResponseDto> getNewMissions(){
         MissionNewListResponseDto newMission_1 = MissionNewListResponseDto.builder()
                 .id(1L)
                 .title("미션1")
@@ -213,19 +212,10 @@ public class MissionObjectFixture {
                 .endDate(LocalDate.now().plusDays(7))
                 .build();
 
-        List<MissionNewListResponseDto> listResponse = List.of(newMission_1, newMission_2);
-
-        boolean hasNext = false;
-        Pageable pageable = PageRequest.of(0, 3);
-
-        Slice<MissionNewListResponseDto> newMissionListResponse = new SliceImpl<>(listResponse, pageable ,hasNext);
-        return newMissionListResponse;
+        return List.of(newMission_1, newMission_2);
     }
-    /**
-     * 인기 미션 리스트 응답 객체를 반환합니다.
-     * @return PageResponseDto
-     */
-    public static Slice<MissionAllListResponseDto> getAllMissionListPageable(){
+
+    public static List<MissionAllListResponseDto> getAllMissions(){
         MissionAllListResponseDto allMission_1 = MissionAllListResponseDto.builder()
                 .id(1L)
                 .title("미션1")
@@ -246,118 +236,10 @@ public class MissionObjectFixture {
                 .endDate(LocalDate.now().plusDays(7))
                 .build();
 
-        List<MissionAllListResponseDto> listResponse = List.of(allMission_1, allMission_2);
-
-        boolean hasNext = false;
-        Pageable pageable = PageRequest.of(0, 3);
-
-        Slice<MissionAllListResponseDto> allMissionListResponse = new SliceImpl<>(listResponse, pageable ,hasNext);
-        return allMissionListResponse;
+        return List.of(allMission_1, allMission_2);
     }
 
-
-    public static PageResponseDto getHotMissionListResponse(){
-        MissionHotListResponseDto hotMission_1 = MissionHotListResponseDto.builder()
-                .id(1L)
-                .title("미션1")
-                .content("열심히 합니다.")
-                .imageUrl("THUMBNAIL1.jpg")
-                .nickname("yoonsu")
-                .startDate(LocalDate.now().minusDays(10))
-                .endDate(LocalDate.now().plusDays(10))
-                .build();
-
-        MissionHotListResponseDto hotMission_2 = MissionHotListResponseDto.builder()
-                .id(2L)
-                .title("미션2")
-                .content("화이팅합시다!")
-                .imageUrl("THUMBNAIL2.jpg")
-                .nickname("sungchul")
-                .startDate(LocalDate.now().minusDays(7))
-                .endDate(LocalDate.now().plusDays(7))
-                .build();
-
-        List<MissionHotListResponseDto> listResponse = List.of(hotMission_1, hotMission_2);
-
-        boolean hasNext = false;
-        Pageable pageable = PageRequest.of(0, 3);
-
-        Slice<MissionHotListResponseDto> hotMissionListResponse = new SliceImpl<>(listResponse, pageable ,hasNext);
-        PageResponseDto pageResponse = new PageResponseDto(hotMissionListResponse.getContent(), hotMissionListResponse.hasNext());
-        return pageResponse;
-    }
-
-    /**
-     * 신규 미션 리스트 응답 객체를 반환합니다.
-     * @return PageResponseDto
-     */
-    public static PageResponseDto getNewMissionListResponse(){
-        MissionNewListResponseDto newMission_1 = MissionNewListResponseDto.builder()
-                .id(1L)
-                .title("미션1")
-                .content("열심히 합니다.")
-                .imageUrl("THUMBNAIL1.jpg")
-                .nickname("yoonsu")
-                .startDate(LocalDate.now().minusDays(10))
-                .endDate(LocalDate.now().plusDays(10))
-                .build();
-
-        MissionNewListResponseDto newMission_2 = MissionNewListResponseDto.builder()
-                .id(2L)
-                .title("미션2")
-                .content("화이팅합시다!")
-                .imageUrl("THUMBNAIL2.jpg")
-                .nickname("sungchul")
-                .startDate(LocalDate.now().minusDays(7))
-                .endDate(LocalDate.now().plusDays(7))
-                .build();
-
-        List<MissionNewListResponseDto> listResponse = List.of(newMission_1, newMission_2);
-
-        boolean hasNext = false;
-        Pageable pageable = PageRequest.of(0, 3);
-
-        Slice<MissionNewListResponseDto> newMissionListResponse = new SliceImpl<>(listResponse, pageable ,hasNext);
-        PageResponseDto pageResponse = new PageResponseDto(newMissionListResponse.getContent(), newMissionListResponse.hasNext());
-        return pageResponse;
-    }
-
-    /**
-     * 전체 미션 리스트 응답 객체를 반환합니다.
-     * @return PageResponseDto
-     */
-    public static PageResponseDto getAllMissionListResponse(){
-        MissionAllListResponseDto allMission_1 = MissionAllListResponseDto.builder()
-                .id(1L)
-                .title("미션1")
-                .content("열심히 합니다.")
-                .imageUrl("THUMBNAIL1.jpg")
-                .nickname("yoonsu")
-                .startDate(LocalDate.now().minusDays(10))
-                .endDate(LocalDate.now().plusDays(10))
-                .build();
-
-        MissionAllListResponseDto allMission_2 = MissionAllListResponseDto.builder()
-                .id(2L)
-                .title("미션2")
-                .content("화이팅합시다!")
-                .imageUrl("THUMBNAIL2.jpg")
-                .nickname("sungchul")
-                .startDate(LocalDate.now().minusDays(7))
-                .endDate(LocalDate.now().plusDays(7))
-                .build();
-
-        List<MissionAllListResponseDto> listResponse = List.of(allMission_1, allMission_2);
-
-        boolean hasNext = false;
-        Pageable pageable = PageRequest.of(0, 3);
-
-        Slice<MissionAllListResponseDto> allMissionListResponse = new SliceImpl<>(listResponse, pageable ,hasNext);
-        PageResponseDto pageResponse = new PageResponseDto(allMissionListResponse.getContent(), allMissionListResponse.hasNext());
-        return pageResponse;
-    }
-
-    public static PageResponseDto getEndMissionListResponse(){
+    public static List<MissionEndedListResponseDto> getEndMissions(){
         MissionEndedListResponseDto endMission_1 = MissionEndedListResponseDto.builder()
                 .id(1L)
                 .title("종료미션")
@@ -374,18 +256,71 @@ public class MissionObjectFixture {
                 .content("화이팅합시다!")
                 .imageUrl("THUMBNAIL2.jpg")
                 .nickname("sungchul")
-                .startDate(LocalDate.now().minusDays(7))
-                .endDate(LocalDate.now().plusDays(7))
+                .startDate(LocalDate.now().minusDays(10))
+                .endDate(LocalDate.now().minusDays(1))
                 .build();
 
-        List<MissionEndedListResponseDto> listResponse = List.of(endMission_1, endMission_2);
+        return List.of(endMission_1, endMission_2);
+    }
 
+    /**
+     * Slice 타입의 각 미션 리스트 응답객체를 반환합니다.
+     * @return
+     */
+    public static Slice<MissionHotListResponseDto> getHotMissionPageable(){
+        List<MissionHotListResponseDto> hotMissions = getHotMissions();
         boolean hasNext = false;
         Pageable pageable = PageRequest.of(0, 3);
 
-        Slice<MissionEndedListResponseDto> endMissionListResponse = new SliceImpl<>(listResponse, pageable ,hasNext);
-        PageResponseDto pageResponse = new PageResponseDto(endMissionListResponse.getContent(), endMissionListResponse.hasNext());
-        return pageResponse;
+        return new SliceImpl<>(hotMissions, pageable, hasNext);
+    }
+
+    public static Slice<MissionNewListResponseDto> getNewMissionPageable(){
+        List<MissionNewListResponseDto> newMissions = getNewMissions();
+        boolean hasNext = false;
+        Pageable pageable = PageRequest.of(0, 3);
+
+        return new SliceImpl<>(newMissions, pageable ,hasNext);
+    }
+
+    public static Slice<MissionAllListResponseDto> getAllMissionPageable(){
+        List<MissionAllListResponseDto> allMissions = getAllMissions();
+        boolean hasNext = false;
+        Pageable pageable = PageRequest.of(0, 3);
+
+        return new SliceImpl<>(allMissions, pageable ,hasNext);
+    }
+
+    public static Slice<MissionEndedListResponseDto> getEndMissionPageable(){
+        List<MissionEndedListResponseDto> endMissions = getEndMissions();
+        boolean hasNext = false;
+        Pageable pageable = PageRequest.of(0, 3);
+
+        return new SliceImpl<>(endMissions, pageable ,hasNext);
+    }
+
+    /**
+     * 각 미션별 리스트를 PageResponseDto 타입 객체로 반환합니다.
+     * @return
+     */
+    public static PageResponseDto getHotMissionListResponse(){
+        Slice<MissionHotListResponseDto> hotMissionListResponse = getHotMissionPageable();
+        return new PageResponseDto(getHotMissionPageable().getContent(), hotMissionListResponse.hasNext());
+    }
+
+    public static PageResponseDto getNewMissionListResponse(){
+        Slice<MissionNewListResponseDto> newMissionListResponse = getNewMissionPageable();
+        return new PageResponseDto(newMissionListResponse.getContent(), newMissionListResponse.hasNext());
+    }
+
+    public static PageResponseDto getAllMissionListResponse(){
+        Slice<MissionAllListResponseDto> allMissionListResponse = getAllMissionPageable();
+        return new PageResponseDto(allMissionListResponse.getContent(), allMissionListResponse.hasNext());
+    }
+
+    public static PageResponseDto getEndMissionListResponse(){
+        Slice<MissionEndedListResponseDto> endMissionListResponse = getEndMissionPageable();
+        return new PageResponseDto(endMissionListResponse.getContent(), endMissionListResponse.hasNext());
     }
 
     public static List<MissionUserListResponseDto> getUserMissionList(){
