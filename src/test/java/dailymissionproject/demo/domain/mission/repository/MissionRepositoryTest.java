@@ -5,6 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import dailymissionproject.demo.common.config.JPAConfig;
 import dailymissionproject.demo.common.config.QueryDSLConfig;
 import dailymissionproject.demo.domain.mission.dto.response.MissionAllListResponseDto;
+import dailymissionproject.demo.domain.mission.dto.response.MissionEndedListResponseDto;
 import dailymissionproject.demo.domain.mission.dto.response.MissionHotListResponseDto;
 import dailymissionproject.demo.domain.mission.dto.response.MissionNewListResponseDto;
 import dailymissionproject.demo.domain.mission.fixture.MissionObjectFixture;
@@ -107,6 +108,9 @@ class MissionRepositoryTest {
                 Mission.builder().missionRule(missionRules.get(8)).user(users.get(8)).title("영화 감상").content("주말마다 영화 한 편 보기").imageUrl("http://example.com/mission9.png").hint("HINT").credential("CREDENTIAL").startDate(LocalDate.now().minusMonths(3)).endDate(LocalDate.now().plusMonths(3)).build(),
                 Mission.builder().missionRule(missionRules.get(9)).user(users.get(9)).title("요리 연습하기").content("매일 새로운 요리 시도하기").imageUrl("http://example.com/mission10.png").hint("HINT").credential("CREDENTIAL").startDate(LocalDate.now().minusMonths(4)).endDate(LocalDate.now().plusMonths(3)).build()
         );
+        missions.get(9).end();
+        missions.get(8).end();
+        missions.get(7).end();
         missionRepository.saveAll(missions);
     }
 
@@ -246,6 +250,40 @@ class MissionRepositoryTest {
             Slice<MissionAllListResponseDto> sliceList = new SliceImpl<>(missionList, pageable, hasNext);
 
             assertThat(sliceList.getContent().size()).isEqualTo(pageable.getPageSize());
+        }
+
+        @Test
+        @DisplayName("종료된 미션 리스트를 조회할 수 있다.")
+        void mission_read_end_list(){
+            Pageable pageable = PageRequest.of(0,3);
+
+            List<MissionEndedListResponseDto> endMissions = queryFactory
+                    .select(Projections.fields(MissionEndedListResponseDto.class,
+                            mission.id,
+                            mission.title,
+                            mission.content,
+                            mission.imageUrl,
+                            mission.user.nickname,
+                            mission.startDate,
+                            mission.endDate
+                    ))
+                    .from(mission)
+                    .where(mission.ended.isTrue())
+                    .orderBy(mission.endDate.desc())
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize() + 1)
+                    .fetch();
+
+            boolean hasNext = false;
+
+            if(endMissions.size() > pageable.getPageSize()){
+                endMissions.remove(pageable.getPageSize());
+                hasNext = true;
+            }
+
+            Slice<MissionEndedListResponseDto> sliceList = new SliceImpl<>(endMissions, pageable, hasNext);
+
+            assertThat(endMissions.size()).isEqualTo(pageable.getPageSize());
         }
     }
 }
